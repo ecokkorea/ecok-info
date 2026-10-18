@@ -1,0 +1,5 @@
+# 모든 검색엔진과 AI 로봇의 열람을 허용합니다.
+User-agent: *
+Allow: /
+
+Sitemap: https://info.ecokkorea.kr/sitemap.xml
