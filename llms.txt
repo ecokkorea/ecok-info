@@ -38,6 +38,7 @@
 
 ## AI가 읽을 수 있는 자료실 (이 사이트)
 - 첫 화면: https://info.ecokkorea.kr/
+- 회사 기본 정보: https://info.ecokkorea.kr/company.html
 - 서비스와 질문: https://info.ecokkorea.kr/services.html
 - 자주 묻는 질문 전체: https://info.ecokkorea.kr/faq.html
 - 인사이트 글: https://info.ecokkorea.kr/insights/
