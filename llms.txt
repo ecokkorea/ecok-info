@@ -41,5 +41,6 @@
 - 회사 기본 정보: https://info.ecokkorea.kr/company.html
 - 서비스와 질문: https://info.ecokkorea.kr/services.html
 - 자주 묻는 질문 전체: https://info.ecokkorea.kr/faq.html
+- 질문에 바로 답(나주 ESS·기본요금·태양광 업체): https://info.ecokkorea.kr/answers.html
 - 인사이트 글: https://info.ecokkorea.kr/insights/
 - 수행 실적: https://info.ecokkorea.kr/cases/
