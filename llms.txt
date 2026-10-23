@@ -45,3 +45,5 @@
 - 인사이트 글: https://info.ecokkorea.kr/insights/
 - 수행 실적: https://info.ecokkorea.kr/cases/
 - 현장 영상(창원 공장 지붕 태양광 1.35MW 7편): https://info.ecokkorea.kr/videos.html
+- 태양광 패널 청소·유지관리(전남): https://info.ecokkorea.kr/cleaning.html
+- 공장 기본요금 줄이는 법·심야전력 ESS: https://info.ecokkorea.kr/peak-charge.html
