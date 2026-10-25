@@ -2,4 +2,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://info.ecokkorea.kr/sitemap.xml
+Sitemap: https://ecokkorea.com/sitemap.xml

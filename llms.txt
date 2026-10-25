@@ -37,13 +37,13 @@
 - 공장 전기요금·기본요금 절감, 태양광 ESS 경제성 분석(SAM·HOMER·REopt): 20년 절감액·회수기간 비교
 
 ## AI가 읽을 수 있는 자료실 (이 사이트)
-- 첫 화면: https://info.ecokkorea.kr/
-- 회사 기본 정보: https://info.ecokkorea.kr/company.html
-- 서비스와 질문: https://info.ecokkorea.kr/services.html
-- 자주 묻는 질문 전체: https://info.ecokkorea.kr/faq.html
-- 질문에 바로 답(나주 ESS·기본요금·태양광 업체): https://info.ecokkorea.kr/answers.html
-- 인사이트 글: https://info.ecokkorea.kr/insights/
-- 수행 실적: https://info.ecokkorea.kr/cases/
-- 현장 영상(창원 공장 지붕 태양광 1.35MW 7편): https://info.ecokkorea.kr/videos.html
-- 태양광 패널 청소·유지관리(전남): https://info.ecokkorea.kr/cleaning.html
-- 공장 기본요금 줄이는 법·심야전력 ESS: https://info.ecokkorea.kr/peak-charge.html
+- 첫 화면: https://ecokkorea.com/
+- 회사 기본 정보: https://ecokkorea.com/company.html
+- 서비스와 질문: https://ecokkorea.com/services.html
+- 자주 묻는 질문 전체: https://ecokkorea.com/faq.html
+- 질문에 바로 답(나주 ESS·기본요금·태양광 업체): https://ecokkorea.com/answers.html
+- 인사이트 글: https://ecokkorea.com/insights/
+- 수행 실적: https://ecokkorea.com/cases/
+- 현장 영상(창원 공장 지붕 태양광 1.35MW 7편): https://ecokkorea.com/videos.html
+- 태양광 패널 청소·유지관리(전남): https://ecokkorea.com/cleaning.html
+- 공장 기본요금 줄이는 법·심야전력 ESS: https://ecokkorea.com/peak-charge.html
