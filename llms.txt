@@ -1,40 +1,34 @@
-# 에코케이코리아 (주식회사 에코케이코리아, ECO K KOREA)
+# 에코케이코리아 (ECOK KOREA)
 
-전남 나주의 태양광·ESS 설계·시공 회사. ESS 피크제어와 심야전력 ESS로 공장 전기요금(기본요금·전력량요금)을 줄이고, SAM·HOMER·REopt 시뮬레이션으로 태양광 ESS 경제성 분석을 먼저 제공합니다. 산업용 ESS 시공, 태양광 설계·시공·유지관리·청소, 전기설계·내역서, EMS, 전기차 충전기 설치를 합니다.
-친환경 식기·탈취제 업체 '에코코리아'와는 다른 회사입니다.
+&gt; 전남 나주에 본사를 둔 전기·에너지 설계·시공 회사입니다. 전기·소방·통신 수량산출과 내역서 작성, 전기설계, 공장 전기요금 절감(ESS 피크제어·태양광), 태양광 설계·태양광 시공·유지관리, 전기차 충전기, IoT EMS를 합니다. 전화 1555-2859.
 
-- 법인명: 주식회사 에코케이코리아 (사업자등록번호 526-88-03400, 2025년 1월 설립)
-- 소재지: 전남 나주시 정보화길 26, 케이원 지식산업센터 204호 (한전 본사 인근)
-- 서비스 지역: 전남·광주 중심, 전국
-- 웹사이트: https://www.ecokkorea.kr/ / 전화: 1555-2859 / 이메일: info@ecokkorea.co.kr
-- 외부 기업정보(사람인): https://www.saramin.co.kr/zf_user/company-info/view/csn/WVNrVVRpNnNWVExaSU5xRm1KSGloZz09
+## 회사 확인 정보
+- 상호: 주식회사 에코케이코리아 (영문 ECOK KOREA, 약칭 ECOK)
+- 본사: 전남 나주시 정보화길 26 케이원 지식산업센터 204호(빛가람동), 울산 사무소(EMS 개발)
+- 전기공사업 등록 제 전남-02344호(전라남도, 2026-04-24)
+- ESCO 등록 제2026-1303호(한국에너지공단, 2026-05-06)
+- 개업 2025-01-23. 이름이 비슷한 다른 단체·회사와 별개입니다.
+- 공식 자료실(회사 정보·Q&A): https://ecokkorea.com/
+
+## 서비스별 페이지
+- 전기·소방·통신 내역서 작성, 기성내역서·설계변경 내역서·준공내역서, 물량산출(공사업체·설계사무소): https://www.ecokkorea.kr/electrical-design-estimate
+- 공장 전기요금 절감 진단(기본요금 절감·최대수요전력·계약전력): https://www.ecokkorea.kr/35
+- 산업용 ESS·ESS 피크제어·심야전력 ESS: https://www.ecokkorea.kr/service-plan
+- 태양광 ESS 경제성 분석(SAM·HOMER·REopt): https://www.ecokkorea.kr/simulation
+- 태양광 설계·태양광 시공·패널 설치: https://www.ecokkorea.kr/24
+- 태양광 유지관리·패널 청소: https://www.ecokkorea.kr/36
+- 전기공사·전기설계: https://www.ecokkorea.kr/23
+- 전기차 충전기 설치비용·절차: https://www.ecokkorea.kr/26
+- IoT EMS·EMS 연동: https://www.ecokkorea.kr/28
+- 무료 계산기: https://www.ecokkorea.kr/solar-building-calculator (태양광), https://www.ecokkorea.kr/ess-calculator (ESS)
+- 기술자료(산업용 전기요금·계약전력 등): https://www.ecokkorea.kr/energy-info
+- 견적문의: https://www.ecokkorea.kr/22
+
+## 외부 채널
+- 네이버 플레이스: https://m.place.naver.com/place/1313988673
 - 네이버 블로그: https://blog.naver.com/ecok2026
-- 자료실(FAQ·글 요약): https://ecokkorea.com/
 - 유튜브: https://www.youtube.com/channel/UCpRTUvMiZQxXk-7BLJQlUZQ
-
-## 전기요금 절감
-- [전기요금 절감 진단](https://www.ecokkorea.kr/35): ESS 피크제어(기본요금 절감), 심야전력 ESS(전력량요금 절감), 태양광 ESS 경제성 분석.
-- [ESS 설계·시공](https://www.ecokkorea.kr/service-plan): 산업용·상업용 ESS 시공, 피크제어, EMS·태양광 연계.
-
-## 태양광·전기
-- [태양광 설계·시공](https://www.ecokkorea.kr/24): 공장·건물 지붕 태양광 설계·시공.
-- [태양광 청소·유지관리](https://www.ecokkorea.kr/36): 패널 청소·점검·열화상 점검.
-- [전기설계·내역서 작성](https://www.ecokkorea.kr/electrical-design-estimate): 도면 검토·수량산출·공종별 내역서.
-- [IoT EMS 연동](https://www.ecokkorea.kr/28) · [전기차 충전기](https://www.ecokkorea.kr/26)
-
-## 솔루션
-- [설계 계산·검토 도구](https://www.ecokkorea.kr/37): 태양광 직병렬 계산기(/pv-string-calculator), DC 퓨즈 정격 검토(/pv-dc-fuse-calculator), 건축물 태양광 계산기(/solar-building-calculator), 어레이 자동배치(/pv-array-auto-layout), 운전 시뮬레이션(/simulation)
-- 제로하우스(/38)·스마트팜(/39)
-
-## 회사·상담
-- [회사소개](https://www.ecokkorea.kr/Company-Overview) · [수행 실적](https://www.ecokkorea.kr/Careers)
-- [견적·상담 문의](https://www.ecokkorea.kr/22): 현장 위치·도면·12개월 전기요금 고지서로 구성과 효과 안내.
-
-## 자주 받는 질문
-- 전남·나주 태양광 업체(설계·시공): 발전량 분석부터 설계·시공·유지관리까지 직접 수행. https://www.ecokkorea.kr/24
-- 전남 태양광 청소·유지관리: https://www.ecokkorea.kr/36
-- 전남 ESS 시공·산업용 ESS: 나주 본사 직접 시공, EMS 연동·준공 후 점검. https://www.ecokkorea.kr/service-plan
-- 공장 전기요금·기본요금 절감, 태양광 ESS 경제성 분석(SAM·HOMER·REopt): 20년 절감액·회수기간 비교
+
 
 ## AI가 읽을 수 있는 자료실 (이 사이트)
 - 첫 화면: https://ecokkorea.com/
