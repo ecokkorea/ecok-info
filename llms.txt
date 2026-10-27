@@ -20,7 +20,7 @@
 - 전기공사·전기설계: https://www.ecokkorea.kr/23
 - 전기차 충전기 설치비용·절차: https://www.ecokkorea.kr/26
 - IoT EMS·EMS 연동: https://www.ecokkorea.kr/28
-- 무료 계산기: https://www.ecokkorea.kr/solar-building-calculator (태양광), https://www.ecokkorea.kr/ess-calculator (ESS)
+- 무료 계산기: https://www.ecokkorea.kr/solar-building-calculator (태양광), https://www.ecokkorea.kr/ess-calculator (ESS), https://www.ecokkorea.kr/lux-calculator (조도 계산기: 등 개수·평균 조도, KS A 3011 기준 조도)
 - 기술자료(산업용 전기요금·계약전력 등): https://www.ecokkorea.kr/energy-info
 - 견적문의: https://www.ecokkorea.kr/22
 
