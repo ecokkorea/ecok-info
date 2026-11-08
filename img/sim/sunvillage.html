@@ -641,7 +641,7 @@ input[type=range]{width:100%;accent-color:var(--grid);margin:0}
     const E=C.econ, yc=yearCurt(curKwh());
     const rev=E.rev1*(1-yc), cut=E.rev1*yc, net=rev-E.om-E.debt, net20=E.net20-E.rev20*yc, netAvg=E.netAvg-E.rev20/20*yc, net1=rev-E.om-E.int1;
     $('netVal').innerHTML=ek(net)+'<small>억/년</small>'; $('revVal').innerHTML=ek(rev)+'<small>억</small>';
-    const tot=E.rev1; [['wfOm',E.om,'운영 '+ek(E.om)],['wfDebt',E.debt,'원리금 '+ek(E.debt)],['wfNet',Math.max(0,net),'남는 돈 '+ek(net)],['wfCut',cut,'제어 '+ek(cut)]].forEach(([id,v,t])=>{const e=$(id); e.style.flexGrow=Math.max(0,v)/tot; e.style.flexBasis='0'; e.textContent=v/tot>0.12?t:''; e.title=t+'억';});
+    const tot=E.rev1; [['wfOm',E.om,'운영 '+ek(E.om)],['wfDebt',E.debt,'원리금 '+ek(E.debt)],['wfNet',Math.max(0,net),'남는 돈 '+ek(net)],['wfCut',cut,'제어 '+ek(cut)]].forEach(([id,v,t])=>{const e=$(id); e.style.flexGrow=Math.max(0,v)/tot; e.style.flexBasis='0'; e.textContent=v/tot>0.15?t:''; e.title=t+'억';});
     $('cutKey').hidden=cut<1e5;
     $('y1').textContent=ek(rev-E.om-E.int1); $('yAvg').textContent=ek(netAvg); $('y20').textContent=ek(net20,1);
     $('sDayRev').textContent='하루 '+man(rev/365)+'원 · 한 달 '+man(rev/12)+'원';
