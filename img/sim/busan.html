@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="ko" translate="no">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="google" content="notranslate">
+<meta http-equiv="Content-Language" content="ko">
+<title>ESS 계통 모니터</title>
+<style>@font-face{font-family:'Paperlogy';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-4Regular.woff2') format('woff2');font-weight:400}@font-face{font-family:'Paperlogy';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-7Bold.woff2') format('woff2');font-weight:700}</style>
+<style>
+:root{
+  color-scheme: dark;
+  --bg:#111317; --panel:#181b21; --panel2:#1e222a; --line:#2b313b; --line2:#353c48;
+  --text:#e6e8ec; --muted:#8e97a6; --dim:#5d6573;
+  --grid:#22d3ee; --ess:#34d399; --pv:#facc15; --load:#fb923c; --alarm:#ef4444;
+  --lo:#3b5b7a; --mid:#1f7a74; --pk:#b7791f;
+  --sans:"Paperlogy","Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+  --mono:"Paperlogy","Malgun Gothic",sans-serif;  /* 숫자도 페이퍼로지 → 폰트 규칙: 모든 산출물 Paperlogy */
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg);color:var(--text)}
+body{font-family:var(--sans);font-size:14px;line-height:1.45;padding-inline:16px;padding-block:14px}
+.wrap{max-width:1440px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+/* header */
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;justify-content:space-between;border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:10px 14px}
+.brand{display:flex;flex-direction:column;gap:2px}
+.brand h1{margin:0;font-size:17px;font-weight:700;letter-spacing:.01em;text-wrap:balance}
+.brand small{color:var(--muted);font-size:12px}
+.status{display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--ess);display:inline-block;margin-right:6px;box-shadow:0 0 8px var(--ess)}
+.dot.alarm{background:var(--alarm);box-shadow:0 0 10px var(--alarm);animation:blink .6s steps(2) infinite}
+.clock{font-size:20px;color:var(--text);font-weight:600;letter-spacing:.04em}
+.band-pill{padding:3px 9px;border-radius:3px;font-family:var(--sans);font-weight:600;font-size:12px;color:#fff}
+/* modes */
+.modes{display:flex;gap:6px;flex-wrap:wrap}
+.tbar{flex:1 1 380px;display:flex;align-items:center;gap:8px;background:var(--panel2);border:1px solid var(--line2);border-radius:4px;padding:3px 6px 3px 3px;min-width:0}
+.tbar .btn{padding:5px 9px;border:0;background:#262b34}
+.tnow{font:700 15px var(--mono);color:var(--grid);min-width:48px;text-align:center;font-variant-numeric:tabular-nums}
+.hstrip{flex:1;min-width:0;display:grid;grid-template-columns:repeat(24,minmax(0,1fr));gap:2px;cursor:pointer;touch-action:none;user-select:none;border-radius:3px}
+.hstrip span{overflow:hidden;font:600 10px var(--mono);color:#eef2f7;text-align:center;padding:6px 0;border-radius:2px;opacity:.5;transition:opacity .15s}
+.hstrip span:hover{opacity:.8}
+.hstrip span.now{opacity:1;box-shadow:inset 0 0 0 2px #fff;font-weight:800}
+.rwrap{position:relative;flex:1;padding-top:22px}
+.rtip{position:absolute;top:0;transform:translateX(-50%);font:700 11px var(--mono);color:#0b0d10;background:var(--grid);border-radius:3px;padding:2px 5px;pointer-events:none;white-space:nowrap}
+.rtip::after{content:'';position:absolute;left:50%;bottom:-4px;margin-left:-4px;border:4px solid transparent;border-bottom:0;border-top-color:var(--grid)}
+@media (max-width:600px){.hstrip{gap:1px}.hstrip span{font-size:8.5px;padding:5px 0;overflow:visible}.tnow{min-width:42px;font-size:13px}.hstrip span:not(:nth-child(3n+1)){color:transparent}.tbar{flex-basis:100%}}
+
+.mode{font:600 12.5px var(--sans);color:var(--muted);background:var(--panel2);border:1px solid var(--line2);border-radius:4px;padding:7px 11px;cursor:pointer;display:flex;gap:6px;align-items:center}
+.mode svg{width:14px;height:14px}
+.mode:hover{color:var(--text);border-color:var(--muted)}
+.mode[aria-pressed="true"]{color:#0b0d10;background:var(--ess);border-color:var(--ess)}
+.mode:focus-visible,.btn:focus-visible,input:focus-visible{outline:2px solid var(--grid);outline-offset:2px}
+/* layout */
+.main{display:grid;grid-template-columns:minmax(0,7fr) minmax(300px,3fr);gap:12px}
+.main>*{min-width:0}
+@media (max-width:980px){.main{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:600px){body{padding-inline:10px}.diagram svg,.daychart svg{min-width:560px}.phead{padding:8px 10px}}
+.panel{border:1px solid var(--line);background:var(--panel);border-radius:6px}
+.phead{display:flex;justify-content:space-between;align-items:center;padding:9px 14px;border-bottom:1px solid var(--line);font-size:12px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;gap:10px;flex-wrap:wrap}
+.phead b{color:var(--text);letter-spacing:.02em;text-transform:none;font-size:13px}
+.diagram{overflow-x:auto}
+.diagram svg{display:block;width:100%;min-width:640px;height:auto}
+/* timeline */
+.tl{padding:12px 14px 14px;display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line)}
+.tl-row{display:flex;gap:10px;align-items:center}
+.btn{font:600 12px var(--sans);color:var(--text);background:var(--panel2);border:1px solid var(--line2);border-radius:4px;padding:6px 10px;cursor:pointer;display:flex;gap:6px;align-items:center;white-space:nowrap}
+.btn svg{width:13px;height:13px}
+.bands{display:grid;grid-template-columns:repeat(24,1fr);gap:2px;height:8px}
+.bands span{border-radius:1px}
+input[type=range]{width:100%;accent-color:var(--grid);margin:0}
+.ticks{display:flex;justify-content:space-between;font:11px var(--mono);color:var(--dim)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+/* right panel */
+.side{display:flex;flex-direction:column;gap:12px}
+.metrics{padding:12px 14px;display:flex;flex-direction:column;gap:14px}
+.m-label{font-size:11.5px;color:var(--muted);letter-spacing:.05em;display:flex;justify-content:space-between}
+.m-val{font:700 26px var(--mono);font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.m-val small{font-size:13px;color:var(--muted);font-weight:400;margin-left:4px}
+.bar{height:8px;background:#0c0e11;border:1px solid var(--line);border-radius:2px;position:relative;overflow:hidden}
+.bar > div{height:100%;transition:width .4s,background .3s}
+.bar .mark{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--alarm)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.soc{display:flex;gap:12px;align-items:center}
+.batt{width:62px;height:30px;border:2px solid var(--muted);border-radius:4px;position:relative;padding:2px;flex:none}
+.batt:after{content:"";position:absolute;right:-6px;top:8px;width:4px;height:10px;background:var(--muted);border-radius:0 2px 2px 0}
+.batt > div{height:100%;background:var(--ess);border-radius:1px;transition:width .5s}
+.calc{padding:12px 14px 14px;display:flex;flex-direction:column;gap:10px}
+.calc .line{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px dashed var(--line);padding-bottom:6px;gap:10px}
+.calc .line span{color:var(--muted);font-size:12.5px}
+.calc .line b{font:600 15px var(--mono);font-variant-numeric:tabular-nums}
+.calc .total b{font-size:20px;color:var(--ess)}
+.warn{font-size:12px;color:#fca5a5;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.35);border-radius:4px;padding:6px 8px}
+.note{font-size:11.5px;color:var(--dim);line-height:1.5}
+.side>section.logp{flex:1 1 0;min-height:180px;display:flex;flex-direction:column}
+.event{padding:10px 14px;font:12px var(--mono);color:var(--muted);display:flex;flex-direction:column;gap:3px;flex:1 1 0;min-height:0;overflow:auto}
+@media (max-width:980px){.event{max-height:220px}}
+.event div b{color:var(--text);font-weight:600}
+/* ess rule */
+.rule{padding:12px 14px 14px;display:flex;flex-direction:column;gap:9px}
+.rstrip{display:grid;grid-template-columns:repeat(24,1fr);gap:2px;height:20px}
+.rstrip span{border-radius:2px;position:relative}
+.rstrip span.now{outline:2px solid #fff;outline-offset:1px;z-index:1}
+.rticks{position:relative;height:13px;font:10.5px var(--mono);color:var(--dim);margin-top:-5px}
+.rticks span{position:absolute;transform:translateX(-50%)}.rticks span:first-child{transform:none}.rticks span:last-child{transform:translateX(-100%)}
+.rlist{display:flex;flex-direction:column;gap:5px}
+.ritem{display:grid;grid-template-columns:10px 64px 1fr;gap:8px;align-items:center;font-size:12.5px;color:var(--muted);padding:5px 7px;border-radius:4px;border:1px solid transparent}
+.ritem i{width:10px;height:10px;border-radius:2px}
+.ritem b{font:600 12px var(--mono);color:var(--text)}
+.ritem.on{background:var(--panel2);border-color:var(--line2);color:var(--text)}
+/* day chart */
+.daychart{padding:10px 14px 0;overflow-x:auto}
+.daychart svg{display:block;width:100%;min-width:640px;height:auto;cursor:pointer}
+.dc-leg{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);padding:6px 14px 0}
+.dc-leg i{display:inline-block;width:14px;height:3px;margin-right:5px;vertical-align:3px}
+.axis{fill:var(--dim);font:10.5px var(--mono)}
+/* svg */
+.flow{fill:none;stroke-linecap:round;stroke-dasharray:10 12;animation:dash 1.1s linear infinite}
+.flow.rev{animation-direction:reverse}
+.flow.off{stroke:var(--line2)!important;animation:none;stroke-dasharray:4 8}
+.wire{fill:none;stroke:var(--line2);stroke-width:2}
+.node{fill:var(--panel2);stroke:var(--line2);stroke-width:1.5}
+.nlabel{fill:var(--text);font:600 13px var(--sans)}
+.nsub{fill:var(--muted);font:11px var(--sans)}
+.nval{font:700 15px var(--mono);font-variant-numeric:tabular-nums}
+.alarmflash{animation:flash .7s steps(2) infinite}
+@keyframes dash{to{stroke-dashoffset:-44}}
+@keyframes flash{50%{stroke:var(--alarm);fill:rgba(239,68,68,.18)}}
+@keyframes blink{50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.flow{animation:none}.alarmflash,.dot.alarm{animation:none}}
+</style>
+
+</head>
+<body>
+<style>
+:root{--tot:#f472b6}
+.shiftbar{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;font-size:12px;color:var(--muted)}
+.shiftbar label{display:flex;align-items:center;gap:6px;white-space:nowrap}
+.shiftbar input[type=number],.shiftbar select{font:600 12.5px var(--mono);color:var(--text);background:var(--panel2);border:1px solid var(--line2);border-radius:4px;padding:4px 6px;width:58px;text-align:center}
+.shiftbar select{width:auto;padding-inline:8px}
+.shiftbar .seg{display:flex;gap:4px}
+.shiftbar .seg button{font:600 12px var(--sans);color:var(--muted);background:var(--panel2);border:1px solid var(--line2);border-radius:4px;padding:4px 9px;cursor:pointer}
+.shiftbar .seg button[aria-pressed="true"]{color:#0b0d10;background:var(--load);border-color:var(--load)}
+.shiftbar b{font:600 12.5px var(--mono);color:var(--load)}
+.shiftbar .t3[hidden]{display:none}
+</style>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <h1>{{siteName}} · ESS 계통 모니터</h1>
+      <small>{{tr}} 수전 · ESS {{essMwh}}MWh ({{kwhEach}}kWh × {{nb}}기 · {{maker}}) / PCS {{pcsMw}}MW ({{pcsEach}}kW × {{nb}}기) · 교환소 {{kvaEach}}kVA × {{units}}기 · e-truck <span id="hdTrucks">{{trucks}}</span>대 · 시뮬레이션 화면</small>
+    </div>
+    <div class="status">
+      <span id="stateTxt"><span class="dot" id="stDot"></span>정상 운전</span>
+      <span class="band-pill" id="bandPill">뱅크 1 충전</span>
+      <span>{{day}} 기준</span>
+      <span style="display:flex;flex-direction:column;align-items:flex-end;line-height:1.1"><span style="font-size:10.5px;color:var(--dim)">시뮬레이션 시각</span><span class="clock" id="clock">14:00</span></span>
+    </div>
+  </header>
+
+  <div class="modes" role="group" aria-label="운전 모드">
+    <button class="mode" data-mode="auto" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4"/><circle cx="12" cy="12" r="3"/></svg>자동 (순번 충전 · 공급)</button>
+    <button class="mode" data-mode="peak" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>피크 · 충전 중지</button>
+    <button class="mode" data-mode="surge" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 3h15v13H1zM16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>교대 집중 공급</button>
+    <button class="mode" data-mode="recover" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>복구 충전 (5기 동시)</button>
+    <div class="tbar" aria-label="시각 타임바">
+      <button class="btn" id="play2" aria-label="24시간 재생/정지"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4v16l13-8z"/></svg></button>
+      <span class="tnow" id="tnow">14:00</span>
+      <div class="hstrip" id="hstrip" role="slider" tabindex="0" aria-label="시뮬레이션 시각" aria-valuemin="0" aria-valuemax="23" aria-valuenow="14"></div>
+    </div>
+  </div>
+
+  <div class="main">
+    <section class="panel" aria-label="계통 모식도">
+      <div class="phead"><b>단선 계통도 · 전력 흐름</b><span id="flowNote"><i style="display:inline-block;width:9px;height:9px;border-radius:2px;background:var(--ess);vertical-align:-1px;margin-right:4px"></i>방전 공급 &nbsp;<i style="display:inline-block;width:9px;height:9px;border-radius:2px;background:var(--pv);vertical-align:-1px;margin-right:4px"></i>충전 중 (방전 불가) &nbsp;<i style="display:inline-block;width:9px;height:9px;border-radius:2px;background:#3a414d;vertical-align:-1px;margin-right:4px"></i>정지 · 점선 = 전력 흐름 · 굵기 = kW</span></div>
+      <div class="diagram">
+        <svg id="pid" viewBox="0 0 900 530" role="img" aria-label="개념 계통도: 154kV 주변전소 TR#2 → 부두 기존 부하 / ESS 충전 피더 → 뱅크 1~5 (5MWh) → PCS 1MW → 공용 교류 모선 → 교환소 1·2 (BSS 3,000kVA)">
+          <defs>
+            <pattern id="gridbg" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" fill="none" stroke="#1c2027" stroke-width="1"/></pattern>
+            <pattern id="chgHatch" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="10" height="10" fill="rgba(250,204,21,.10)"/><path d="M0 0V10" stroke="rgba(250,204,21,.35)" stroke-width="3"/></pattern>
+          </defs>
+          <rect x="0" y="0" width="900" height="530" fill="url(#gridbg)"/>
+          <!-- base wires -->
+          <path class="wire" d="M110 120 V175 M200 63 H260 M260 63 V455"/>
+          <path class="wire" d="M260 63 H300 M260 161 H300 M260 259 H300 M260 357 H300 M260 455 H300"/>
+          <path class="wire" d="M485 63 H500 M485 161 H500 M485 259 H500 M485 357 H500 M485 455 H500 M570 63 H600 M570 161 H600 M570 259 H600 M570 357 H600 M570 455 H600"/>
+          <path class="wire" d="M603 205 H630 M603 335 H630"/>
+          <!-- flows -->
+          <path id="fBase" class="flow" d="M110 120 V175" stroke="var(--grid)"/>
+          <path id="fGridEss" class="flow" d="M200 63 H260" stroke="var(--grid)"/>
+          <path id="fChg0" class="flow" d="M260 63 H300" stroke="var(--grid)"/>
+          <path id="fChg1" class="flow" d="M260 63 V161 H300" stroke="var(--grid)"/>
+          <path id="fChg2" class="flow" d="M260 63 V259 H300" stroke="var(--grid)"/>
+          <path id="fChg3" class="flow" d="M260 63 V357 H300" stroke="var(--grid)"/>
+          <path id="fChg4" class="flow" d="M260 63 V455 H300" stroke="var(--grid)"/>
+          <path id="fDis0" class="flow" d="M485 63 H500 M570 63 H600" stroke="var(--ess)"/>
+          <path id="fDis1" class="flow" d="M485 161 H500 M570 161 H600" stroke="var(--ess)"/>
+          <path id="fDis2" class="flow" d="M485 259 H500 M570 259 H600" stroke="var(--ess)"/>
+          <path id="fDis3" class="flow" d="M485 357 H500 M570 357 H600" stroke="var(--ess)"/>
+          <path id="fDis4" class="flow" d="M485 455 H500 M570 455 H600" stroke="var(--ess)"/>
+          <path id="fL1" class="flow" d="M603 205 H630" stroke="var(--load)"/>
+          <path id="fL2" class="flow" d="M603 335 H630" stroke="var(--load)"/>
+
+          <!-- TR#2 -->
+          <g>
+            <rect class="node" id="trBox" x="20" y="20" width="180" height="100" rx="5"/>
+            <g transform="translate(34,34)" stroke="var(--grid)" stroke-width="2" fill="none"><circle cx="13" cy="11" r="10"/><circle cx="13" cy="25" r="10"/></g>
+            <text x="68" y="50" class="nlabel">{{tr}}</text>
+            <text x="68" y="68" class="nsub">{{trSub}}</text>
+            <text x="34" y="104" class="nval" id="vTR2" fill="var(--grid)">0 kW</text>
+          </g>
+          <text x="230" y="53" class="nsub" text-anchor="middle" style="font-size:9.5px">ESS 충전 피더</text>
+          <text x="230" y="81" class="nsub" text-anchor="middle" id="vGridEss" style="fill:var(--text)">0 kW</text>
+          <!-- 부두 기존 부하 -->
+          <g>
+            <rect class="node" id="baseBox" x="20" y="175" width="180" height="80" rx="5"/>
+            <g transform="translate(32,187)" stroke="var(--grid)" stroke-width="1.6" fill="none"><path d="M0 26V8l9 6V8l9 6V8l9 6V0h5v26z"/></g>
+            <text x="72" y="201" class="nlabel">부두 기존 부하</text>
+            <text x="72" y="219" class="nsub">{{baseSub}}</text>
+            <text x="72" y="241" class="nval" id="vBase" fill="var(--grid)" style="font-size:13px">0 kW</text>
+          </g>
+          <!-- 한도 게이지 -->
+          <g>
+            <rect class="node" id="limBox" x="20" y="320" width="180" height="120" rx="5"/>
+            <text x="32" y="342" class="nlabel">TR#2 수전 한도</text>
+            <text x="32" y="359" class="nsub" style="font-size:10px">{{limitNote}} = {{limitKw}}kW</text>
+            <rect x="32" y="372" width="156" height="10" rx="2" fill="#0c0e11" stroke="var(--line)"/>
+            <rect id="gaugeFill" x="33" y="373" width="0" height="8" rx="1" fill="var(--grid)"/>
+            <rect id="gaugeMark" x="0" y="370" width="2" height="14" fill="var(--alarm)"/>
+            <text x="32" y="404" class="nsub" id="vMargin">여유 - kW</text>
+            <text x="32" y="422" class="nsub" id="vPct" style="font-size:10px">풍냉 -% · 자냉 -%</text>
+          </g>
+          <text x="110" y="470" class="nsub" text-anchor="middle" style="font-size:10px">개념 구성도</text>
+          <text x="110" y="486" class="nsub" text-anchor="middle" style="font-size:10px">이중회선·보호협조는 상세설계에서 확정</text>
+          <!-- 뱅크 1~5 (JS 생성) -->
+          <g id="banks"></g>
+          <!-- 공용 교류 모선 -->
+          <rect id="busBar" x="597" y="40" width="6" height="450" rx="2" fill="#3a414d"/>
+          <text x="592" y="518" class="nsub" text-anchor="end">공용 교류 모선 · {{busKva}}kVA</text>
+          <!-- 공급 합계 (상단) -->
+          <g>
+            <rect class="node" id="supBox" x="630" y="40" width="210" height="90" rx="5"/>
+            <text x="642" y="62" class="nlabel" style="fill:var(--tot)">교환소 공급 합계</text>
+            <text x="642" y="95" class="nval" id="vLoadTot" fill="var(--tot)" style="font-size:18px">0 kW</text>
+            <text x="642" y="117" class="nsub" id="vSupNote">ESS 방전 0 kW · 계통 0 kW</text>
+          </g>
+          <!-- 교환소 1 -->
+          <g>
+            <rect class="node" id="load1Box" x="630" y="150" width="210" height="110" rx="5"/>
+            <g transform="translate(646,164)" stroke="var(--load)" stroke-width="1.8" fill="none"><path d="M12 0v28M0 14h24M3 5l18 18M21 5 3 23"/></g>
+            <text x="690" y="178" class="nlabel" fill="var(--load)" style="fill:var(--load)">{{load1}}</text>
+            <text x="690" y="196" class="nsub">{{load1Sub}}</text>
+            <text x="646" y="236" class="nval" id="vL1" fill="var(--load)">0 kW</text>
+            <text x="828" y="236" class="nsub" id="vL1pct" text-anchor="end">정격 대비 0%</text>
+          </g>
+          <!-- 교환소 2 -->
+          <g>
+            <rect class="node" id="load2Box" x="630" y="280" width="210" height="110" rx="5"/>
+            <g transform="translate(646,294)" stroke="var(--load)" stroke-width="1.8" fill="none"><path d="M12 0v28M0 14h24M3 5l18 18M21 5 3 23"/></g>
+            <text x="690" y="308" class="nlabel" style="fill:var(--load)">{{load2}}</text>
+            <text x="690" y="326" class="nsub">{{load2Sub}}</text>
+            <text x="646" y="366" class="nval" id="vL2" fill="var(--load)">0 kW</text>
+            <text x="828" y="366" class="nsub" id="vL2pct" text-anchor="end">정격 대비 0%</text>
+          </g>
+          <!-- e-truck (교환소 1·2 → 완충 팩 교환) -->
+          <path class="wire" d="M840 205 H872 V460 H840 M840 335 H872"/>
+          <path id="fTruck1" class="flow" d="M840 205 H872 V335" stroke="var(--load)"/>
+          <path id="fTruck2" class="flow" d="M840 335 H872" stroke="var(--load)"/>
+          <path id="fTruck3" class="flow" d="M872 335 V460 H840" stroke="var(--load)"/>
+          <text x="889" y="300" class="nsub" text-anchor="middle" style="font-size:9.5px" transform="rotate(90 889 300)">완충 팩 → 트럭</text>
+          <g>
+            <rect class="node" id="truckBox" x="630" y="420" width="210" height="96" rx="5"/>
+            <g transform="translate(642,434)" stroke="var(--load)" stroke-width="1.6" fill="none"><path d="M0 2h14v12H0zM14 6h5l4 4v4h-9z"/><circle cx="4.5" cy="16.5" r="2.2"/><circle cx="17.5" cy="16.5" r="2.2"/></g>
+            <text x="674" y="442" class="nlabel">e-truck 운영</text>
+            <text x="674" y="460" class="nsub" id="vTrucks">{{trucks}}대 × {{kwhPerTruck}}kWh</text>
+            <text x="642" y="481" class="nsub" id="vDemand">하루 요구 - MWh · 팩 교환</text>
+            <text x="642" y="504" class="nval" id="vCum" fill="var(--load)" style="font-size:13px">금일 공급 0 MWh</text>
+          </g>
+        </svg>
+      </div>
+      <div class="tl">
+        <div class="tl-row">
+          <button class="btn" id="play" aria-pressed="false"><svg viewBox="0 0 24 24" fill="currentColor" id="playIco"><path d="M7 4v16l13-8z"/></svg><span id="playTxt">24시간 재생</span></button>
+          <label for="hour" class="note" style="white-space:nowrap">시각</label>
+          <div class="rwrap"><span class="rtip" id="hourTip">14:00</span><input type="range" id="hour" min="0" max="23" step="1" value="14" aria-label="시뮬레이션 시각"></div>
+        </div>
+        <div class="bands" id="bands" aria-hidden="true"></div>
+        <div class="ticks"><span>00</span><span>03</span><span>06</span><span>09</span><span>12</span><span>15</span><span>18</span><span>21</span><span>23</span></div>
+        <div class="legend" id="legend"></div>
+      </div>
+          <div class="phead" style="border-top:1px solid var(--line)"><b>24시간 전력 흐름 (kW) · {{day}} 교환소 부하 · <span id="shDesc">{{dayDesc}}</span></b><span>첨두 = 교대 시각 전후 트럭 집중 교환 (가정) · 클릭하면 해당 시각으로 이동</span></div>
+      <div class="dc-leg"><span><i style="background:var(--load)"></i>교환소 부하 (공급)</span><span><i style="background:var(--grid)"></i>계통 수전 (ESS 충전)</span><span><i style="background:var(--ess)"></i>ESS 방전 (+)</span><span><i style="background:var(--grid);opacity:.5"></i>배터리 충전 (−)</span><span><i style="background:#a78bfa"></i>SOC 평균 %</span></div>
+      <div class="daychart"><svg id="day" viewBox="0 0 900 250" role="img" aria-label="24시간 교환소 부하, 계통 수전, ESS 충방전 그래프"></svg></div>
+</section>
+
+    <aside class="side">
+      <section class="panel">
+        <div class="phead"><b>실시간 상태</b><span id="modeTxt">자동 운전</span></div>
+        <div class="metrics">
+          <div>
+            <div class="m-label"><span>TR#2 수전 합계 (기존 + ESS 충전)</span><span id="gridPct">-</span></div>
+            <div class="m-val" id="mGrid">0<small>kW</small></div>
+            <div class="bar" style="margin-top:6px"><div id="gridBar" style="width:0;background:var(--grid)"></div><span class="mark" id="gridMark"></span></div>
+            <div class="note" id="gridHint" style="margin-top:4px">빨간 선 = 한도 {{limitKw}}kW ({{limitNote}}) · 기존 피크 {{peakKw}}kW</div>
+          </div>
+          <div class="row2">
+            <div><div class="m-label"><span>ESS 공급 출력</span></div><div class="m-val" id="mESS" style="color:var(--ess)">0<small>kW</small></div><div class="note" id="essState">대기</div></div>
+            <div><div class="m-label"><span>ESS 충전 수전</span></div><div class="m-val" id="mChg" style="color:var(--grid)">0<small>kW</small></div><div class="note" id="chgState">-</div></div>
+          </div>
+          <div>
+            <div class="m-label"><span>배터리 SOC (뱅크 {{nb}}기 평균)</span><span id="socKwh">- kWh</span></div>
+            <div class="soc"><div class="batt"><div id="battFill" style="width:50%"></div></div><div class="m-val" id="mSOC">0<small>%</small></div></div>
+            <div class="note">운용 범위 SOC {{socMin}}~{{socMax}}% (가용 약 {{usable}}kWh) · 뱅크별 SOC는 계통도 참조</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="phead"><b>하루 에너지 수지</b><span>트럭 대수 가변</span></div>
+        <div class="calc">
+          <div>
+            <div class="m-label"><label for="target">e-truck 운영 대수</label><span id="tVal" style="font-family:var(--mono);color:var(--text)">{{trucks}} 대</span></div>
+            <input type="range" id="target" min="{{tMin}}" max="{{tMax}}" step="{{tStep}}" value="{{trucks}}">
+            <div class="ticks"><span>{{tMin}}대</span><span>기준 {{trucks}}대</span><span>{{tMax}}대</span></div>
+          </div>
+          <div class="line"><span>하루 요구량 (대수 × {{kwhPerTruck}}kWh)</span><b id="sDemand">0</b></div>
+          <div class="line"><span>배터리 방전량 (÷ 효율 {{effDis}})</span><b id="sBat">0</b></div>
+          <div class="line"><span>계통 입력량 ({{chgTotal}}시간 충전 + 보조 {{auxKw}}kW)</span><b id="sGridE">0</b></div>
+          <div class="line"><span>교환소 직결 시 수전 ({{kvaEach}}kVA × {{units}})</span><b>{{directKw}} kW</b></div>
+          <div class="line total"><span>ESS 경유 계통 수전 (충전 시)</span><b id="sTotal">0</b></div>
+          <div class="warn" id="warn" hidden></div>
+          <div class="note">수명 말기 공급 = {{essMwh}}MWh × 효율 {{effDis}} × DoD {{dod}} × SOH {{sohEol}} ≈ {{eolMwh}}MWh/일. 효율 · 보조전력 · 충전 {{chgTotal}}시간 · 충전 중지 시간대는 가정값 → 15분 부하와 70% 한도 기준 회신 후 확정.</div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="phead"><b>교대 설정 · 교환소 부하</b><span>첨두 = 교대 전후 집중 교환 (가정)</span></div>
+        <div class="calc" aria-label="교대 시각·대수 설정">
+          <div class="shiftbar">
+            <div class="seg" role="group" aria-label="교대 횟수"><button type="button" data-n="2" aria-pressed="false">2교대</button><button type="button" data-n="3" aria-pressed="true">3교대</button></div>
+            <label>교대 시각 <input type="number" id="sh0" min="0" max="23" step="1" value="6"> <input type="number" id="sh1" min="0" max="23" step="1" value="14"> <input type="number" id="sh2" class="t3" min="0" max="23" step="1" value="22"> 시</label>
+            <label>교대당 교환 <input type="number" id="shPer" min="2" max="40" step="1" value="12"> 대</label>
+          </div>
+          <div>
+            <div class="rstrip" id="rstrip" aria-hidden="true" title="시각별 교환소 부하 (진할수록 큼)"></div>
+            <div class="rticks" id="rticks"></div>
+          </div>
+          <div class="line"><span>첨두 부하 (교대 시각)</span><b id="shPeak" style="color:var(--load)">0 kW</b></div>
+          <div class="line"><span>평시 부하 · 교대 외 분산 교환</span><b id="shBase">0 kW</b></div>
+          <div class="line"><span>교대당 교환 → 분산 교환 대수</span><b id="shRest">0대</b></div>
+          <div class="note">교대 시각에 교환 대수의 80%, 앞뒤 1시간에 10%씩 집중. 뱅크 순번 충전(00~20시, 4시간씩)과 피크 충전 중지(20~24시)는 상단 타임바 색으로 표시합니다.</div>
+        </div>
+      </section>
+
+      <section class="panel logp">
+        <div class="phead"><b>이벤트 로그</b><span>최근 순</span></div>
+        <div class="event" id="log" aria-live="polite"></div>
+      </section>
+    </aside>
+  </div>
+</div>
+
+<script>
+(function(){
+  /* =====================================================================
+     ESS 계통 모니터 → 공급형(배터리 교환소) 변형. 프로젝트마다 이 CONFIG 블록만 바꾸세요.
+     (화면 구성·색·동작은 고정, 숫자/문구는 전부 여기서 나옵니다)
+     ===================================================================== */
+  const CONFIG={
+    site:   {name:'예시 항만 전기트럭 충전', day:'대표일(가정)', dayDesc:'3교대 교대시각 집중 가정'},
+    grid:   {tr:'TR#2 25/30MVA', trSub:'154kV 주변전소 → 부두', baseSub:'부두 부변전소',
+             limitKw:21000, limitNote:'풍냉 30MVA × 70%', kvaFan:30000, kvaSelf:25000,   // 한도 = 풍냉 30MVA × 70%, 역률 1 가정
+             gridKwDisplay:900,   // 충전 중 계통 수전 표시값
+             peakKw:20200,                                                             // TR#2 기존 피크 (기존 피크)
+             // 가상 부하(kW)
+             BASE:[19000,19000,19000,19000,19000,19000,19000,19000,19000,19000,19000,19000,19000,19000,19000,19000,19000,19000,19000,19000,20200,20200,20200,20200]},
+    ess:    {maker:'예시 구성', cell:'LFP', banks:5, kwhEach:5000, pcsEach:1000,
+             socMin:5, socMax:95, effChg:0.95, effDis:0.95, auxKw:50, chgHours:4, sohEol:0.70},
+    bss:    {units:2, kvaEach:3000, trucks:80, kwhPerTruck:190, surgeKw:3000},         // 교환소 3,000kVA×2, e-truck 80대×190kWh, 집중 2.3~3.0MW
+    trucks: {min:40, max:120, step:5},                                                 // 대수 슬라이더
+    schedule:{chgStart:0, peakStop:[20,24]},                                           // 뱅크 i 충전 = chgStart+4i ~ +4시, 피크 4시간 충전 중지
+    loads:  [{name:'교환소 1', sub:'BSS 3,000kVA · 팩 교환', share:0.5},
+             {name:'교환소 2', sub:'BSS 3,000kVA · 팩 교환'}],
+    // 교환소 부하 모델(가정): 교대 시각 전후에 perShift대가 집중 교환(첨두), 나머지 트럭은 24시간 분산. 첨두 시각에 80%, 앞뒤 1시간에 10%씩
+    shifts: {n:3, times:[6,14,22], perShift:12, peakShare:0.8}
+  };
+  /* ===================================================================== */
+
+  const C=CONFIG, NB=C.ess.banks, KWHB=C.ess.kwhEach, PCSB=C.ess.pcsEach, SMIN=C.ess.socMin, SMAX=C.ess.socMax;
+  const EFFC=C.ess.effChg, EFFD=C.ess.effDis, AUX=C.ess.auxKw, LIMIT=C.grid.limitKw, BASE=C.grid.BASE;
+  const CHG_TOTAL=NB*C.ess.chgHours, PEAK=C.schedule.peakStop;
+  const SH={n:C.shifts.n, times:C.shifts.times.slice(), per:C.shifts.perShift, share:C.shifts.peakShare};
+  const CAP=Math.round(NB*KWHB*(SMAX-SMIN)/100), DOD=(SMAX-SMIN)/100;
+  const EOL=NB*KWHB*EFFD*DOD*C.ess.sohEol;                          // 수명 말기 하루 공급 가능량(kWh)
+  const inR=(h,[a,b])=> a<b ? (h>=a&&h<b) : (h>=a||h<b);
+  const hh=n=>String(n%24).padStart(2,'0'), rng=([a,b])=>hh(a)+'~'+(b===24?'24':hh(b))+'시';
+  const $=id=>document.getElementById(id);
+  const fmt=n=>Math.round(n).toLocaleString('ko-KR');
+  const mwh=n=>(n/1000).toLocaleString('ko-KR',{minimumFractionDigits:1,maximumFractionDigits:1})+' MWh';
+  const BCOL=['#0ea5e9','#2563eb','#7c3aed','#0d9488','#ca8a04'];
+  const bankOf=h=>{ const s=C.schedule.chgStart, i=Math.floor(((h-s)%24+24)%24/C.ess.chgHours); return inR(h,PEAK)||i>=NB ? -1 : i; };
+  const bankRange=i=>{ const a=(C.schedule.chgStart+i*C.ess.chgHours)%24; return [a,(a+C.ess.chgHours)%24||24]; };
+  const BAND=h=>{ const b=bankOf(h); return b<0 ? ['피크 · 충전 중지','#475569'] : ['뱅크 '+(b+1)+' 충전',BCOL[b]]; };
+
+  // 트럭 대수에 따른 파생값
+  let trucks=C.bss.trucks, LOAD=new Array(24).fill(0), CHGKW=0, GRIDKW=0, DEMAND=0, LBASE=0, LREST=0;
+  function buildLoad(N){ // 교대 시각·대수 → 24시간 교환소 부하(kW)
+    const T=SH.times.slice(0,SH.n), kwt=C.bss.kwhPerTruck, per=Math.min(SH.per, Math.floor(N/T.length));
+    LREST=N-per*T.length; LBASE=LREST*kwt/24;
+    const L=new Array(24).fill(LBASE);
+    T.forEach(h=>{ const e=per*kwt; L[h]+=e*SH.share; L[(h+23)%24]+=e*(1-SH.share)/2; L[(h+1)%24]+=e*(1-SH.share)/2; });
+    return L;
+  }
+  function derive(n){
+    trucks=n; DEMAND=n*C.bss.kwhPerTruck;                       // 하루 요구량 kWh
+    LOAD=buildLoad(n);
+    CHGKW=DEMAND/EFFD/CHG_TOTAL;                                 // 배터리 충전 전력 kW (뱅크당)
+    GRIDKW=CHGKW/EFFC+AUX;                                       // 충전 중 계통 수전 kW
+    YMAX=Math.ceil(Math.max(...LOAD,GRIDKW)*1.3/200)*200; YSTEP=YMAX>2400?500:YMAX>1200?200:100;
+  }
+  let YMAX=0, YSTEP=100; derive(trucks);
+  const gk=kw=>(C.grid.gridKwDisplay&&Math.abs(kw-GRIDKW)<1)?C.grid.gridKwDisplay:kw;   // 표시용
+
+  (function applyText(){
+    const T={siteName:C.site.name, day:C.site.day, dayDesc:C.site.dayDesc,
+      tr:C.grid.tr, trSub:C.grid.trSub, maker:C.ess.maker, baseSub:C.grid.baseSub, limitKw:fmt(LIMIT), limitNote:C.grid.limitNote, peakKw:fmt(C.grid.peakKw),
+      essMwh:(NB*KWHB/1000).toLocaleString('ko-KR'), kwhEach:fmt(KWHB), nb:NB, pcsMw:(NB*PCSB/1000).toLocaleString('ko-KR'), pcsEach:fmt(PCSB),
+      kvaEach:fmt(C.bss.kvaEach), units:C.bss.units, busKva:fmt(C.bss.kvaEach*C.bss.units), trucks:C.bss.trucks, kwhPerTruck:C.bss.kwhPerTruck,
+      directKw:fmt(C.bss.kvaEach*C.bss.units), socMin:SMIN, socMax:SMAX, usable:fmt(CAP), dod:DOD.toFixed(2), sohEol:C.ess.sohEol.toFixed(2),
+      effDis:EFFD.toFixed(2), auxKw:AUX, chgTotal:CHG_TOTAL, chgHours:C.ess.chgHours, eolMwh:(EOL/1000).toFixed(1),
+      tMin:C.trucks.min, tMax:C.trucks.max, tStep:C.trucks.step,
+      load1:C.loads[0].name, load1Sub:C.loads[0].sub, load2:C.loads[1].name, load2Sub:C.loads[1].sub};
+    const W=document.querySelector('.wrap');
+    W.innerHTML=W.innerHTML.replace(/\{\{(\w+)\}\}/g,(m,k)=>k in T?T[k]:m);
+    document.title=C.site.name+' · ESS 계통 모니터';
+    // 교대 패널 눈금
+    const rt=$('rticks'); [0,6,12,18,24].forEach(h=>{const e=document.createElement('span');e.style.left=(h/24*100).toFixed(2)+'%';e.textContent=h===24?'24':hh(h);rt.appendChild(e);});
+    // 범례
+    const lg=$('legend');
+    lg.innerHTML=BCOL.slice(0,NB).map((c,i)=>'<span><i style="background:'+c+'"></i>뱅크 '+(i+1)+' 충전 '+rng(bankRange(i))+'</span>').join('')
+      +'<span><i style="background:#475569;box-shadow:inset 0 0 0 2px var(--alarm)"></i>피크 중지 '+rng(PEAK)+'</span><span><i style="background:var(--grid)"></i>계통 수전</span><span><i style="background:var(--ess)"></i>ESS</span><span><i style="background:var(--load)"></i>교환소 부하</span>';
+    // 뱅크 노드
+    (function(){ const g=$('banks'), NSx='http://www.w3.org/2000/svg';
+      const mk=(t,a,p,txt)=>{const e=document.createElementNS(NSx,t);for(const k in a)e.setAttribute(k,a[k]);p.appendChild(e);if(txt!=null)e.textContent=txt;return e;};
+      for(let i=0;i<NB;i++){ const y=20+i*98, gg=mk('g',{id:'bankG'+i,style:'transition:opacity .3s'},g);
+        mk('rect',{class:'node',id:'bankBox'+i,x:300,y,width:185,height:86,rx:5},gg);
+        mk('rect',{id:'bico'+i,x:312,y:y+14,width:36,height:22,rx:3,fill:'none',stroke:'var(--ess)','stroke-width':2},gg);
+        mk('rect',{id:'bnub'+i,x:348,y:y+20,width:4,height:10,fill:'var(--ess)'},gg);
+        mk('rect',{id:'bfill'+i,x:315,y:y+17,width:15,height:16,fill:'var(--ess)'},gg);
+        mk('text',{x:360,y:y+28,class:'nlabel',id:'blab'+i},gg,'뱅크 '+(i+1)+' · '+(KWHB/1000).toLocaleString('ko-KR')+'MWh');
+        mk('text',{x:360,y:y+46,class:'nsub',id:'bsoc'+i,style:'fill:#a78bfa;font-weight:600;font-size:10.5px'},gg,'SOC -%');
+        mk('text',{x:312,y:y+72,class:'nval',id:'bval'+i,fill:'var(--muted)',style:'font-size:13px'},gg,'대기');
+        // PCS (뱅크 우측)
+        const yc=y+43;
+        mk('rect',{class:'node',id:'pcsBox'+i,x:500,y:yc-28,width:70,height:56,rx:5},gg);
+        mk('text',{x:535,y:yc-11,class:'nlabel','text-anchor':'middle',id:'plab'+i,style:'font-size:12px'},gg,'PCS '+(PCSB/1000).toLocaleString('ko-KR')+'MW');
+        mk('text',{x:535,y:yc+4,class:'nsub','text-anchor':'middle',id:'pst'+i,style:'font-size:10.5px;font-weight:600'},gg,'정지');
+        mk('text',{x:535,y:yc+20,class:'nsub','text-anchor':'middle',id:'pval'+i,style:'font-size:10px'},gg,'AC 0 kW');
+      }
+    })();
+  })();
+
+  let mode='auto', hour=14, socs=new Array(NB).fill(50), SOC0=new Array(NB).fill(50), playing=false, jitter=0, lastAlarm=false, lastBank=null;
+
+  // ── 1시간 시뮬레이션 ─────────────────────────────────────────────
+  function simHour(h,s,m,jit){
+    jit=jit||0;
+    let L = m==='surge' ? C.bss.surgeKw*(1+jit) : LOAD[h]*(1+jit);
+    const chg=new Array(NB).fill(0), dis=new Array(NB).fill(0);
+    let note='', gridLoad=0, chgBank=-1;
+    if(m==='recover'){ for(let i=0;i<NB;i++) if(s[i]<SMAX) chg[i]=PCSB*EFFC; gridLoad=L; note='정전 후 복구 → '+NB+'기 동시 충전 · 교환소는 계통 직공급'; }
+    else {
+      chgBank = m==='peak' ? -1 : bankOf(h);
+      if(chgBank>=0){ if(s[chgBank]<SMAX) chg[chgBank]=CHGKW; else note='뱅크 '+(chgBank+1)+' 만충 → 충전 정지'; }
+      const need=L/EFFD;
+      let avail=[]; for(let i=0;i<NB;i++) if(chg[i]===0 && s[i]>SMIN) avail.push(i);
+      if(need>0 && (avail.length===0 || need>avail.length*PCSB)){ // 최대 집중: 충전 뱅크도 방전 전환
+        avail=[]; for(let i=0;i<NB;i++){ chg[i]=0; if(s[i]>SMIN) avail.push(i);} if(avail.length) note='집중 부하 → 충전 뱅크도 방전 전환'; }
+      if(avail.length){ // SOC 비례 분담 (잔량 많은 뱅크가 더 방전 → 뱅크 간 SOC 균형)
+        let rem=need, open=avail.slice();
+        for(let it=0; it<NB && rem>0.01 && open.length; it++){ // PCS 한도에 걸린 뱅크의 몫은 나머지에 재배분
+          const w=open.map(i=>Math.max(0.5,s[i]-SMIN)), sw=w.reduce((a,b)=>a+b,0), nxt=[];
+          open.forEach((i,k)=>{ const add=Math.min(PCSB-dis[i], rem*w[k]/sw); dis[i]+=add; if(dis[i]<PCSB-0.01) nxt.push(i); });
+          rem=need-dis.reduce((a,b)=>a+b,0); open=nxt; } }
+      const served=dis.reduce((a,b)=>a+b,0)*EFFD; gridLoad=Math.max(0,L-served);
+      if(gridLoad>0.5) note='ESS 공급 부족 '+fmt(gridLoad)+'kW → 계통 보충';
+    }
+    const chgTot=chg.reduce((a,b)=>a+b,0), disAC=dis.reduce((a,b)=>a+b,0)*EFFD;
+    const grid=(chgTot>0? chgTot/EFFC+AUX:0)+gridLoad;
+    const ns=s.map((v,i)=>Math.max(SMIN,Math.min(SMAX,v+(chg[i]-dis[i])/KWHB*100)));
+    return {h,load:L,chg,dis,chgTot,disAC,grid,gridLoad,chgBank,tr2:BASE[h]+grid,note,next:ns,soc:s.reduce((a,b)=>a+b,0)/NB};
+  }
+  function daySim(start){ let s=start.slice(); const out=[]; for(let h=0;h<24;h++){const r=simHour(h,s,'auto'); out.push(r); s=r.next;} return {out,end:s}; }
+  function steady(){ let s=new Array(NB).fill(50); for(let d=0;d<6;d++) s=daySim(s).end; SOC0=s; }
+  function socAt(h){ let s=SOC0.slice(); for(let i=0;i<h;i++) s=simHour(i,s,'auto').next; return s; }
+  steady();
+
+  // 상단 타임바
+  const hs=$('hstrip');
+  for(let h=0;h<24;h++){const s=document.createElement('span');s.textContent=hh(h);s.style.background=BAND(h)[1];s.title=hh(h)+':00 · '+BAND(h)[0];hs.appendChild(s);}
+  function goHour(h){h=Math.max(0,Math.min(23,h)); if(h===hour) return; hour=h; if(mode==='auto') socs=socAt(hour); render();}
+  const hAt=e=>{const r=hs.getBoundingClientRect(); return Math.floor((e.clientX-r.left)/r.width*24);};
+  hs.addEventListener('pointerdown',e=>{hs.setPointerCapture(e.pointerId); goHour(hAt(e));});
+  hs.addEventListener('pointermove',e=>{if(e.buttons) goHour(hAt(e));});
+  hs.addEventListener('keydown',e=>{const d={ArrowLeft:-1,ArrowDown:-1,ArrowRight:1,ArrowUp:1}[e.key]; if(d){e.preventDefault(); goHour(hour+d);} if(e.key==='Home')goHour(0); if(e.key==='End')goHour(23);});
+  const bands=$('bands');
+  for(let h=0;h<24;h++){const s=document.createElement('span');s.style.background=BAND(h)[1];bands.appendChild(s);}
+  (function(){const r=$('rstrip');for(let h=0;h<24;h++){const sp=document.createElement('span');r.appendChild(sp);}})();
+
+  // ── 24시간 차트 ─────────────────────────────────────────────────
+  const NS='http://www.w3.org/2000/svg';
+  function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);parent&&parent.appendChild(e);return e;}
+  let VH=250;
+  function fitLeft(){
+    const day=$('day'), main=document.querySelector('.main'), [lc,rc]=main.children;
+    VH=250; drawDay();
+    if(getComputedStyle(main).gridTemplateColumns.split(' ').length<2) return;
+    const lh=[...lc.children].reduce((a,c)=>a+c.getBoundingClientRect().height,0);
+    const logp=rc.querySelector('.logp'); const rh=[...rc.children].reduce((a,c)=>a+(c===logp?180:c.getBoundingClientRect().height),0)+12*(rc.children.length-1);
+    const gap=rh-lh; if(gap<=4) return;
+    const w=day.getBoundingClientRect().width; VH=Math.min(760,250+gap*900/w); drawDay();
+  }
+  let fitT; addEventListener('resize',()=>{clearTimeout(fitT);fitT=setTimeout(fitLeft,120);});
+  function drawDay(){
+    const svg=$('day'); svg.innerHTML='';
+    const d=daySim(SOC0).out; svg.setAttribute('viewBox','0 0 900 '+VH);
+    const L=48,R=836,T=12,B=VH-36, YMIN=-Math.ceil(Math.max(150,GRIDKW*1.3)/100)*100, Y=v=>B-(v-YMIN)/(YMAX-YMIN)*(B-T), X=h=>L+(h+0.5)*(R-L)/24;
+    (()=>{const a=[];for(let v=Math.ceil(YMIN/YSTEP)*YSTEP;v<YMAX;v+=YSTEP)a.push(v);return a;})().forEach(v=>{el('line',{x1:L,x2:R,y1:Y(v),y2:Y(v),stroke:v===0?'#3a414d':'#1f242c','stroke-width':1},svg);el('text',{x:L-6,y:Y(v)+3.5,'text-anchor':'end',class:'axis'},svg).textContent=fmt(v);});
+    for(let h=0;h<24;h++) el('rect',{x:L+h*(R-L)/24+0.5,y:B+6,width:(R-L)/24-1,height:5,fill:BAND(h)[1]},svg);
+    for(let h=0;h<24;h+=3) el('text',{x:X(h),y:B+26,'text-anchor':'middle',class:'axis'},svg).textContent=hh(h);
+    const bw=(R-L)/24*0.5;
+    d.forEach(r=>{ if(r.disAC>=1){const y0=Y(0),y1=Y(r.disAC); el('rect',{x:X(r.h)-bw/2,y:Math.min(y0,y1),width:bw,height:Math.abs(y1-y0),fill:'var(--ess)',opacity:.85},svg);}
+                   if(r.chgTot>=1){const y0=Y(0),y1=Y(-r.chgTot); el('rect',{x:X(r.h)-bw/2,y:Math.min(y0,y1),width:bw,height:Math.abs(y1-y0),fill:'var(--grid)',opacity:.5},svg);} });
+    const line=(key,color,w)=>{let q='';d.forEach((r,i)=>q+=(i?' L':'M')+X(r.h)+' '+Y(r[key]));el('path',{d:q,fill:'none',stroke:color,'stroke-width':w,'stroke-linejoin':'round'},svg);};
+    line('load','var(--load)',2.2); line('grid','var(--grid)',2.4);
+    let q=''; d.forEach((r,i)=>q+=(i?' L':'M')+X(r.h)+' '+(B-(r.soc/100)*60)); el('path',{d:q,fill:'none',stroke:'#a78bfa','stroke-width':1.4,'stroke-dasharray':'3 3'},svg);
+    el('text',{x:R+6,y:B-60+3,class:'axis',fill:'#a78bfa'},svg).textContent='SOC 100%';
+    el('text',{x:R+6,y:B+3,class:'axis',fill:'#a78bfa'},svg).textContent='0%';
+    const cx=X(hour); el('rect',{x:cx-(R-L)/48,y:T,width:(R-L)/24,height:B-T,fill:'rgba(34,211,238,.08)'},svg);
+    el('line',{x1:cx,x2:cx,y1:T,y2:B,stroke:'var(--grid)','stroke-width':1},svg);
+    const tag=(x,y,txt,fill,anchor,bold)=>{ const t=el('text',{x,y,class:'axis',fill,'text-anchor':anchor||'start',style:bold?'font-weight:600':''},svg); t.textContent=txt;
+      let bb; try{bb=t.getBBox();}catch(e){bb={x:x-(anchor==='middle'?txt.length*3.1:0),y:y-9,width:txt.length*6.2,height:12};}
+      const rc=el('rect',{x:bb.x-4,y:bb.y-1,width:bb.width+8,height:bb.height+2,rx:3,fill:'rgba(17,19,23,.88)'}); svg.insertBefore(rc,t); return t; };
+    const r=d[hour]; tag(Math.min(cx+8,R-230),B-6,hh(hour)+'시  교환소 '+fmt(r.load)+' · 계통 '+fmt(gk(r.grid))+' · ESS +'+fmt(r.disAC)+' / −'+fmt(r.chgTot)+' kW','var(--text)');
+    // ── 설명 주석 ──
+    const T3=SH.times.slice(0,SH.n).slice().sort((a,b)=>a-b), per=Math.min(SH.per,Math.floor(trucks/T3.length)), circ=['①','②','③','④'];
+    T3.forEach((t,i)=>{ const y=Y(LOAD[t]); let ax=X(t); if(ax<L+70) ax=L+70; if(ax>R-70) ax=R-70;
+      el('line',{x1:X(t),x2:X(t),y1:y-4,y2:y-22,stroke:'var(--load)','stroke-width':1,opacity:.7},svg);
+      tag(ax,y-38,'교대 '+circ[i]+' '+hh(t)+'시','var(--load)','middle',true);
+      tag(ax,y-26,per+'대 집중 교환 · '+fmt(LOAD[t])+'kW','var(--load)','middle'); });
+    // 교대와 가장 먼 시각(충전 시간대 안)을 골라 평시·계통 라벨 배치
+    const far=h=>Math.min(...T3.map(t=>Math.min(Math.abs(h-t),24-Math.abs(h-t))));
+    let hq=0, best=-1; for(let h=0;h<24;h++){ if(inR(h,PEAK)) continue; const f=far(h); if(f>best||(f===best&&Math.abs(h-10)<Math.abs(hq-10))){best=f;hq=h;} }
+    tag(X(hq),Y(LBASE)-6,'평시 '+fmt(LBASE)+'kW · '+LREST+'대 분산 교환','var(--load)','middle');
+    if(d.some(r=>r.grid>1)){ const gN=d.filter(r=>r.grid>1).length; tag(X(hq),Y(GRIDKW)-8,'계통 '+(gk(GRIDKW)/1000).toFixed(1)+'MW 일정 수전 · 뱅크 1기씩 순번 충전 ('+gN+'h)','var(--grid)','middle'); }
+    { const p0=PEAK[0], p1=PEAK[1]; const xa=L+p0*(R-L)/24, xb=L+p1*(R-L)/24;
+      const zone=el('rect',{x:xa,y:T,width:xb-xa,height:B-T,fill:'rgba(239,68,68,.06)'}); svg.insertBefore(zone,svg.firstChild);
+      tag((xa+xb)/2,Y(0)+16,'TR#2 피크 · 충전 중지 (계통 0kW)','var(--alarm)','middle',true); }
+    svg.onclick=ev=>{const pt=svg.createSVGPoint();pt.x=ev.clientX;pt.y=ev.clientY;const lp=pt.matrixTransform(svg.getScreenCTM().inverse());const h=Math.max(0,Math.min(23,Math.floor((lp.x-L)/((R-L)/24))));hour=h;$('hour').value=h;if(mode==='auto')socs=socAt(hour);render();};
+  }
+
+  function setFlow(e,kw,dir,max){
+    if(kw<1){e.classList.add('off');e.style.strokeWidth=2;return;}
+    e.classList.remove('off');e.classList.toggle('rev',dir<0);
+    e.style.strokeWidth=(2+6*Math.min(1,kw/max)).toFixed(1);
+  }
+  function log(msg){const l=$('log');const d=document.createElement('div');d.innerHTML='<b>'+hh(hour)+':00</b> '+msg;l.prepend(d);while(l.children.length>30)l.lastChild.remove();}
+  function renderRule(){[...$('rstrip').children].forEach((sp,i)=>sp.classList.toggle('now',i===hour));}
+  function render(){
+    const s=simHour(hour,socs,mode,jitter); const b=BAND(hour);
+    renderRule();
+    $('clock').textContent=hh(hour)+':00';
+    {const t=hh(hour)+':00'; $('hour').value=hour; $('tnow').textContent=t; $('hourTip').textContent=t;
+     $('hourTip').style.left='calc(8px + (100% - 16px) * '+(hour/23).toFixed(4)+')';
+     [...hs.children].forEach((sp,i)=>sp.classList.toggle('now',i===hour)); hs.setAttribute('aria-valuenow',hour); hs.setAttribute('aria-valuetext',t);
+     $('play2').innerHTML=$('playIco').outerHTML.replace(' id="playIco"','');}
+    const bp=$('bandPill');
+    if(mode==='recover'){bp.textContent='복구 충전 '+NB+'기';bp.style.background='#b45309';}
+    else if(s.chgBank<0){bp.textContent=mode==='peak'?'피크 · 충전 중지':b[0];bp.style.background='#475569';}
+    else {bp.textContent='뱅크 '+(s.chgBank+1)+' 충전 중';bp.style.background=BCOL[s.chgBank];}
+    // 계통도 값
+    const alarm=s.tr2>LIMIT+0.5, gShow=gk(s.grid), tr2Show=s.tr2-s.grid+gShow;
+    $('vTR2').textContent=fmt(tr2Show)+' kW'; $('vTR2').setAttribute('fill',alarm?'var(--alarm)':'var(--grid)');
+    $('vBase').textContent=fmt(BASE[hour])+' kW';
+    $('vGridEss').textContent=fmt(gShow)+' kW';
+    setFlow($('fBase'),BASE[hour],1,LIMIT); setFlow($('fGridEss'),s.grid,1,GRIDKW*1.5);
+    const GSCALE=LIMIT*1.05;
+    $('gaugeFill').setAttribute('width',Math.min(156,156*tr2Show/GSCALE).toFixed(1)); $('gaugeFill').setAttribute('fill',alarm?'var(--alarm)':'var(--grid)');
+    $('gaugeMark').setAttribute('x',(33+156*LIMIT/GSCALE).toFixed(1));
+    $('vMargin').textContent=(alarm?'한도 초과 ':'여유 ')+fmt(Math.abs(LIMIT-tr2Show))+' kW'; $('vMargin').style.fill=alarm?'var(--alarm)':'';
+    $('vPct').textContent='풍냉 '+Math.round(tr2Show/C.grid.kvaFan*100)+'% · 자냉 '+Math.round(tr2Show/C.grid.kvaSelf*100)+'%';
+    $('vTrucks').textContent=trucks+'대 × '+C.bss.kwhPerTruck+'kWh'; $('vDemand').textContent='하루 요구 '+mwh(DEMAND)+' · 팩 교환';
+    {let cum=0; for(let i=0;i<hour;i++) cum+=LOAD[i]; $('vCum').textContent='금일 공급 '+(cum/1000).toFixed(1)+' / '+mwh(DEMAND);}
+    for(let i=0;i<NB;i++){ const c=s.chg[i], d=s.dis[i]*EFFD, v=$('bval'+i);
+      v.textContent= c>=1 ? '충전 −'+fmt(c)+' kW · 방전 불가' : d>=1 ? '방전 +'+fmt(d)+' kW' : '정지';
+      v.setAttribute('fill', c>=1?'var(--pv)':d>=1?'var(--ess)':'var(--dim)'); v.style.fontSize= c>=1?'12px':'13px';
+      $('bsoc'+i).textContent='SOC '+Math.round(socs[i])+'% · '+fmt(socs[i]/100*KWHB)+'kWh'; $('bfill'+i).setAttribute('width',(34*socs[i]/100).toFixed(1));
+            const st=c>=1?'chg':d>=1?'dis':'idle', col={chg:'var(--pv)',dis:'var(--ess)',idle:'var(--dim)'}[st];
+      $('bankBox'+i).style.stroke= st==='idle'?'':col; $('bankBox'+i).style.strokeWidth= st==='chg'?2.5:1.5; $('bankBox'+i).style.fill= st==='chg'?'url(#chgHatch)':st==='dis'?'rgba(52,211,153,.07)':'#15181d';
+      $('pcsBox'+i).style.stroke= st==='idle'?'':col; $('pcsBox'+i).style.strokeWidth= st==='chg'?2.5:1.5; $('pcsBox'+i).style.fill= st==='chg'?'url(#chgHatch)':st==='dis'?'rgba(52,211,153,.07)':'#15181d';
+      $('blab'+i).style.fill=col; $('plab'+i).style.fill=col; $('bico'+i).setAttribute('stroke',col); $('bnub'+i).setAttribute('fill',col);
+      $('bfill'+i).setAttribute('fill', socs[i]<15?'var(--alarm)':st==='idle'?'#4b5563':col);
+      $('bsoc'+i).style.fill= st==='idle'?'var(--dim)':'#a78bfa';
+      $('pst'+i).textContent={chg:'충전 중',dis:'방전 중',idle:'정지'}[st]; $('pst'+i).style.fill=col;
+      $('pval'+i).textContent='AC '+(d>=1?'+'+fmt(d):c>=1?'−'+fmt(c/EFFC):'0')+' kW'; $('pval'+i).style.fill= st==='idle'?'var(--dim)':'var(--text)';
+      $('bankG'+i).style.opacity= st==='idle'?.6:1;
+      setFlow($('fChg'+i),c,1,PCSB); setFlow($('fDis'+i),d,1,PCSB); }
+    const l1=s.load*(C.loads[0].share??0.5), l2=s.load-l1;
+    $('vL1').textContent=fmt(l1)+' kW'; $('vL2').textContent=fmt(l2)+' kW';
+    $('vL1pct').textContent='정격 대비 '+Math.round(l1/C.bss.kvaEach*100)+'%'; $('vL2pct').textContent='정격 대비 '+Math.round(l2/C.bss.kvaEach*100)+'%';
+    $('vLoadTot').textContent=fmt(s.load)+' kW'; $('vSupNote').textContent='ESS 방전 '+fmt(s.disAC)+' kW · 계통 '+fmt(s.gridLoad)+' kW';
+    setFlow($('fL1'),l1,1,C.bss.kvaEach); setFlow($('fL2'),l2,1,C.bss.kvaEach);
+    setFlow($('fTruck1'),l1,1,C.bss.kvaEach*0.5); setFlow($('fTruck2'),l2,1,C.bss.kvaEach*0.5); setFlow($('fTruck3'),s.load,1,C.bss.kvaEach);
+    $('busBar').setAttribute('fill', s.load>=1?'var(--ess)':'#3a414d');
+    const surge=s.load>C.bss.surgeKw*0.7;
+    [['load1Box',l1],['load2Box',l2]].forEach(([id,v])=>{ const on=v>=1, bx=$(id); bx.style.stroke=on?'var(--load)':''; bx.style.strokeWidth=surge?2.5:1.5; bx.style.fill=on?(surge?'rgba(251,146,60,.14)':'rgba(251,146,60,.07)'):'#15181d'; bx.parentNode.style.opacity=on?1:.6; });
+    $('truckBox').style.stroke=s.load>=1?'var(--load)':''; $('truckBox').style.fill=s.load>=1?'rgba(251,146,60,.07)':'#15181d';
+    // 경보
+    ['trBox','limBox'].forEach(id=>$(id).classList.toggle('alarmflash',alarm));
+    $('stDot').classList.toggle('alarm',alarm);
+    $('stateTxt').lastChild.textContent= alarm?'TR#2 한도 초과 경보':'정상 운전';
+    if(alarm&&!lastAlarm) log('<span style="color:var(--alarm)">한도 초과</span> TR#2 '+fmt(tr2Show)+'kW > '+fmt(LIMIT)+'kW');
+    lastAlarm=alarm;
+    // 우측 지표
+    $('mGrid').innerHTML=fmt(tr2Show)+'<small>kW</small>'; $('mGrid').style.color= alarm?'var(--alarm)':'var(--grid)';
+    $('gridBar').style.width=Math.min(100,tr2Show/GSCALE*100)+'%'; $('gridBar').style.background= alarm?'var(--alarm)':'var(--grid)';
+    $('gridMark').style.left=(LIMIT/GSCALE*100)+'%';
+    $('gridPct').textContent='한도 대비 '+(tr2Show/LIMIT*100).toFixed(1)+'% · ESS 충전분 +'+fmt(gShow)+'kW';
+    $('mESS').innerHTML='+'+fmt(s.disAC)+'<small>kW</small>';
+    $('essState').textContent= s.note || (s.disAC>=1 ? (s.dis.filter(v=>v>=1).length)+'기 분담 방전' : '대기');
+    $('mChg').innerHTML=fmt(gShow)+'<small>kW</small>';
+    $('chgState').textContent= mode==='recover' ? NB+'기 동시 · 배터리 '+fmt(s.chgTot)+'kW' : s.chgBank<0 ? '충전 중지 (피크)' : s.chgTot>=1 ? '뱅크 '+(s.chgBank+1)+' · 배터리 '+fmt(s.chgTot)+'kW' : '뱅크 '+(s.chgBank+1)+' 만충';
+    const soc=s.soc;
+    $('mSOC').innerHTML=Math.round(soc)+'<small>%</small>'; $('battFill').style.width=soc+'%';
+    $('battFill').style.background= soc<15?'var(--alarm)':'var(--ess)';
+    $('socKwh').textContent=fmt(soc/100*NB*KWHB)+' kWh';
+    drawDay();
+    $('modeTxt').textContent={auto:'자동 운전',peak:'피크 · 충전 중지',surge:'교대 집중 공급',recover:'복구 충전'}[mode];
+    return s;
+  }
+
+  function calc(){
+    derive(+$('target').value); steady(); if(mode==='auto') socs=socAt(hour);
+    $('tVal').textContent=trucks+' 대'; $('hdTrucks').textContent=trucks;
+    $('sDemand').textContent=mwh(DEMAND); $('sBat').textContent=mwh(DEMAND/EFFD);
+    $('sGridE').textContent=mwh(GRIDKW*CHG_TOTAL)+' · '+(gk(GRIDKW)/1000).toFixed(2)+'MW';
+    $('sTotal').textContent=fmt(gk(GRIDKW))+' kW';
+    const w=[]; const tr2=Math.min(...BASE.map((b,h)=>bankOf(h)>=0?b:Infinity))+GRIDKW;
+    if(DEMAND>EOL) w.push(NB*KWHB/1000+'MWh → 수명 말기(SOH '+Math.round(C.ess.sohEol*100)+'%) 공급 '+(EOL/1000).toFixed(1)+'MWh/일, 약 '+((DEMAND-EOL)/1000).toFixed(2)+'MWh/일 부족 → 증량 또는 보완 운전 검토');
+    if(tr2>LIMIT) w.push('충전 중 TR#2 합계 '+fmt(tr2)+'kW가 한도 '+fmt(LIMIT)+'kW를 넘습니다 → 충전 시간 연장 또는 수전 증설 협의 필요.');
+    $('warn').textContent=w.join(' '); $('warn').hidden=!w.length;
+  }
+
+  // 교대 설정 UI
+  function shiftUI(){ $('sh2').hidden=SH.n<3; document.querySelectorAll('.shiftbar .seg button').forEach(x=>x.setAttribute('aria-pressed',String(+x.dataset.n===SH.n)));
+    const T3=SH.times.slice(0,SH.n), per=Math.min(SH.per,Math.floor(trucks/T3.length)); const pk=Math.max(...T3.map(t=>LOAD[t]));
+    $('shPeak').textContent=fmt(pk)+' kW'; $('shBase').textContent=fmt(LBASE)+' kW'; $('shRest').textContent=per+'대 → '+LREST+'대';
+    $('shDesc').textContent=SH.n+'교대 '+T3.map(hh).join('·')+'시 집중 가정';
+    const mx=Math.max(...LOAD); [...$('rstrip').children].forEach((sp,h)=>{const k=LOAD[h]/mx; sp.style.background='rgba(251,146,60,'+(0.12+0.88*k).toFixed(2)+')'; sp.title=hh(h)+'시 · 교환소 '+fmt(LOAD[h])+'kW';}); }
+  function shiftApply(){ calc(); shiftUI(); render(); log('교대 설정 → '+SH.n+'교대 '+SH.times.slice(0,SH.n).map(hh).join('·')+'시 · 교대당 '+SH.per+'대'); }
+  document.querySelectorAll('.shiftbar .seg button').forEach(x=>x.addEventListener('click',()=>{SH.n=+x.dataset.n; shiftApply();}));
+  ['sh0','sh1','sh2'].forEach((id,i)=>$(id).addEventListener('change',e=>{let v=Math.max(0,Math.min(23,Math.round(+e.target.value||0))); e.target.value=v; SH.times[i]=v; shiftApply();}));
+  $('shPer').addEventListener('change',e=>{let v=Math.max(2,Math.min(40,Math.round(+e.target.value||2))); e.target.value=v; SH.per=v; shiftApply();});
+  ['sh0','sh1','sh2'].forEach((id,i)=>$(id).value=SH.times[i]); $('shPer').value=SH.per;
+
+  document.querySelectorAll('.mode').forEach(btn=>btn.addEventListener('click',()=>{
+    document.querySelectorAll('.mode').forEach(x=>x.setAttribute('aria-pressed','false'));
+    btn.setAttribute('aria-pressed','true'); mode=btn.dataset.mode;
+    if(mode==='auto') socs=socAt(hour);
+    if(mode==='peak'&&!inR(hour,PEAK)){hour=PEAK[0];$('hour').value=hour; socs=socAt(hour);}
+    if(mode==='surge'){const m=LOAD.indexOf(Math.max(...LOAD)); if(LOAD[hour]<Math.max(...LOAD)*0.9){hour=m;$('hour').value=hour;} socs=socAt(hour);}
+    log('운전 모드 → '+btn.textContent.trim()); render();
+  }));
+  $('hour').addEventListener('input',e=>{hour=+e.target.value; if(mode==='auto') socs=socAt(hour); render();});
+  $('target').addEventListener('input',()=>{calc(); render();});
+  $('play2').addEventListener('click',()=>$('play').click());
+  $('play').addEventListener('click',()=>{
+    playing=!playing; $('play').setAttribute('aria-pressed',playing);
+    $('playTxt').textContent=playing?'정지':'24시간 재생';
+    $('playIco').innerHTML=playing?'<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>':'<path d="M7 4v16l13-8z"/>';
+    if(playing&&mode!=='auto'){document.querySelector('[data-mode=auto]').click();}
+  });
+
+  let t=0;
+  setInterval(()=>{
+    t++; jitter=(Math.sin(t*1.7)+Math.sin(t*0.63))*0.012;
+    if(playing && t%2===0){
+      hour=(hour+1)%24; $('hour').value=hour; socs=socAt(hour);
+      const bk=bankOf(hour);
+      if(bk!==lastBank){ if(bk>=0) log('뱅크 '+(bk+1)+' 충전 시작 → 계통 '+fmt(gk(GRIDKW))+'kW'); else log('TR#2 피크 → 충전 중지 (계통 0kW)'); lastBank=bk; }
+      if(SH.times.slice(0,SH.n).includes(hour)) log('교대 집중 → 교환소 '+fmt(LOAD[hour])+'kW 공급');
+    } else if(mode!=='auto'){
+      const s=simHour(hour,socs,mode,0); socs=socs.map((v,i)=>Math.max(SMIN,Math.min(SMAX,v+(s.chg[i]-s.dis[i])/12/KWHB*100))); // 5분 상당
+    }
+    render();
+  },1000);
+
+  calc(); shiftUI(); socs=socAt(hour); lastBank=bankOf(hour); render();
+  log('시스템 기동 → 자동 운전 · 뱅크 순번 충전 · 계통 '+fmt(gk(GRIDKW))+'kW');
+  fitLeft(); if(document.fonts) document.fonts.ready.then(fitLeft);
+  $('play').click();
+})();
+</script>
+</body>
+</html>

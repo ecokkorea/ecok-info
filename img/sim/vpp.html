@@ -1,0 +1,899 @@
+<style>@font-face{font-family:'Paperlogy';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-4Regular.woff2') format('woff2');font-weight:400}@font-face{font-family:'Paperlogy';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-6SemiBold.woff2') format('woff2');font-weight:600}@font-face{font-family:'Paperlogy';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-7Bold.woff2') format('woff2');font-weight:700}@font-face{font-family:'Paperlogy';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-8ExtraBold.woff2') format('woff2');font-weight:800}</style><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>히트펌프 VPP P&amp;ID</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+<style>
+/* 페이퍼로지 Paperlogy, SIL OFL, 화면 사용 글자만 서브셋 */
+
+
+
+
+:root{
+  color-scheme: dark;
+  --bg:#081016; --panel:#0d1820; --panel2:#101e28; --line:#1c2d38; --line2:#27404f;
+  --text:#d7e4ec; --muted:#7f95a3; --dim:#4f6573;
+  --accent:#5ee7ff; --pv:#f5c518; --hot:#ff5a36; --warm:#ff9a3c; --cold:#3aa0ff; --grid:#3ddc84; --exp:#c084fc;
+  --ok:#3ddc84; --warn:#ffb23c; --crit:#ff4d5e;
+  --sans:"Paperlogy","Malgun Gothic","Apple SD Gothic Neo",system-ui,sans-serif;
+  --mono:"JetBrains Mono","Paperlogy",ui-monospace,Consolas,monospace;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{background:var(--bg);color:var(--text)}
+body{font-family:var(--sans);font-size:14px;padding-inline:16px;padding-block:14px 28px;
+  background-image:linear-gradient(rgba(94,231,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(94,231,255,.035) 1px,transparent 1px);
+  background-size:24px 24px}
+.wrap{max-width:1440px;margin:0 auto;display:grid;gap:14px}
+header{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:center;justify-content:space-between}
+.brand h1{margin:0;font-size:20px;font-weight:700;letter-spacing:-.01em;text-wrap:balance}
+.brand p{margin:3px 0 0;color:var(--muted);font-size:12.5px}
+.brand .tag{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:.12em;text-transform:uppercase}
+.modes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;flex:1 1 640px;max-width:860px}
+.mode{all:unset;cursor:pointer;border:1px solid var(--line2);background:var(--panel);border-radius:6px;padding:9px 12px;display:grid;gap:2px;position:relative;transition:border-color .2s,background .2s}
+.mode:hover{border-color:var(--accent)}
+.mode:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mode .n{font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:.1em}
+.mode .t{font-weight:600;font-size:13.5px;line-height:1.25}
+.mode .s{font-size:11.5px;color:var(--muted)}
+.mode.on{background:linear-gradient(180deg,rgba(94,231,255,.12),rgba(94,231,255,.03));border-color:var(--mc,var(--accent));box-shadow:inset 0 -3px 0 var(--mc,var(--accent))}
+.mode.on .n{color:var(--mc,var(--accent))}
+.ctrl{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.btn{all:unset;cursor:pointer;font-family:var(--mono);font-size:11.5px;border:1px solid var(--line2);border-radius:5px;padding:6px 10px;color:var(--text);background:var(--panel)}
+.btn:hover{border-color:var(--accent)} .btn:focus-visible{outline:2px solid var(--accent)}
+.btn.on{border-color:var(--accent);color:var(--accent)}
+.clock{font-family:var(--mono);font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.02em;display:flex;align-items:baseline;gap:6px;white-space:nowrap}
+.clock .ap{font-family:var(--sans);font-size:13px;font-weight:600;padding:2px 6px;border-radius:3px;border:1px solid currentColor;align-self:center}
+.clock .ap.am{color:var(--pv)} .clock .ap.pm{color:var(--accent)}
+.statusbar{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:8px 14px}
+.pill{font-family:var(--mono);font-size:11px;letter-spacing:.08em;padding:3px 8px;border-radius:3px;border:1px solid currentColor;text-transform:uppercase}
+.pill.ok{color:var(--ok)} .pill.warn{color:var(--warn)} .pill.crit{color:var(--crit);animation:blink 1s steps(2) infinite} .pill.info{color:var(--accent)}
+@keyframes blink{50%{opacity:.45}}
+.narr{flex:1 1 380px;color:var(--text);font-size:13px;line-height:1.5}
+.narr b{color:var(--accent);font-weight:600}
+.main{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:14px}
+.panel{border:1px solid var(--line);background:var(--panel);border-radius:8px;min-width:0}
+.ph{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:9px 14px;border-bottom:1px solid var(--line)}
+.ph h2{margin:0;font-size:12px;font-family:var(--mono);font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:11.5px;color:var(--muted)}
+.legend i{display:inline-block;width:18px;height:3px;border-radius:2px;vertical-align:middle;margin-right:5px}
+.svgbox{overflow-x:auto}
+#pid{display:block;width:100%;min-width:760px;height:auto}
+/* svg */
+.casing{fill:none;stroke:#132430;stroke-linecap:round;stroke-linejoin:round}
+.pipe.casing{stroke-width:11}
+.wire.casing{stroke-width:7}
+.flow{fill:none;stroke-linecap:round;stroke-linejoin:round;transition:opacity .4s,stroke .6s}
+.pipe.flow{stroke-width:5;stroke-dasharray:10 9}
+.wire.flow{stroke-width:3;stroke-dasharray:7 7}
+.comm{fill:none;stroke:var(--accent);stroke-width:1.3;stroke-dasharray:3 5;opacity:.55}
+.eqbox{fill:#0f1f2a;stroke:#35556a;stroke-width:1.4}
+.lbl{fill:var(--text);font-family:var(--sans);font-size:12.5px;font-weight:600}
+.sub{fill:var(--muted);font-family:var(--sans);font-size:10.5px}
+.val{fill:var(--text);font-family:var(--mono);font-size:11px;font-variant-numeric:tabular-nums}
+.tagt{fill:var(--accent);font-family:var(--mono);font-size:10px;letter-spacing:.06em}
+.equip{cursor:pointer}
+.equip:hover .hl,.equip:focus-visible .hl{stroke:var(--accent);stroke-width:2.2}
+.equip:focus{outline:none}
+.inst circle{fill:#0b1820;stroke:#6f8a99;stroke-width:1.2}
+.inst line{stroke:#6f8a99;stroke-width:1}
+.inst text{fill:var(--text);font-family:var(--mono);font-size:8.5px;text-anchor:middle}
+.leader{stroke:#4f6573;stroke-width:1}
+.vbody{stroke-width:1.5;transition:fill .4s,stroke .4s}
+.pbody{fill:#0f1f2a;stroke-width:1.6;transition:stroke .4s}
+/* sidebar */
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line)}
+.tile{background:var(--panel);padding:11px 13px;display:grid;gap:3px;align-content:start;min-height:84px;cursor:default}
+.tile .k{font-size:11.5px;color:var(--muted);display:flex;justify-content:space-between;gap:6px}
+.tile .k em{font-style:normal;font-family:var(--mono);font-size:10px;color:var(--dim)}
+.tile .v{font-family:var(--mono);font-size:23px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
+.tile .v small{font-size:12px;font-weight:400;color:var(--muted);margin-left:3px}
+.tile .d{font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.tile.wide{grid-column:1/-1}
+.bar{height:8px;background:#0a141b;border:1px solid var(--line2);border-radius:2px;position:relative;overflow:hidden;margin-top:4px}
+.bar>span{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,var(--cold),var(--warm),var(--hot));transition:width .3s}
+.bar .mk{position:absolute;top:-2px;bottom:-2px;width:1px;background:var(--text);opacity:.6}
+.flexrow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.prio{padding:10px 13px;border-top:1px solid var(--line);display:grid;gap:6px}
+.prio h3{margin:0;font-size:11px;font-family:var(--mono);color:var(--muted);letter-spacing:.1em;font-weight:600}
+.chain{display:flex;flex-wrap:wrap;gap:4px;font-size:11px}
+.chain span{padding:2px 6px;border:1px solid var(--line2);border-radius:3px;color:var(--muted);transition:all .3s}
+.chain span.act{color:#081016;background:var(--accent);border-color:var(--accent);font-weight:600}
+.bottom{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 340px;gap:14px}
+.chart{display:block;width:100%;height:auto}
+.axis{fill:var(--muted);font-family:var(--mono);font-size:10px}
+.gridl{stroke:#1a2a35;stroke-width:1}
+.groups{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;padding:0 14px 12px}
+.grp{font-family:var(--mono);font-size:9.5px;text-align:center;padding:4px 0;border:1px solid var(--line2);border-radius:3px;color:var(--muted);transition:all .3s}
+.grp.wait{color:var(--dim)} .grp.ramp{color:#081016;background:var(--warm);border-color:var(--warm)} .grp.run{color:var(--ok);border-color:var(--ok)} .grp.dr{color:var(--crit);border-color:var(--crit)}
+.grp.me{outline:1px solid var(--accent);outline-offset:1px}
+.gcap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 12px;padding:0 14px 6px;font-size:11.5px;color:var(--muted)}
+.gl{display:flex;flex-wrap:wrap;align-items:center;gap:4px;font-size:11px}
+.gl i{display:inline-block;width:11px;height:11px;border-radius:2px;border:1px solid var(--line2);margin-left:6px}
+.gl i.dr{border-color:var(--crit)} .gl i.wait{border-color:var(--dim)} .gl i.ramp{background:var(--warm);border-color:var(--warm)} .gl i.run{border-color:var(--ok)} .gl i.me{outline:1px solid var(--accent);outline-offset:1px}
+.log{font-family:var(--mono);font-size:11.3px;line-height:1.55;padding:8px 14px;max-height:260px;overflow-y:auto;display:grid;gap:2px}
+.log div{display:grid;grid-template-columns:74px 1fr;gap:8px;color:var(--muted)}
+.log div b{color:var(--accent);font-weight:400}
+.log div.hi{color:var(--text)}
+.note{font-size:11.5px;color:var(--dim);padding:0 14px 12px;line-height:1.5}
+/* modal */
+.scrim{position:fixed;inset:0;background:rgba(3,8,12,.6);display:grid;place-items:center;padding:16px;z-index:10}
+.modal{width:min(560px,100%);max-height:88vh;overflow:auto;background:var(--panel2);border:1px solid var(--accent);border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.mh{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;padding:14px 16px;border-bottom:1px solid var(--line2)}
+.mh h3{margin:0;font-size:16px}
+.mh p{margin:4px 0 0;color:var(--muted);font-size:12.5px;line-height:1.5}
+.mh .tg{font-family:var(--mono);color:var(--accent);font-size:11px;letter-spacing:.1em}
+.mb{padding:12px 16px;display:grid;gap:12px}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+.kv div{border:1px solid var(--line2);border-radius:4px;padding:7px 9px}
+.kv span{display:block;font-size:11px;color:var(--muted)}
+.kv b{font-family:var(--mono);font-size:15px;font-variant-numeric:tabular-nums}
+table.reg{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11.5px;font-variant-numeric:tabular-nums}
+table.reg th{text-align:left;color:var(--muted);font-weight:400;border-bottom:1px solid var(--line2);padding:5px 6px}
+table.reg td{border-bottom:1px solid var(--line);padding:5px 6px}
+table.reg td.rw{color:var(--warn)}
+.regwrap{overflow-x:auto}
+.mnote{font-size:11px;color:var(--dim)}
+.x{all:unset;cursor:pointer;font-family:var(--mono);font-size:18px;color:var(--muted);padding:0 4px}
+.x:hover{color:var(--text)} .x:focus-visible{outline:2px solid var(--accent)}
+.hint{font-size:11.5px;color:var(--dim);text-align:right}
+@media (max-width:1180px){.main{grid-template-columns:1fr}.bottom{grid-template-columns:1fr 1fr}.bottom .logp{grid-column:1/-1}}
+@media (max-width:720px){.bottom{grid-template-columns:1fr}.modes{grid-template-columns:1fr 1fr}.tile .v{font-size:20px}}
+@media (prefers-reduced-motion:reduce){.pill.crit{animation:none}}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="brand">
+    <div class="tag">ECO K KOREA · HP-VPP DEMO</div>
+    <h1>주택형 히트펌프 VPP 연계 P&amp;ID</h1>
+    <p>PV 3 kW · 공기열 HP &lt;20 kW<sub>th</sub> · 축열조 500 L · 스마트 게이트웨이 (예시 주택)</p>
+  </div>
+  <nav class="modes" id="modes" aria-label="동작 모드">
+    <button class="mode" data-mode="normal" style="--mc:#f5c518"><span class="n">MODE 1 · 오전 6시–오후 12시</span><span class="t">평시 · PV 자가소비</span><span class="s">PV → HP → 축열 기본가열</span></button>
+    <button class="mode" data-mode="plus" style="--mc:#ff9a3c"><span class="n">MODE 2 · 오후 12시–3시</span><span class="t">Plus DR · Preheat</span><span class="s">재생E 과잉 → 부하 증대</span></button>
+    <button class="mode" data-mode="peak" style="--mc:#ff4d5e"><span class="n">MODE 3 · 오후 6시–8시</span><span class="t">Peak Cut · DR Event</span><span class="s">HP 정지, TES 단독 공급</span></button>
+    <button class="mode" data-mode="rebound" style="--mc:#5ee7ff"><span class="n">MODE 4 · 오후 8시~</span><span class="t">Rebound 방지</span><span class="s">Staggered Recovery</span></button>
+  </nav>
+</header>
+
+<div class="statusbar">
+  <div class="clock" id="clock">오전 6:00</div>
+  <span class="pill info" id="drpill">NORMAL</span>
+  <div class="narr" id="narr"></div>
+  <div class="ctrl">
+    <button class="btn" id="pause" aria-label="일시정지">❚❚ 정지</button>
+    <button class="btn" data-speed="0.5">0.5×</button>
+    <button class="btn on" data-speed="1">1×</button>
+    <button class="btn" data-speed="3">3×</button>
+    <button class="btn" id="tour">▶ 자동 시연</button>
+  </div>
+</div>
+
+<div class="main">
+  <section class="panel">
+    <div class="ph">
+      <h2>P&amp;ID · 예시 주택</h2>
+      <div class="legend">
+        <span><i style="background:var(--pv)"></i>PV 전력</span>
+        <span><i style="background:var(--grid)"></i>계통 수전</span>
+        <span><i style="background:var(--exp)"></i>계통 역송</span>
+        <span><i style="background:var(--hot)"></i>HP 공급수</span>
+        <span><i style="background:var(--warm)"></i>축열 → 난방</span>
+        <span><i style="background:var(--cold)"></i>환수</span>
+        <span><i style="background:repeating-linear-gradient(90deg,var(--accent) 0 3px,transparent 3px 7px)"></i>통신</span>
+      </div>
+    </div>
+    <div class="svgbox">
+<svg id="pid" viewBox="0 0 1000 640" role="img" aria-label="히트펌프 VPP 연계 계통 P&amp;ID">
+  <defs>
+    <linearGradient id="tesGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop id="g0" offset="0" stop-color="#ff5a36"/>
+      <stop id="g1" offset="0.5" stop-color="#ff5a36"/>
+      <stop id="g2" offset="0.56" stop-color="#3aa0ff"/>
+      <stop id="g3" offset="1" stop-color="#3aa0ff"/>
+    </linearGradient>
+    <pattern id="pvcellOn" width="9" height="8" patternUnits="userSpaceOnUse"><rect width="9" height="8" fill="#2f86ff"/><path d="M0 0H9M0 0V8" stroke="#9fd0ff" stroke-width="1"/></pattern>
+    <pattern id="pvcell" width="9" height="8" patternUnits="userSpaceOnUse"><rect width="9" height="8" fill="#12324a"/><path d="M0 0H9M0 0V8" stroke="#2a5a7a" stroke-width="1"/></pattern>
+  </defs>
+
+  <!-- comm lines -->
+  <path class="comm" id="c1" d="M500,60 V110"/>
+  <path class="comm" id="c2" d="M500,166 V250"/>
+  <path class="comm" id="c3" d="M440,138 H262 V270"/>
+  <path class="comm" id="c4" d="M560,124 H600 V80 H770 V92"/>
+  <path class="comm" id="c5" d="M530,166 V200 H600 V263"/>
+
+  <!-- power lines -->
+  <path class="wire casing" d="M125,150 V180"/><path class="wire flow" id="f_pvdc" d="M125,150 V180" stroke="var(--pv)"/>
+  <path class="wire casing" d="M130,220 V300 H240"/><path class="wire flow" id="f_pvac" d="M130,220 V300 H240" stroke="var(--pv)"/>
+  <path class="wire casing" d="M130,520 H225 V400 H240"/><path class="wire flow" id="f_grid" d="M130,520 H225 V400 H240" stroke="var(--grid)"/>
+  <path class="wire casing" d="M280,330 H400"/><path class="wire flow" id="f_hpp" d="M280,330 H400" stroke="var(--pv)"/>
+  <path class="wire casing" d="M280,410 H340 V612 H840 V572"/><path class="wire flow" id="f_base" d="M280,410 H340 V612 H840 V572" stroke="var(--grid)"/>
+
+  <!-- pipes -->
+  <path class="pipe casing" d="M560,275 H640 V110 H720"/><path class="pipe flow" id="f_hot" d="M560,275 H640 V110 H720" stroke="var(--hot)"/>
+  <path class="pipe casing" d="M720,312 H680 V385 H560"/><path class="pipe flow" id="f_cold" d="M720,312 H680 V385 H560" stroke="var(--cold)"/>
+  <path class="pipe casing" d="M820,150 H910 V428"/><path class="pipe flow" id="f_sup" d="M820,150 H910 V428" stroke="var(--warm)"/>
+  <path class="pipe casing" d="M736,446 V330"/><path class="pipe flow" id="f_ret" d="M736,446 V330" stroke="var(--cold)"/>
+
+  <!-- VPP cloud -->
+  <g class="equip" data-eq="VPP" tabindex="0">
+    <rect class="eqbox hl" x="390" y="12" width="220" height="48" rx="6"/>
+    <text class="lbl" x="500" y="33" text-anchor="middle">VPP 플랫폼 · KPX Plus DR</text>
+    <text class="sub" x="500" y="49" text-anchor="middle">OpenADR 2.0b · MQTT 5.0 / mTLS</text>
+  </g>
+  <g id="drsig" opacity="0">
+    <rect x="626" y="20" width="118" height="30" rx="4" fill="none" stroke="var(--crit)" stroke-width="1.4"/>
+    <text id="drsigt" x="685" y="40" text-anchor="middle" class="val" style="fill:var(--crit);font-weight:700">DR EVENT</text>
+  </g>
+
+  <!-- Gateway -->
+  <g class="equip" data-eq="GW" tabindex="0">
+    <rect class="eqbox hl" x="440" y="110" width="120" height="56" rx="5"/>
+    <circle id="gwled" cx="449" cy="118" r="3.5" fill="var(--ok)"/>
+    <text class="lbl" x="500" y="136" text-anchor="middle">스마트 게이트웨이</text>
+    <text class="sub" x="500" y="152" text-anchor="middle">RS-485 · LTE</text>
+  </g>
+
+  <!-- PV array -->
+  <g class="equip" data-eq="PV" tabindex="0">
+    <rect class="hl" x="36" y="64" width="178" height="88" rx="4" fill="none" stroke="transparent"/>
+    <g transform="skewX(-12) translate(18,0)">
+      <rect x="40" y="72" width="38" height="34" fill="url(#pvcell)" stroke="#3b6b8c"/>
+      <rect x="82" y="72" width="38" height="34" fill="url(#pvcell)" stroke="#3b6b8c"/>
+      <rect x="124" y="72" width="38" height="34" fill="url(#pvcell)" stroke="#3b6b8c"/>
+      <rect x="166" y="72" width="38" height="34" fill="url(#pvcell)" stroke="#3b6b8c"/>
+      <rect x="40" y="110" width="38" height="34" fill="url(#pvcell)" stroke="#3b6b8c"/>
+      <rect x="82" y="110" width="38" height="34" fill="url(#pvcell)" stroke="#3b6b8c"/>
+      <rect x="124" y="110" width="38" height="34" fill="url(#pvcell)" stroke="#3b6b8c"/>
+      <rect x="166" y="110" width="38" height="34" fill="url(#pvcell)" stroke="#3b6b8c"/>
+      <g id="pvlit" opacity="0" style="filter:drop-shadow(0 0 8px rgba(64,160,255,.85))">
+      <rect x="40" y="72" width="38" height="34" fill="url(#pvcellOn)" stroke="#cfe8ff"/>
+      <rect x="82" y="72" width="38" height="34" fill="url(#pvcellOn)" stroke="#cfe8ff"/>
+      <rect x="124" y="72" width="38" height="34" fill="url(#pvcellOn)" stroke="#cfe8ff"/>
+      <rect x="166" y="72" width="38" height="34" fill="url(#pvcellOn)" stroke="#cfe8ff"/>
+      <rect x="40" y="110" width="38" height="34" fill="url(#pvcellOn)" stroke="#cfe8ff"/>
+      <rect x="82" y="110" width="38" height="34" fill="url(#pvcellOn)" stroke="#cfe8ff"/>
+      <rect x="124" y="110" width="38" height="34" fill="url(#pvcellOn)" stroke="#cfe8ff"/>
+      <rect x="166" y="110" width="38" height="34" fill="url(#pvcellOn)" stroke="#cfe8ff"/>
+      </g>
+    </g>
+    <circle id="sun" cx="232" cy="58" r="11" fill="var(--pv)" opacity=".9"/>
+    <text class="lbl" x="40" y="48">주택 태양광</text>
+    <text class="sub" x="40" y="60">3.0 kWp · 계통연계형</text>
+  </g>
+  <g class="equip" data-eq="INV" tabindex="0">
+    <rect class="eqbox hl" x="95" y="180" width="70" height="40" rx="4"/>
+    <text class="lbl" x="130" y="198" text-anchor="middle" style="font-size:11.5px">인버터</text>
+    <text class="sub" x="130" y="212" text-anchor="middle">DC/AC</text>
+  </g>
+  <text class="val" id="pvv" x="174" y="252" style="fill:var(--pv)">0.0 kW</text>
+
+  <!-- PV meter -->
+  <g class="equip" data-eq="JTP" tabindex="0" transform="translate(130,258)">
+    <circle class="hl" r="13" fill="#0b1820" stroke="#6f8a99"/><text class="val" y="4" text-anchor="middle" style="font-size:9px">kWh</text>
+  </g>
+  <text class="tagt" x="98" y="262" text-anchor="end">PV 계량기</text>
+
+  <!-- Grid -->
+  <g class="equip" data-eq="GRID" tabindex="0">
+    <rect class="hl" x="30" y="468" width="110" height="130" fill="none" stroke="transparent" rx="4"/>
+    <path d="M85,480 L62,590 M85,480 L108,590 M68,560 H102 M72,535 H98 M76,510 H94 M56,498 H114 M60,520 H110 M73,540 L97,560 M97,540 L73,560" stroke="#4f8a6a" stroke-width="2" fill="none"/>
+    <text class="lbl" x="36" y="620">한전 계통</text>
+    <text class="sub" x="36" y="634">저압 단상 220 V</text>
+  </g>
+  <g class="equip" data-eq="JTG" tabindex="0" transform="translate(185,520)">
+    <circle class="hl" r="16" fill="#0b1820" stroke="#6f8a99"/><text class="val" y="4" text-anchor="middle" style="font-size:9px">kWh↔</text>
+  </g>
+  <text class="tagt" x="185" y="551" text-anchor="middle">한전 양방향 계량기</text>
+  <text class="val" id="gridv" x="150" y="500" style="fill:var(--grid)">0.0 kW</text>
+
+  <!-- DB -->
+  <g class="equip" data-eq="DB" tabindex="0">
+    <rect class="eqbox hl" x="240" y="270" width="40" height="160" rx="3"/>
+    <path d="M260,284 V416" stroke="#6f8a99" stroke-width="3"/>
+    <text class="lbl" x="260" y="448" text-anchor="middle" style="font-size:11.5px">분전반</text>
+  </g>
+
+  <!-- HP meter -->
+  <g class="equip" data-eq="JTH" tabindex="0" transform="translate(340,330)">
+    <circle class="hl" r="13" fill="#0b1820" stroke="#6f8a99"/><text class="val" y="4" text-anchor="middle" style="font-size:9px">kWh</text>
+  </g>
+  <text class="tagt" x="340" y="360" text-anchor="middle">HP 계량기</text>
+  <text class="val" id="hppv" x="340" y="312" text-anchor="middle">0.0 kW</text>
+  <text class="sub" x="352" y="600" id="basev">가전 부하 0.5 kW</text>
+
+  <!-- Heat pump -->
+  <g class="equip" data-eq="HP" tabindex="0">
+    <rect class="eqbox hl" x="400" y="250" width="160" height="160" rx="6"/>
+    <circle cx="446" cy="336" r="30" fill="#0a151c" stroke="#35556a"/>
+    <g id="fan" transform="translate(446,336)">
+      <path d="M0,0 C8,-6 10,-20 0,-26 C-4,-16 -4,-8 0,0 Z" fill="#5d7f93"/>
+      <path d="M0,0 C8,-6 10,-20 0,-26 C-4,-16 -4,-8 0,0 Z" fill="#5d7f93" transform="rotate(120)"/>
+      <path d="M0,0 C8,-6 10,-20 0,-26 C-4,-16 -4,-8 0,0 Z" fill="#5d7f93" transform="rotate(240)"/>
+      <circle r="4" fill="#9fb6c3"/>
+    </g>
+    <circle id="comp" cx="522" cy="310" r="15" fill="#0a151c" stroke="#6f8a99" stroke-width="1.4"/>
+    <text x="522" y="314" text-anchor="middle" class="val" style="font-size:10px">C</text>
+    <text class="val" id="hpstate" x="522" y="352" text-anchor="middle" style="font-size:10px">RUN</text>
+    <text class="val" id="hpfreq" x="522" y="366" text-anchor="middle" style="font-size:10px;fill:var(--muted)">0 Hz</text>
+    <text class="lbl" x="480" y="272" text-anchor="middle">공기열 히트펌프</text>
+    <text class="sub" x="480" y="398" text-anchor="middle">공기-물 · 인버터 · &lt;20 kW<tspan baseline-shift="sub" font-size="8">th</tspan></text>
+  </g>
+  <g class="equip inst" data-eq="TT104" tabindex="0" transform="translate(430,440)">
+    <circle r="14"/><line x1="-14" x2="14"/><text y="-3">온도</text><text y="9">104</text>
+  </g>
+  <path class="leader" d="M430,426 V410"/>
+  <text class="val" id="toutv" x="450" y="444" style="fill:var(--muted)">외기 2.0℃</text>
+
+  <!-- V1 -->
+  <g class="equip" data-eq="V1" tabindex="0" transform="translate(600,275)">
+    <rect class="hl" x="-16" y="-24" width="32" height="36" fill="transparent" stroke="transparent" rx="3"/>
+    <path class="vbody" id="v1b" d="M-12,-8 L0,0 L-12,8 Z M12,-8 L0,0 L12,8 Z"/>
+    <line x1="0" y1="0" x2="0" y2="-14" stroke="#9fb6c3" stroke-width="1.4"/>
+    <path d="M-8,-14 A8,8 0 0 1 8,-14 Z" fill="#1b3140" stroke="#9fb6c3" stroke-width="1.2"/>
+    <text class="tagt" y="-28" text-anchor="middle">충전밸브</text>
+    <text class="val" id="v1p" y="24" text-anchor="middle" style="font-size:10px">0%</text>
+  </g>
+  <!-- P1 -->
+  <g class="equip" data-eq="P1" tabindex="0" transform="translate(620,385)">
+    <circle class="pbody hl" id="p1b" r="14" stroke="#6f8a99"/>
+    <g id="p1i"><path d="M-7,-5 L7,0 L-7,5 Z" fill="#9fb6c3" transform="rotate(180)"/></g>
+    <text class="tagt" y="-20" text-anchor="middle">순환펌프1</text>
+  </g>
+  <g class="equip inst" data-eq="FT101" tabindex="0" transform="translate(676,160)">
+    <circle r="14"/><line x1="-14" x2="14"/><text y="-3">유량</text><text y="9">101</text>
+  </g>
+  <path class="leader" d="M662,160 H640"/>
+  <g class="equip inst" data-eq="TT105" tabindex="0" transform="translate(676,228)">
+    <circle r="14"/><line x1="-14" x2="14"/><text y="-3">온도</text><text y="9">105</text>
+  </g>
+  <path class="leader" d="M662,228 H640"/>
+  <g class="equip inst" data-eq="TT106" tabindex="0" transform="translate(590,428)">
+    <circle r="14"/><line x1="-14" x2="14"/><text y="-3">온도</text><text y="9">106</text>
+  </g>
+  <path class="leader" d="M590,414 V385"/>
+  <text class="val" id="hotv" x="646" y="100" style="fill:var(--hot)">- ℃</text>
+  <text class="val" id="coldv" x="612" y="459" style="fill:var(--cold)">- ℃</text>
+  <text class="val" id="flowv" x="632" y="150" text-anchor="end" style="fill:var(--muted);font-size:10px">0 L/min</text>
+
+  <!-- TES -->
+  <g class="equip" data-eq="TES" tabindex="0">
+    <rect class="eqbox hl" x="720" y="88" width="100" height="244" rx="22"/>
+    <rect x="727" y="95" width="86" height="230" rx="17" fill="url(#tesGrad)" opacity=".88"/>
+    <path d="M735,140 H805 M735,190 H805 M735,240 H805 M735,290 H805" stroke="rgba(0,0,0,.25)" stroke-width="1" stroke-dasharray="2 4"/>
+    <text class="val" id="tessoc" x="770" y="206" text-anchor="middle" style="font-size:20px;font-weight:700;fill:#fff;paint-order:stroke;stroke:rgba(0,0,0,.55);stroke-width:3">0%</text>
+    <text class="val" x="770" y="224" text-anchor="middle" style="font-size:9.5px;fill:#fff;paint-order:stroke;stroke:rgba(0,0,0,.55);stroke-width:3">THERMAL SOC</text>
+    <text class="val" id="teschg" x="770" y="244" text-anchor="middle" style="font-size:10.5px;font-weight:700;fill:#fff;paint-order:stroke;stroke:rgba(0,0,0,.6);stroke-width:3">-</text>
+    <text class="lbl" x="750" y="354">축열조</text>
+    <text class="sub" x="750" y="368">500 L · 11.6 kWh<tspan baseline-shift="sub" font-size="8">th</tspan></text>
+  </g>
+  <g class="equip inst" data-eq="TT101" tabindex="0" transform="translate(850,110)">
+    <circle r="14"/><line x1="-14" x2="14"/><text y="-3">온도</text><text y="9">101</text>
+  </g>
+  <path class="leader" d="M836,110 H820"/>
+  <text class="val" id="ttopv" x="868" y="106" style="font-size:12px;font-weight:600">-</text>
+  <text class="sub" x="868" y="120">상부</text>
+  <g class="equip inst" data-eq="TT102" tabindex="0" transform="translate(850,300)">
+    <circle r="14"/><line x1="-14" x2="14"/><text y="-3">온도</text><text y="9">102</text>
+  </g>
+  <path class="leader" d="M836,300 H820"/>
+  <text class="val" id="tbotv" x="868" y="296" style="font-size:12px;font-weight:600">-</text>
+  <text class="sub" x="868" y="310">하부</text>
+
+  <!-- P2 / V2 on supply -->
+  <g class="equip" data-eq="P2" tabindex="0" transform="translate(910,218)">
+    <circle class="pbody hl" id="p2b" r="14" stroke="#6f8a99"/>
+    <g id="p2i"><path d="M-7,-5 L7,0 L-7,5 Z" fill="#9fb6c3" transform="rotate(90)"/></g>
+    <text class="tagt" x="20" y="4">순환펌프2</text>
+  </g>
+  <g class="equip" data-eq="V2" tabindex="0" transform="translate(910,340)">
+    <rect class="hl" x="-16" y="-16" width="32" height="32" fill="transparent" stroke="transparent" rx="3"/>
+    <g transform="rotate(90)">
+      <path class="vbody" id="v2b" d="M-12,-8 L0,0 L-12,8 Z M12,-8 L0,0 L12,8 Z"/>
+      <line x1="0" y1="0" x2="0" y2="-14" stroke="#9fb6c3" stroke-width="1.4"/>
+      <path d="M-8,-14 A8,8 0 0 1 8,-14 Z" fill="#1b3140" stroke="#9fb6c3" stroke-width="1.2"/>
+    </g>
+    <text class="tagt" x="-22" y="-4" text-anchor="end">공급밸브</text>
+    <text class="val" id="v2p" x="-22" y="10" text-anchor="end" style="font-size:10px">0%</text>
+  </g>
+  <text class="val" id="supv" x="920" y="276" style="fill:var(--warm);font-size:10px">-</text>
+  <text class="val" id="supf" x="920" y="290" style="fill:var(--muted);font-size:10px">-</text>
+
+  <!-- House -->
+  <g class="equip" data-eq="HOUSE" tabindex="0">
+    <path class="hl" d="M718,452 L845,398 L972,452" fill="none" stroke="#35556a" stroke-width="1.6"/>
+    <rect class="eqbox hl" x="730" y="452" width="230" height="120"/>
+    <path id="floorcoil" d="M744,552 h180 v-8 h-180 v-8 h180 v-8 h-180" fill="none" stroke="var(--warm)" stroke-width="2" opacity=".7"/>
+    <text class="lbl" x="744" y="474">주택 난방·급탕 부하</text>
+    <text class="val" id="roomv" x="744" y="494" style="font-size:12.5px;font-weight:600">실내 21.0℃</text>
+    <text class="val" id="loadv" x="744" y="511" style="fill:var(--muted)">난방 0.0 kW<tspan font-size="8">th</tspan></text>
+    <g transform="translate(930,488)">
+      <path d="M-10,-6 h14 v10 M4,4 v6" fill="none" stroke="#9fb6c3" stroke-width="2"/>
+      <circle cx="4" cy="16" r="2" fill="var(--cold)"/>
+      <text class="sub" x="0" y="-12" text-anchor="middle">DHW</text>
+    </g>
+  </g>
+  <g class="equip inst" data-eq="TT103" tabindex="0" transform="translate(924,522)">
+    <circle r="14"/><line x1="-14" x2="14"/><text y="-3">온도</text><text y="9">103</text>
+  </g>
+</svg>
+    </div>
+    <div class="note">설비·계기(밸브, 펌프, 계량기, 게이트웨이, 온도계 등)를 클릭하면 상세 정보와 Modbus 레지스터가 표시됩니다. 레지스터 주소는 설명용 예시 맵이며 실제 값은 OEM별로 다릅니다.</div>
+  </section>
+
+  <aside class="panel">
+    <div class="ph"><h2>실시간 모니터링</h2><span class="pill ok" id="acklbl">GW ONLINE</span></div>
+    <div class="tiles">
+      <div class="tile"><div class="k">계통 전력 <em>한전 계량기</em></div><div class="v" id="t_grid">0.0<small>kW</small></div><div class="d" id="t_grid_d">-</div></div>
+      <div class="tile"><div class="k">PV 발전량 <em>PV 계량기</em></div><div class="v" id="t_pv" style="color:var(--pv)">0.0<small>kW</small></div><div class="d" id="t_pv_d">-</div></div>
+      <div class="tile"><div class="k">HP 소비전력 <em>HP 계량기</em></div><div class="v" id="t_hp" style="color:var(--warm)">0.0<small>kW</small></div><div class="d" id="t_hp_d">-</div></div>
+      <div class="tile"><div class="k">순간 COP <em>Q/P</em></div><div class="v" id="t_cop">-</div><div class="d" id="t_cop_d">-</div></div>
+      <div class="tile wide"><div class="k">Thermal SOC <em>ρVc<sub>p</sub>(T<sub>avg</sub>−T<sub>min</sub>)</em></div>
+        <div class="v" id="t_soc">0<small>%</small></div>
+        <div class="bar"><span id="t_socbar" style="width:0%"></span><i class="mk" style="left:20%"></i><i class="mk" style="left:90%"></i></div>
+        <div class="d" id="t_soc_d">-</div></div>
+      <div class="tile"><div class="k">축열조 상부 <em>상부 온도계</em></div><div class="v" id="t_top">-</div><div class="d">T<sub>max</sub> 60℃</div></div>
+      <div class="tile"><div class="k">축열조 하부 <em>하부 온도계</em></div><div class="v" id="t_bot">-</div><div class="d">T<sub>min</sub> 40℃ 기준</div></div>
+      <div class="tile wide"><div class="k">가용 유연성 <em>Flex<sub>t</sub> × A<sub>i,t</sub></em></div>
+        <div class="flexrow">
+          <div><div class="v" id="t_fdown" style="color:var(--crit)">−0.0<small>kW</small></div><div class="d" id="t_fdown_d">하향(감축) · -</div></div>
+          <div><div class="v" id="t_fup" style="color:var(--ok)">+0.0<small>kW</small></div><div class="d" id="t_fup_d">상향(증대)</div></div>
+        </div>
+        <div class="d" id="t_fleet" style="margin-top:4px">-</div></div>
+      <div class="tile wide"><div class="k">기준부하 대비 계통 영향 <em>M&amp;V</em></div><div class="v" id="t_delta">0.0<small>kW</small></div><div class="d" id="t_delta_d">-</div></div>
+    </div>
+    <div class="prio">
+      <h3>명령 우선순위 (Edge 실행권한)</h3>
+      <div class="chain" id="chain">
+        <span>Safety</span><span>동파방지</span><span>OEM 보호</span><span data-k="comfort">급탕·쾌적</span><span>고객 Override</span><span>계통비상</span><span data-k="vpp">VPP 최적화</span><span data-k="cost">비용 최적화</span>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<div class="bottom">
+  <section class="panel">
+    <div class="ph"><h2>단위 주택 추이 · 최근 2시간</h2>
+      <div class="legend"><span><i style="background:var(--grid)"></i>수전</span><span><i style="background:var(--exp)"></i>역송</span><span><i style="background:var(--pv)"></i>PV</span><span><i style="background:var(--warm)"></i>HP</span><span><i style="background:rgba(94,231,255,.5)"></i>SOC</span></div></div>
+    <svg class="chart" id="ch1" viewBox="0 0 520 220" role="img" aria-label="단위 주택 전력 및 SOC 추이"></svg>
+  </section>
+  <section class="panel">
+    <div class="ph"><h2 id="ch2t">집합자원 2,000가구 부하</h2>
+      <div class="legend" id="ch2l"></div></div>
+    <svg class="chart" id="ch2" viewBox="0 0 520 190" role="img" aria-label="집합자원 부하"></svg>
+    <div class="gcap"><span>복귀 그룹 (각 200가구) · 축열 SOC가 낮은 G1부터 5분 간격으로 순차 복귀</span>
+      <span class="gl"><i class="dr"></i>DR 감축 중 <i class="wait"></i>대기 <i class="ramp"></i>복귀 중 <i class="run"></i>정상 <i class="me"></i>이 주택</span></div>
+    <div class="groups" id="groups"></div>
+  </section>
+  <section class="panel logp">
+    <div class="ph"><h2>이벤트 · 명령 로그</h2></div>
+    <div class="log" id="log" aria-live="polite"></div>
+  </section>
+</div>
+<div class="hint">숫자키 1–4: 모드 전환 · Space: 일시정지</div>
+</div>
+
+<div class="scrim" id="scrim" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mtitle">
+    <div class="mh"><div><div class="tg" id="mtag"></div><h3 id="mtitle"></h3><p id="mdesc"></p></div><button class="x" id="mclose" aria-label="닫기">✕</button></div>
+    <div class="mb" id="mbody"></div>
+  </div>
+</div>
+
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,k)=>a+(b-a)*k;
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- constants (보고서 기준) ---------- */
+const EMAX=11.6;          // 500 L × 4.186 × 20K / 3600 ≈ 11.6 kWh_th
+const HP_MAX=4.6;         // 전기입력 최대 (kW), 열출력 <20 kW_th
+const HP_BASE_EVE=3.2;    // 저녁 피크 시 기준부하(Baseline) HP 전력
+const Q_EVE=4.2;          // 저녁 축열조 부담 열부하 kW_th
+const N=2000, PART=0.85;  // 집합 가구수, 참여율
+const MY_GROUP=3;         // 이 주택의 복귀 그룹 (0-based, G4)
+const G_START=g=>4+g*5;   // 그룹별 복귀 시작(분) , thermal priority 순
+const pRec=tau=>tau<0?0:(tau<5?(Math.floor(tau/1.25)+1)/4*3.8:2.4+1.4*Math.exp(-(tau-5)/20)); // 단계복귀 kW/대
+const pNaive=tau=>tau<0?0:2.4+1.8*Math.exp(-tau/20);
+const fleetStag=tm=>{let s=0;for(let g=0;g<10;g++)s+=200*pRec(tm-G_START(g));return s/1000;}
+const fleetNaive=tm=>N*pNaive(tm)/1000;
+
+/* ---------- state ---------- */
+const S={mode:'normal',t:10.5*60,soc:.42,pv:0,hp:1,house:.5,grid:0,qhp:0,qload:4,cop:3.8,
+  tTop:50,tBot:36,tSup:40,tRet:32,tOut:3,flowHP:0,flowLoad:0,v1:0,v2:0,p1:0,p2:0,room:21,
+  flexDown:0,flexUp:0,sustain:0,hpBase:1.2,modeT:0,reb:0,override:false,saved:0,drOn:false,drEnded:false,soc90:false};
+let speed=1,paused=false,tour=false,tourWait=0;
+const hist=[];
+
+const pvCurve=h=>(h>6.5&&h<18)?3.0*.95*Math.pow(Math.sin(Math.PI*(h-6.5)/11.5),1.3):0;
+const tOutF=h=>1.5+4.5*Math.max(0,Math.sin(Math.PI*(h-8)/12));
+const fmtT=m=>{m=((m%1440)+1440)%1440;const h=Math.floor(m/60),mm=Math.floor(m%60);return (h<12?'오전 ':'오후 ')+(h%12||12)+':'+String(mm).padStart(2,'0');};
+
+const MODES={
+ normal:{start:6*60,pill:['NORMAL · 자가소비','ok'],
+   narr:'<b>평시 운전 (시간 ×3 가속)</b>: 새벽에는 한전 전력으로 최소 운전하고, 해가 뜨면 PV 발전분을 히트펌프에 우선 공급합니다. 오후 12시 Plus DR 예고에 대비해 축열조는 30% 수준만 유지하고, 남는 PV는 역송합니다.'},
+ plus:{start:12*60,pill:['PLUS DR · 부하증대','warn'],
+   narr:'<b>Plus DR / Preheat</b>: 재생에너지 과잉시간 발령. PV 잉여 + 낮 시간 계통전력으로 HP를 최대 가동해 축열조 SOC를 90%까지 끌어올리고, 저녁 피크용 하향 유연성(Flex↓)을 확보합니다.'},
+ peak:{start:17*60+55,pill:['DR EVENT · 부하감축','crit'],
+   narr:'<b>Peak Cut</b>: 오후 6시 DR 명령 수신 → GW가 HP Run Enable을 해제하고 충전밸브·순환펌프1을 닫습니다. 축열조에 저장된 열만으로 순환펌프2를 통해 난방·급탕을 공급합니다.'},
+ rebound:{start:20*60,pill:['RECOVERY · 순차복귀','info'],
+   narr:'<b>Staggered Recovery</b>: DR 종료 후 2,000대가 동시에 켜지면 새로운 피크가 생깁니다. SOC가 낮은 그룹부터 5분 간격으로, 그룹 내부는 25% 단계로 밸브·출력을 올려 Event 전 Peak 이하로 복귀합니다.'}
+};
+
+/* ---------- log ---------- */
+const logEl=$('log');
+function log(msg,hi){const d=document.createElement('div');if(hi)d.className='hi';d.innerHTML='<b>'+fmtT(S.t)+'</b><span>'+msg+'</span>';logEl.prepend(d);while(logEl.children.length>60)logEl.lastChild.remove();}
+
+/* ---------- mode switch ---------- */
+function setMode(m,fromTour,auto){
+  S.mode=m;S.t=MODES[m].start;S.modeT=0;S.override=false;S.recStart=null;S.soc80=false;S.drOn=false;S.drEnded=false;S.soc90=false;
+  if(!fromTour&&tour){tour=false;$('tour').classList.remove('on');}
+  endWait=-1;paused=false;$('pause').textContent='❚❚ 정지';$('pause').classList.remove('on');
+  document.querySelectorAll('.mode').forEach(b=>b.classList.toggle('on',b.dataset.mode===m));
+  $('drpill').textContent=MODES[m].pill[0];$('drpill').className='pill '+MODES[m].pill[1];
+  $('narr').innerHTML=MODES[m].narr;
+  if(!auto)hist.length=0;S.pv=pvCurve(S.t/60);
+  if(m==='normal'){S.soc=.30;S.room=21;log('평시 모드 · PV 자가소비 우선 스케줄 적용',true);log('Plus DR 예고(오후 12시) → 축열 여유 확보, SOC 30% 유지');}
+  if(m==='plus'){if(!auto)S.soc=.20;S.room=21;log('KPX Plus DR 발령 수신 (오후 12시–3시, 재생E 출력제어 예측)',true);log('게이트웨이 → 히트펌프: SG-Ready 4 (강제증대), 급탕/난방 설정온도 +8K');log('충전밸브 100% 개방, 순환펌프1 최대속도');}
+  if(m==='peak'){if(S.soc<.85){S.soc=.85;log('Preheat 완료 상태에서 시작 (SOC 85%)');}S.room=21;log('DR Event 예고 수신 · 오후 6시–8시 감축 요청 (OpenADR EiEvent)',true);}
+  if(m==='rebound'){if(S.soc>.3)S.soc=.18;S.room=20.5;S.hp=0;log('DR Event 종료 · Rebound 제어기 활성화',true);log('Group 순서 산정: Thermal SOC 낮은 순 · Feeder 한도 6.4 MW');log('이 주택 = G'+(MY_GROUP+1)+' · 복귀 예정 T+'+G_START(MY_GROUP)+'분');}
+}
+
+/* ---------- targets ---------- */
+function targets(){
+  const h=S.t/60, m=S.mode; const T={v1:0,v2:100,p1:0,p2:1,hp:0,qload:4.0,hpBase:1.2};
+  S.tOut=tOutF(h); S.pv=lerp(S.pv,pvCurve(h),.2); S.house=h>17.5?0.8:0.5;
+  if(m==='normal'){
+    const surplus=S.pv-S.house;
+    T.hp=clamp(T.qload/S.cop+(.30-S.soc)*12,.5,3.0);
+    T.v1=60;T.p1=1;T.v2=60;T.hpBase=T.hp;
+  }else if(m==='plus'){
+    T.hpBase=clamp(S.pv-S.house,.9,3);
+    if(S.soc<.9){T.hp=HP_MAX;T.v1=100;}else{T.hp=clamp(T.qload/S.cop,.4,2);T.v1=35;
+      if(!S.soc90){S.soc90=true;log('Thermal SOC 90% 도달 → 유지운전 전환 (Setpoint 복귀)',true);}}
+    T.p1=1;T.v2=60;
+  }else if(m==='peak'){
+    T.qload=Q_EVE;T.hpBase=HP_BASE_EVE;
+    if(S.t<18*60){T.hp=HP_BASE_EVE;T.v1=60;T.p1=1;}
+    else if(S.t<20*60){
+      if(!S.drOn){S.drOn=true;log('오후 6시 DR 개시 · GW ACK 1.8 s',true);log('히트펌프 운전허가 해제 · 충전밸브 닫힘 · 순환펌프1 정지');log('공급밸브 100% · 순환펌프2 가동 → 축열조 단독 공급');}
+      if(S.soc<.10){T.hp=1.2;T.v1=40;T.p1=1;if(!S.override){S.override=true;log('SOC 10% 미만 → 급탕·쾌적 우선규칙 발동, HP 최소운전 1.2 kW',true);}}
+      else{T.hp=0;T.v1=0;T.p1=0;}
+      T.v2=100;
+    }else{T.hp=0;T.v1=0;T.p1=0;T.v2=100;if(!S.drEnded){S.drEnded=true;log('오후 8시 DR 종료 · 모드 4에서 순차복귀를 확인하세요',true);}}
+  }else if(m==='rebound'){
+    T.qload=Q_EVE;T.hpBase=HP_BASE_EVE;
+    const tm=S.t-20*60;
+    if(S.recStart===null){
+      if(S.soc<.10){S.recStart=tm;log('SOC 10% 미만 → 급탕·쾌적 우선규칙: G'+(MY_GROUP+1)+' 대기 해제, 조기 복귀 (T+'+Math.round(tm)+'분)',true);}
+      else if(tm>=G_START(MY_GROUP)){S.recStart=tm;log('G'+(MY_GROUP+1)+' 순번 도래 → 단계 복귀 시작');}
+      if(S.recStart!==null)log('한전 수전으로 HP 재가동 → 충전밸브 단계 개방, 축열조 재충전 시작');
+    }
+    if(S.recStart!==null&&S.soc>=.8&&!S.soc80){S.soc80=true;log('축열조 재충전 80% 도달 · 상부 '+S.tTop.toFixed(1)+'℃ → 유지운전 준비',true);}
+    const tau=S.recStart===null?-1:tm-S.recStart;
+    if(tau<0){T.hp=0;T.v1=0;T.p1=0;}
+    else if(tau<5){const st=Math.floor(tau/1.25)+1;T.v1=st*25;T.p1=1;T.hp=pRec(tau);}
+    else{T.v1=100;T.p1=1;T.hp=S.soc<.85?pRec(tau):clamp(T.qload/S.cop,.4,2);}
+    T.v2=100;
+  }
+  return T;
+}
+
+/* ---------- physics step (dtMin sim minutes) ---------- */
+let lastStep=-1;
+function step(dtMin){
+  const T=targets(); const k=clamp(dtMin/1.2,0,1);
+  S.hp=lerp(S.hp,T.hp,k); if(S.hp<.02)S.hp=0;
+  S.v1=lerp(S.v1,T.v1,clamp(dtMin/.8,0,1)); S.v2=lerp(S.v2,T.v2,clamp(dtMin/.8,0,1));
+  S.p1=T.p1;S.p2=T.p2;S.qload=lerp(S.qload,T.qload,k);S.hpBase=T.hpBase;
+  S.tBot=28+26*Math.pow(S.soc,1.3); S.tTop=38+22*Math.pow(S.soc,.7);
+  S.tSup=S.hp>.1?S.tBot+4+1.2*S.hp:S.tBot;
+  S.cop=clamp(4.5+.05*(S.tOut-5)-.055*(S.tSup-35),2.2,5.2);
+  S.qhp=S.hp*S.cop;
+  S.flowHP=S.hp>.05?S.qhp/(4.186*7)*60:0;
+  const qFromTank=S.soc>.02?S.qload:0;
+  S.flowLoad=qFromTank/(4.186*10)*60*(S.v2/100>.05?1:0);
+  S.tRet=S.tTop-10*(S.qload/5);
+  const dH=dtMin/60;
+  S.soc=clamp(S.soc+(S.qhp-qFromTank)*dH/EMAX,.02,.98);
+  S.grid=S.house+S.hp-S.pv;
+  // room
+  const roomTgt=(S.mode==='peak'&&S.drOn&&!S.drEnded)?(S.soc<.12?20.2:20.6):21;
+  S.room=lerp(S.room,roomTgt,clamp(dtMin/40,0,1));
+  // flexibility
+  S.sustain=S.soc*EMAX/Q_EVE;           // h
+  const A=clamp(S.sustain/2,0,1);       // 2h 이벤트 기준 가용성 계수
+  S.flexDown=HP_BASE_EVE*A;
+  S.flexUp=S.soc<.95?Math.max(0,HP_MAX-S.hp):0;
+  if(S.mode==='peak'&&S.drOn&&!S.drEnded)S.saved+=Math.max(0,S.hpBase-S.hp)*dH;
+  S.t+=dtMin;S.modeT+=dtMin;
+  const mi=Math.floor(S.t);
+  if(mi!==lastStep){lastStep=mi;hist.push({t:S.t,g:S.grid,pv:S.pv,hp:S.hp,soc:S.soc,f:fleetNow()});if(hist.length>140)hist.shift();}
+}
+function fleetNow(){
+  if(S.mode==='rebound')return fleetStag(S.t-20*60);
+  return N*(PART*S.hp+(1-PART)*S.hpBase)/1000;
+}
+
+/* ---------- flows ---------- */
+const flows=[
+ ['f_pvdc',()=>S.pv,14],['f_pvac',()=>S.pv,14],['f_grid',()=>S.grid,14],
+ ['f_hpp',()=>S.hp,14],['f_base',()=>S.house,14],
+ ['f_hot',()=>S.flowHP*(S.v1>3?1:0)/5.5,14],['f_cold',()=>S.flowHP*(S.v1>3?1:0)/5.5,14],
+ ['f_sup',()=>S.flowLoad/4,14],['f_ret',()=>S.flowLoad/4,14]
+].map(([id,fn,k])=>({el:$(id),fn,k,off:0}));
+const comms=['c1','c2','c3','c4','c5'].map(id=>({el:$(id),off:0}));
+let fanA=0,p1A=0,p2A=0;
+
+function mixColor(share){ // PV share of consumption
+  return share>.6?'var(--pv)':share>.2?'#b9d53a':'var(--grid)';
+}
+function tempColor(t){
+  const st=[[25,[58,160,255]],[42,[255,178,60]],[60,[255,74,46]]];
+  if(t<=st[0][0])return 'rgb('+st[0][1]+')';
+  for(let i=0;i<st.length-1;i++){const[a,ca]=st[i],[b,cb]=st[i+1];if(t<=b){const k=(t-a)/(b-a);return 'rgb('+ca.map((c,j)=>Math.round(c+(cb[j]-c)*k))+')';}}
+  return 'rgb('+st[2][1]+')';
+}
+
+function animate(dt){
+  const rm=RM?.25:1;
+  for(const f of flows){const v=f.fn();const a=Math.abs(v);
+    f.off-=Math.sign(v)*Math.min(a*f.k,110)*dt*rm*Math.max(speed,.5); f.el.style.strokeDashoffset=f.off;
+    f.el.style.opacity=a<.05?.12:1;}
+  for(const c of comms){c.off-=10*dt*rm;c.el.style.strokeDashoffset=c.off;}
+  fanA+=S.hp*140*dt*rm;$('fan').setAttribute('transform','translate(446,336) rotate('+fanA+')');
+  if(S.p1){p1A+=240*dt*rm;} if(S.p2&&S.flowLoad>0){p2A+=240*dt*rm;}
+  $('p1i').setAttribute('transform','rotate('+p1A+')');$('p2i').setAttribute('transform','rotate('+p2A+')');
+}
+
+/* ---------- render ---------- */
+const f1=v=>v.toFixed(1), f2=v=>v.toFixed(2);
+function render(){
+  {const mm=((S.t%1440)+1440)%1440,h=Math.floor(mm/60),pm=h>=12;$('clock').innerHTML='<span class="ap '+(pm?'pm':'am')+'">'+(pm?'오후':'오전')+'</span>'+String(h%12||12).padStart(2,'\u2007')+':'+String(Math.floor(mm%60)).padStart(2,'0');}
+  const share=(S.hp+S.house)>0?Math.min(1,S.pv/(S.hp+S.house)):0;
+  $('f_hpp').setAttribute('stroke',mixColor(share));$('f_base').setAttribute('stroke',mixColor(share));
+  $('pvv').textContent=f1(S.pv)+' kW';
+  const exp=S.grid<-0.05, gc=exp?'var(--exp)':'var(--grid)';
+  $('gridv').textContent=(exp?'역송 ':'수전 ')+f1(Math.abs(S.grid))+' kW';$('gridv').style.fill=gc;$('f_grid').setAttribute('stroke',gc);
+  $('hppv').textContent=f1(S.hp)+' kW';
+  $('basev').textContent='가전 부하 '+f1(S.house)+' kW';
+  $('pvlit').setAttribute('opacity',clamp(S.pv/2.4,0,1).toFixed(2));
+  $('sun').setAttribute('opacity',(.15+.85*S.pv/2.85).toFixed(2));
+  const running=S.hp>.05;
+  $('hpstate').textContent=running?(S.override?'최소운전':'운전'):(S.mode==='peak'&&S.drOn?'DR 정지':'대기');
+  $('hpstate').style.fill=running?'var(--ok)':(S.drOn&&!S.drEnded?'var(--crit)':'var(--muted)');
+  $('hpfreq').textContent=Math.round(S.hp/HP_MAX*90)+' Hz';
+  $('comp').setAttribute('stroke',running?'var(--hot)':'#6f8a99');
+  $('toutv').textContent='외기 '+f1(S.tOut)+'℃';
+  // valves
+  const vs=(el,p,col)=>{const o=p>3;el.setAttribute('fill',o?'transparent':'#7a1f2a');el.setAttribute('stroke',o?col:'#ff4d5e');};
+  vs($('v1b'),S.v1,'var(--hot)');vs($('v2b'),S.v2,'var(--warm)');
+  $('v1p').textContent=S.v1>3?Math.round(S.v1)+'%':'닫힘';$('v1p').style.fill=S.v1>3?'var(--text)':'var(--crit)';
+  $('v2p').textContent=S.v2>3?Math.round(S.v2)+'%':'닫힘';
+  $('p1b').setAttribute('stroke',S.p1?'var(--ok)':'#6f8a99');$('p2b').setAttribute('stroke',S.p2&&S.flowLoad>0?'var(--ok)':'#6f8a99');
+  // pipes values
+  $('hotv').textContent=S.flowHP>0&&S.v1>3?'공급 '+f1(S.tSup)+'℃':'공급 정지';
+  $('coldv').textContent='환수 '+f1(S.tBot)+'℃';
+  $('flowv').textContent=(S.v1>3?f1(S.flowHP):'0.0')+' L/min';
+  $('supv').textContent=f1(S.tTop)+'℃';$('supf').textContent=f1(S.flowLoad)+' L/min';
+  // TES
+  const sp=Math.round(S.soc*100);$('tessoc').textContent=sp+'%';
+  const th=1-S.soc; $('g0').setAttribute('stop-color',tempColor(S.tTop));$('g1').setAttribute('stop-color',tempColor(S.tTop-3));
+  $('g1').setAttribute('offset',clamp(S.soc-.04,0,1));$('g2').setAttribute('offset',clamp(S.soc+.04,0,1));
+  $('g2').setAttribute('stop-color',tempColor(S.tBot+2));$('g3').setAttribute('stop-color',tempColor(S.tBot));
+  $('ttopv').textContent=f1(S.tTop)+'℃';$('tbotv').textContent=f1(S.tBot)+'℃';
+  $('roomv').textContent='실내 '+f1(S.room)+'℃';
+  $('loadv').firstChild.nodeValue='난방·급탕 '+f1(S.qload)+' kW';
+  $('floorcoil').setAttribute('opacity',S.flowLoad>0?.8:.2);
+  // DR signal
+  const drAct=S.mode==='peak'&&S.t>=18*60&&S.t<20*60, plus=S.mode==='plus';
+  $('drsig').setAttribute('opacity',drAct||plus?1:0);
+  $('drsigt').textContent=plus?'PLUS DR ↑':'DR EVENT ↓';
+  $('drsig').firstElementChild.setAttribute('stroke',plus?'var(--warm)':'var(--crit)');$('drsigt').style.fill=plus?'var(--warm)':'var(--crit)';
+  if(S.mode==='peak'){$('drpill').textContent=S.t<18*60?'DR 예고 · T-'+Math.ceil(18*60-S.t)+'분':(S.t<20*60?'DR EVENT · 부하감축':'DR 종료');$('drpill').className='pill '+(S.t<18*60?'warn':S.t<20*60?'crit':'info');}
+  // tiles
+  $('t_grid').innerHTML=f1(Math.abs(S.grid))+'<small>kW</small>';
+  $('t_grid').style.color=gc;
+  $('t_grid_d').textContent=exp?'역송 (Export) · PV 잉여 → 한전':'수전 (Import) · 한전 → 주택';
+  $('t_pv').innerHTML=f1(S.pv)+'<small>kW</small>';
+  $('t_pv_d').textContent='자가소비율 '+(S.pv>.05?Math.round(Math.min(1,(S.hp+S.house)/S.pv)*100):0)+'%';
+  $('t_hp').innerHTML=f2(S.hp)+'<small>kW</small>';
+  $('t_hp_d').textContent='열출력 '+f1(S.qhp)+' kWth';
+  $('t_cop').innerHTML=S.hp>.05?f2(S.cop):'-';
+  $('t_cop_d').textContent=S.hp>.05?'공급 '+f1(S.tSup)+'℃ / 외기 '+f1(S.tOut)+'℃':'압축기 정지';
+  $('t_soc').innerHTML=sp+'<small>%</small>';
+  $('t_socbar').style.width=sp+'%';
+  const net=(S.v1>3?S.qhp:0)-(S.soc>.02?S.qload:0);
+  $('teschg').textContent=Math.abs(net)<.3?'유지':(net>0?'▲ 충전 +':'▼ 방열 −')+f1(Math.abs(net))+' kW';
+  $('teschg').style.fill=Math.abs(net)<.3?'#fff':net>0?'#ffd9cf':'#cfe6ff';
+  $('t_soc_d').textContent=(Math.abs(net)<.3?'유지':(net>0?'▲ 충전 +':'▼ 방열 −')+f1(Math.abs(net))+' kW_th')+' · 저장열 '+f1(S.soc*EMAX)+' / '+EMAX+' kWh_th · 피크부하 기준 '+f1(S.sustain)+' h 지속';
+  $('t_top').innerHTML=f1(S.tTop)+'<small>℃</small>';$('t_top').style.color=tempColor(S.tTop);
+  $('t_bot').innerHTML=f1(S.tBot)+'<small>℃</small>';$('t_bot').style.color=tempColor(S.tBot);
+  $('t_fdown').innerHTML='−'+f2(S.flexDown)+'<small>kW</small>';
+  $('t_fdown_d').textContent='하향 · 오후 6–8시 2h 확보율 '+Math.round(clamp(S.sustain/2,0,1)*100)+'%';
+  $('t_fup').innerHTML='+'+f2(S.flexUp)+'<small>kW</small>';
+  $('t_fup_d').textContent=S.flexUp>0?'상향 · P_max 4.6 kW까지':'상향 · 축열 포화';
+  $('t_fleet').textContent='집합 2,000가구 × 참여 85% → Flex↓ '+(S.flexDown*N*PART/1000).toFixed(2)+' MW · Flex↑ '+(S.flexUp*N*PART/1000).toFixed(2)+' MW';
+  const delta=S.hp-S.hpBase;
+  $('t_delta').innerHTML=(delta>=0?'+':'−')+f2(Math.abs(delta))+'<small>kW</small>';
+  $('t_delta').style.color=Math.abs(delta)<.05?'var(--text)':delta<0?'var(--ok)':'var(--warm)';
+  let dd='기준부하 '+f2(S.hpBase)+' kW';
+  if(S.mode==='peak'&&S.drOn)dd+=' · 누적 감축 '+f2(S.saved)+' kWh · 집합 '+(Math.max(0,-delta)*N*PART/1000).toFixed(2)+' MW';
+  else if(S.mode==='plus')dd+=' · 부하증대(Plus DR) 인정분';
+  else if(S.mode==='rebound')dd+=' · 그룹 G'+(MY_GROUP+1)+' '+(S.recStart===null?'복귀 대기 T-'+Math.ceil(G_START(MY_GROUP)-(S.t-20*60))+'분':'복귀 중 (한전 수전)');
+  $('t_delta_d').textContent=dd;
+  // priority chain
+  document.querySelectorAll('#chain span').forEach(s=>{const k=s.dataset.k;s.classList.toggle('act',
+    (k==='comfort'&&S.override)||(k==='vpp'&&!S.override&&S.mode!=='normal')||(k==='cost'&&S.mode==='normal'));});
+  renderCharts();renderGroups();
+  if(openEq)fillModal(openEq);
+}
+
+/* ---------- charts ---------- */
+const NS='http://www.w3.org/2000/svg';
+function renderCharts(){
+  // unit chart
+  const W=520,H=220,L=36,R=40,Tp=22,B=26,pw=W-L-R,ph=H-Tp-B;
+  const tEnd=S.t,t0=tEnd-120;
+  const x=t=>L+(t-t0)/120*pw, y=v=>Tp+ph-(v+2)/8*ph, ys=s=>Tp+ph-s*ph;
+  let g='';
+  for(let v=-2;v<=6;v+=2){g+=`<line class="gridl" x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}"/><text class="axis" x="${L-6}" y="${y(v)+3}" text-anchor="end">${v}</text>`;}
+  g+=`<text class="axis" x="${L-6}" y="${Tp-2}" text-anchor="end">kW</text>`;
+  for(const s of [0,.5,1])g+=`<text class="axis" x="${W-R+6}" y="${ys(s)+3}">${s*100}%</text>`;
+  for(let m=Math.ceil(t0/30)*30;m<=tEnd;m+=30)g+=`<text class="axis" x="${x(m)}" y="${H-8}" text-anchor="middle">${fmtT(m)}</text>`;
+  if(hist.length>1){
+    const pts=k=>hist.map(p=>x(p.t).toFixed(1)+','+(k==='soc'?ys(p.soc):y(p[k])).toFixed(1)).join(' ');
+    const sa=`${x(hist[0].t)},${ys(0)} ${pts('soc')} ${x(hist[hist.length-1].t)},${ys(0)}`;
+    g+=`<polygon points="${sa}" fill="rgba(94,231,255,.10)"/><polyline points="${pts('soc')}" fill="none" stroke="rgba(94,231,255,.55)" stroke-width="1.2"/>`;
+    g+=`<polyline points="${pts('pv')}" fill="none" stroke="var(--pv)" stroke-width="1.8"/>`;
+    g+=`<polyline points="${pts('hp')}" fill="none" stroke="var(--warm)" stroke-width="2"/>`;
+    for(let i=1;i<hist.length;i++){const p0=hist[i-1],p1=hist[i];g+=`<line x1="${x(p0.t).toFixed(1)}" y1="${y(p0.g).toFixed(1)}" x2="${x(p1.t).toFixed(1)}" y2="${y(p1.g).toFixed(1)}" stroke="${(p0.g+p1.g)/2<-0.05?'var(--exp)':'var(--grid)'}" stroke-width="2" stroke-linecap="round"/>`;}
+    const lp=hist[hist.length-1];
+    g+=`<circle cx="${x(lp.t)}" cy="${y(lp.g)}" r="3.2" fill="${lp.g<-0.05?'var(--exp)':'var(--grid)'}"/><circle cx="${x(lp.t)}" cy="${y(lp.hp)}" r="3.2" fill="var(--warm)"/>`;
+  }
+  g+=`<line x1="${L}" x2="${W-R}" y1="${y(0)}" y2="${y(0)}" stroke="#35556a"/>`;
+  $('ch1').innerHTML=g;
+  // fleet chart
+  const H2=190,Tp2=22,B2=26,ph2=H2-Tp2-B2, y2=v=>Tp2+ph2-v/10*ph2;
+  let h='';
+  for(let v=0;v<=10;v+=2.5)h+=`<line class="gridl" x1="${L}" x2="${W-R}" y1="${y2(v)}" y2="${y2(v)}"/><text class="axis" x="${L-6}" y="${y2(v)+3}" text-anchor="end">${v}</text>`;
+  h+=`<text class="axis" x="${L-6}" y="${Tp2-2}" text-anchor="end">MW</text>`;
+  if(S.mode==='rebound'){
+    $('ch2t').textContent='Rebound 비교 · 집합 2,000대';
+    $('ch2l').innerHTML='<span><i style="background:var(--crit)"></i>동시 복귀(비제어)</span><span><i style="background:var(--warm)"></i>순차 복귀</span><span><i style="background:var(--muted)"></i>Event 전 Peak</span>';
+    const xr=m=>L+m/70*pw, tm=clamp(S.t-20*60,0,70);
+    let pn='',ps='';for(let m=0;m<=70;m+=.5){pn+=xr(m).toFixed(1)+','+y2(fleetNaive(m)).toFixed(1)+' ';if(m<=tm)ps+=xr(m).toFixed(1)+','+y2(fleetStag(m)).toFixed(1)+' ';}
+    h+=`<line x1="${L}" x2="${W-R}" y1="${y2(6.4)}" y2="${y2(6.4)}" stroke="var(--muted)" stroke-dasharray="4 4"/><text class="axis" x="${W-R+4}" y="${y2(6.4)+3}">6.4</text>`;
+    h+=`<polyline points="${pn}" fill="none" stroke="var(--crit)" stroke-width="1.6" stroke-dasharray="5 4" opacity=".85"/>`;
+    h+=`<text class="axis" x="${xr(1.5)}" y="${y2(8.4)-6}" style="fill:var(--crit)">+${((8.4/6.4-1)*100).toFixed(0)}% 신규 피크</text>`;
+    if(ps)h+=`<polyline points="${ps}" fill="none" stroke="var(--warm)" stroke-width="2.4"/><circle cx="${xr(tm)}" cy="${y2(fleetStag(tm))}" r="3.5" fill="var(--warm)"/>`;
+    h+=`<line x1="${xr(tm)}" x2="${xr(tm)}" y1="${Tp2}" y2="${Tp2+ph2}" stroke="var(--accent)" stroke-width="1" opacity=".5"/>`;
+    for(let m=0;m<=70;m+=10)h+=`<text class="axis" x="${xr(m)}" y="${H2-8}" text-anchor="middle">T+${m}</text>`;
+  }else{
+    $('ch2t').textContent='집합자원 2,000가구 부하';
+    $('ch2l').innerHTML='<span><i style="background:var(--warm)"></i>HP 합계</span><span><i style="background:var(--muted)"></i>기준부하</span>';
+    const tEnd2=S.t,t02=tEnd2-120,x2=t=>L+(t-t02)/120*pw;
+    if(hist.length>1){
+      const pts=hist.map(p=>x2(p.t).toFixed(1)+','+y2(p.f).toFixed(1)).join(' ');
+      h+=`<polygon points="${x2(hist[0].t)},${y2(0)} ${pts} ${x2(hist[hist.length-1].t)},${y2(0)}" fill="rgba(255,154,60,.12)"/><polyline points="${pts}" fill="none" stroke="var(--warm)" stroke-width="2"/>`;
+      const lp=hist[hist.length-1];h+=`<circle cx="${x2(lp.t)}" cy="${y2(lp.f)}" r="3.5" fill="var(--warm)"/><text class="val" x="${x2(lp.t)-6}" y="${y2(lp.f)-8}" text-anchor="end">${lp.f.toFixed(2)} MW</text>`;
+    }
+    const bl=N*S.hpBase/1000;h+=`<line x1="${L}" x2="${W-R}" y1="${y2(bl)}" y2="${y2(bl)}" stroke="var(--muted)" stroke-dasharray="4 4"/><text class="axis" x="${W-R+4}" y="${y2(bl)+3}">${bl.toFixed(1)}</text>`;
+    for(let m=Math.ceil(t02/30)*30;m<=tEnd2;m+=30)h+=`<text class="axis" x="${x2(m)}" y="${H2-8}" text-anchor="middle">${fmtT(m)}</text>`;
+  }
+  $('ch2').innerHTML=h;
+}
+const grpEl=$('groups');
+for(let g=0;g<10;g++){const d=document.createElement('div');d.className='grp'+(g===MY_GROUP?' me':'');d.textContent='G'+(g+1);grpEl.appendChild(d);}
+function renderGroups(){
+  [...grpEl.children].forEach((d,g)=>{let c='run',txt='G'+(g+1);
+    if(S.mode==='peak'&&S.drOn&&!S.drEnded)c='dr';
+    else if(S.mode==='peak'&&S.drEnded)c='wait';
+    else if(S.mode==='rebound'){const tau=g===MY_GROUP?(S.recStart===null?-1:S.t-20*60-S.recStart):S.t-20*60-G_START(g);c=tau<0?'wait':tau<5?'ramp':'run';}
+    d.className='grp '+c+(g===MY_GROUP?' me':'');d.textContent=txt;
+    d.title=(g===MY_GROUP?'이 주택 · ':'')+'200대 · 복귀 T+'+G_START(g)+'분';});
+}
+
+/* ---------- equipment popup ---------- */
+const R=(a,n,v,u,rw='R')=>({a,n,v,u,rw});
+const onoff=b=>b?'1 (ON)':'0 (OFF)';
+const hpMode=()=>S.hp<.05?(S.drOn&&!S.drEnded?'0 Stop (DR)':'0 Standby'):'1 Heating';
+const EQ={
+ HP:()=>({tag:'히트펌프 · Modbus RTU · Slave 1 · 9600 8N1',title:'공기열 히트펌프',desc:'공기-물 인버터 히트펌프(<20 kW_th). VPP는 목표전력·운전창만 보내고, 최종 실행과 압축기 보호는 OEM 제어기가 담당합니다.',
+   kv:[['상태',S.hp>.05?(S.override?'최소운전':'운전'):'정지'],['소비전력',f2(S.hp)+' kW'],['열출력',f1(S.qhp)+' kWth'],['순간 COP',S.hp>.05?f2(S.cop):'-'],['공급수온',f1(S.tSup)+'℃'],['SG-Ready',S.mode==='plus'&&S.soc<.9?'4 강제증대':S.drOn&&!S.drEnded&&!S.override?'1 차단':'2 정상']],
+   regs:[R(30001,'운전상태',hpMode(),'enum'),R(30002,'소비전력',Math.round(S.hp*1000),'W'),R(30003,'압축기 주파수',Math.round(S.hp/HP_MAX*90),'Hz'),R(30004,'공급수온',Math.round(S.tSup*10),'×0.1℃'),R(30005,'환수온',Math.round(S.tBot*10),'×0.1℃'),R(30006,'외기온',Math.round(S.tOut*10),'×0.1℃'),R(30010,'Fault Code','0','-'),
+     R(40001,'Run Enable',onoff(S.hp>.05),'bool','RW'),R(40002,'난방 Setpoint',S.mode==='plus'?'550':'450','×0.1℃','RW'),R(40003,'Capacity Limit',Math.round(S.hp/HP_MAX*100),'%','RW'),R(40004,'SG-Ready State',S.mode==='plus'&&S.soc<.9?4:(S.drOn&&!S.drEnded&&!S.override?1:2),'1–4','RW')]}),
+ GW:()=>({tag:'게이트웨이 · Edge Linux + Docker',title:'스마트 게이트웨이',desc:'RS-485(Modbus RTU)로 HP·계량기·센서를 수집하고 MQTT 5.0/mTLS로 클라우드와 통신합니다. 통신 장애 시에도 난방·동파방지 로컬 제어를 유지하고 7~30일 데이터를 버퍼링합니다.',
+   kv:[['통신','LTE + Ethernet'],['인증','X.509 mTLS (TPM)'],['최근 ACK','1.8 s'],['RSSI','-71 dBm'],['버퍼','30일 Store&Forward'],['펌웨어','edge-agent 2.4.1']],
+   regs:[R('MQTT','vpp/jj0412/telemetry','5 s 주기','pub'),R('MQTT','vpp/jj0412/cmd',S.mode==='peak'&&S.drOn?'DR_SHED':S.mode==='plus'?'DR_PLUS':S.mode==='rebound'?'RECOVER G'+(MY_GROUP+1):'SCHEDULE','sub','RW'),R('MQTT','vpp/jj0412/ack','seq 1842','pub'),
+     R(30501,'Flex Down (Derived)',Math.round(S.flexDown*1000),'W'),R(30502,'Flex Up (Derived)',Math.round(S.flexUp*1000),'W'),R(30503,'지속가능시간',Math.round(S.sustain*60),'min'),R(30504,'Rebound Group',MY_GROUP+1,'-'),R(40501,'Local Override','0','bool','RW')]}),
+ TES:()=>({tag:'축열조 · 500 L 성층 축열조',title:'축열조 (Thermal Battery)',desc:'E = ρVc_p(T_avg − T_min). 500 L를 20 K 유효온도폭으로 쓰면 약 11.6 kWh_th를 저장합니다. SOC는 상·하부 온도로 추정합니다.',
+   kv:[['Thermal SOC',Math.round(S.soc*100)+'%'],['저장열',f1(S.soc*EMAX)+' kWh_th'],['상부 상부 온도계',f1(S.tTop)+'℃'],['하부 하부 온도계',f1(S.tBot)+'℃'],['충전',f1(S.v1>3?S.qhp:0)+' kW'],['방열',f1(S.qload)+' kW']],
+   regs:[R(30101,'상부 온도계 상부온도',Math.round(S.tTop*10),'×0.1℃'),R(30102,'하부 온도계 하부온도',Math.round(S.tBot*10),'×0.1℃'),R(30103,'Thermal SOC',Math.round(S.soc*1000),'×0.1%'),R(30104,'저장열량',Math.round(S.soc*EMAX*100),'×0.01 kWh'),R(40101,'SOC 상한',900,'×0.1%','RW'),R(40102,'SOC 하한(쾌적)',100,'×0.1%','RW')]}),
+ V1:()=>valve('충전밸브','HP 충전밸브 (HP → TES)','히트펌프 공급수를 축열조 상부로 보내는 전동 2-way 밸브. DR 중에는 닫히고, 복귀 시 25% 단계로 열립니다.',S.v1,40201),
+ V2:()=>valve('공급밸브','난방 공급밸브 (TES → 주택)','축열조 상부 온수를 바닥난방·급탕으로 보내는 전동 밸브. Peak Cut 동안 100% 개방.',S.v2,40203),
+ P1:()=>pump('순환펌프1','HP 1차 순환펌프','축열조 하부 환수를 히트펌프로 순환시키는 가변속 펌프.',S.p1,S.flowHP,40211),
+ P2:()=>pump('순환펌프2','난방 2차 순환펌프','축열조 → 주택 부하 공급 펌프. DR 중에도 운전.',S.p2&&S.flowLoad>0,S.flowLoad,40213),
+ PV:()=>({tag:'주택 태양광 · 3.0 kWp',title:'주택 태양광',desc:'계통연계형. PV → 주택부하/HP 우선소비 → 잉여 역송. 정전 시에는 독립운전설비 없이 VPP 전원으로 쓸 수 없습니다.',kv:[['발전',f2(S.pv)+' kW'],['자가소비',f2(Math.min(S.pv,S.hp+S.house))+' kW'],['역송',f2(Math.max(0,-S.grid))+' kW']],regs:[]}),
+ INV:()=>({tag:'인버터 · Modbus TCP · Unit 2',title:'PV 인버터',desc:'단상 계통연계 인버터.',kv:[['AC 출력',f2(S.pv)+' kW'],['상태',S.pv>.05?'발전':'대기']],regs:[R(30775,'AC Active Power',Math.round(S.pv*1000),'W'),R(30803,'Grid Freq',6000,'×0.01Hz'),R(40210,'Active Power Limit',100,'%','RW')]}),
+ JTG:()=>meter('한전 계량기','계통 양방향 전력량계','수전·역송을 분리 계량. 시장정산용 공식 계량기와 내부 진단용은 논리적으로 구분합니다.',S.grid,11),
+ JTP:()=>meter('PV 계량기','PV 발전 전력량계','PV 발전량 계량.',S.pv,12),
+ JTH:()=>meter('HP 계량기','HP 전용 전력량계','DR 성과(Baseline 대비 감축량) 산정의 근거가 되는 HP 서브미터.',S.hp,13),
+ GRID:()=>({tag:'KEPCO · 저압 1φ 220 V',title:'한전 계통',desc:'요금표·상계계약·계량방식은 가구별 Site Master에서 관리합니다. 주택용에 특정 TOU 요금을 일괄 가정하지 않습니다.',kv:[['현재',S.grid>=0?'수전':'역송'],['전력',f2(Math.abs(S.grid))+' kW']],regs:[]}),
+ DB:()=>({tag:'분전반',title:'분전반',desc:'MCCB/RCBO, SPD, CT가 실장된 주택용 에너지 게이트웨이 패널.',kv:[['HP 분기',f2(S.hp)+' kW'],['가전 분기',f2(S.house)+' kW']],regs:[]}),
+ VPP:()=>({tag:'Cloud · DERMS/VPP',title:'VPP 플랫폼',desc:'Market Adapter(KPX/OpenADR) · Optimizer · Device Adapter를 분리한 계층형 구조. 클라우드는 목표전력·운전창·경제신호만 보냅니다.',kv:[['집합자원','2,000가구'],['현재 이벤트',S.mode==='plus'?'Plus DR':S.drOn&&!S.drEnded?'DR 감축':S.mode==='rebound'?'복귀 제어':'없음'],['Flex↓ 합계',(S.flexDown*N*PART/1000).toFixed(2)+' MW'],['Flex↑ 합계',(S.flexUp*N*PART/1000).toFixed(2)+' MW']],regs:[]}),
+ HOUSE:()=>({tag:'LOAD · 바닥난방 + DHW',title:'주택 난방·급탕 부하',desc:'고객 Comfort Policy: 최소 실내 20℃, 최소 급탕 45℃, 즉시 Opt-out, 수동운전 우선.',kv:[['실내',f1(S.room)+'℃'],['열부하',f1(S.qload)+' kWth'],['공급수',f1(S.tTop)+'℃'],['유량',f1(S.flowLoad)+' L/min']],regs:[]}),
+};
+const inst=(tag,title,desc,val,addr,unit)=>()=>({tag:tag+' · GW AI',title,desc,kv:[['현재값',val()]],regs:[R(addr,title,Math.round(parseFloat(val())*10),unit)]});
+Object.assign(EQ,{
+ TT101:inst('상부 온도계','축열조 상부온도','PT1000 온도센서',()=>f1(S.tTop)+'℃',30101,'×0.1℃'),
+ TT102:inst('하부 온도계','축열조 하부온도','PT1000 온도센서',()=>f1(S.tBot)+'℃',30102,'×0.1℃'),
+ TT103:inst('실내 온도계','실내온도','온습도 센서',()=>f1(S.room)+'℃',30107,'×0.1℃'),
+ TT104:inst('외기 온도계','외기온도','COP·열부하 예측 입력',()=>f1(S.tOut)+'℃',30006,'×0.1℃'),
+ TT105:inst('공급 온도계','HP 공급수온','Q = ṁ·c_p·ΔT 산정용',()=>f1(S.tSup)+'℃',30004,'×0.1℃'),
+ TT106:inst('환수 온도계','HP 환수온','Q = ṁ·c_p·ΔT 산정용',()=>f1(S.tBot)+'℃',30005,'×0.1℃'),
+ FT101:inst('유량계','HP 루프 유량','전자식 유량계',()=>f1(S.v1>3?S.flowHP:0)+' L/min',30110,'×0.1 L/min'),
+});
+function valve(tag,title,desc,p,addr){const o=p>3;return {tag:tag+' · 전동밸브 · DO/AO',title,desc,kv:[['상태',o?'열림':'닫힘'],['개도',Math.round(p)+'%'],['제어','GW AO 0–10 V']],regs:[R(addr,'개도 지령',Math.round(p),'%','RW'),R(addr-10000,'개도 피드백',Math.round(p),'%'),R(addr-10000+1,'리밋 스위치',o?'OPEN':'CLOSE','DI')]};}
+function pump(tag,title,desc,on,flow,addr){return {tag:tag+' · 가변속 순환펌프',title,desc,kv:[['상태',on?'운전':'정지'],['유량',f1(flow)+' L/min'],['소비',on?Math.round(25+flow*2)+' W':'0 W']],regs:[R(addr,'Run 지령',onoff(on),'bool','RW'),R(addr-10000,'속도',on?Math.round(clamp(flow/35*100,30,100)):0,'%'),R(addr-10000+1,'소비전력',on?Math.round(25+flow*2):0,'W')]};}
+function meter(tag,title,desc,p,sid){return {tag:tag+' · Modbus RTU · Slave '+sid,title,desc,kv:[['유효전력',f2(p)+' kW'],['방향',p>=0?'수전':'역송']],regs:[R('30013–14','Active Power (float32)',f2(p*1000),'W'),R('30073–74','Import kWh',(1842.3+S.t/60*1.1).toFixed(1),'kWh'),R('30075–76','Export kWh',(612.7).toFixed(1),'kWh'),R('30071–72','Frequency','60.00','Hz')]};}
+
+let openEq=null;
+function fillModal(k){const d=EQ[k]();$('mtag').textContent=d.tag;$('mtitle').textContent=d.title;$('mdesc').textContent=d.desc;
+  let h='<div class="kv">'+d.kv.map(([a,b])=>`<div><span>${a}</span><b>${b}</b></div>`).join('')+'</div>';
+  if(d.regs.length)h+='<div class="regwrap"><table class="reg"><thead><tr><th>Addr / Topic</th><th>Name</th><th>Value</th><th>Unit</th><th>R/W</th></tr></thead><tbody>'+d.regs.map(r=>`<tr><td>${r.a}</td><td>${r.n}</td><td>${r.v}</td><td>${r.u}</td><td class="${r.rw==='RW'?'rw':''}">${r.rw}</td></tr>`).join('')+'</tbody></table></div><div class="mnote">레지스터 주소는 설명용 예시 맵입니다. 실제 주소·스케일은 OEM 매뉴얼 기준으로 Device Adapter에서 매핑합니다.</div>';
+  $('mbody').innerHTML=h;}
+let lastFocus=null;
+function openModal(k){openEq=k;lastFocus=document.activeElement;fillModal(k);try{var fr=window.frameElement.getBoundingClientRect();$('scrim').style.placeItems='start center';$('scrim').style.paddingTop=Math.max(16,Math.round(70-fr.top))+'px';}catch(e){}$('scrim').hidden=false;$('mclose').focus({preventScroll:true});}
+function closeModal(){openEq=null;$('scrim').hidden=true;if(lastFocus&&lastFocus.focus)lastFocus.focus();}
+document.querySelectorAll('.equip').forEach(el=>{el.addEventListener('click',()=>openModal(el.dataset.eq));
+  el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openModal(el.dataset.eq);}});});
+$('mclose').onclick=closeModal;$('scrim').addEventListener('click',e=>{if(e.target.id==='scrim')closeModal();});
+
+/* ---------- controls ---------- */
+document.querySelectorAll('.mode').forEach(b=>b.onclick=()=>setMode(b.dataset.mode));
+document.querySelectorAll('[data-speed]').forEach(b=>b.onclick=()=>{speed=+b.dataset.speed;document.querySelectorAll('[data-speed]').forEach(x=>x.classList.toggle('on',x===b));});
+$('pause').onclick=()=>{if(paused&&S.mode==='rebound'&&S.t>=NEXT.rebound[1]){setMode('normal');return;}paused=!paused;$('pause').textContent=paused?'▶ 재생':'❚❚ 정지';$('pause').classList.toggle('on',paused);};
+$('tour').onclick=()=>{tour=!tour;$('tour').classList.toggle('on',tour);if(tour){setMode('normal',true);}};
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&openEq){closeModal();return;}
+  if(openEq)return;
+  const m={'1':'normal','2':'plus','3':'peak','4':'rebound'}[e.key];if(m)setMode(m);
+  if(e.key===' '&&e.target===document.body){e.preventDefault();$('pause').click();}
+});
+const NEXT={normal:['plus',12*60],plus:['peak',15*60],peak:['rebound',20*60],rebound:[null,21*60+10]};
+let endWait=-1;
+function advance(){
+  const [nx,end]=NEXT[S.mode]; if(S.t<end)return false;
+  if(nx==='peak'){log('오후 3시 Plus DR 종료 · 오후 3시~5시 55분 유지운전 구간 생략');}
+  if(nx){log('시간 경과 → '+{plus:'모드 2 Plus DR',peak:'모드 3 Peak Cut',rebound:'모드 4 순차복귀'}[nx]+' 자동 전환',true);setMode(nx,true,true);return false;}
+  // 하루 시연 종료
+  if(tour){if(endWait<0)endWait=0;return true;}
+  paused=true;$('pause').textContent='▶ 재생';$('pause').classList.add('on');
+  log('하루 시연 종료 · 모드 1을 누르면 처음부터 다시 시작합니다',true);return true;
+}
+function tourLoop(dt){if(endWait<0)return;endWait+=dt;if(endWait>3){endWait=-1;setMode('normal',true);}}
+function simRate(){
+  if(S.mode==='normal')return 3;
+  if(S.mode==='plus'&&S.soc90)return 4;
+  return 1;
+}
+
+/* ---------- loop ---------- */
+let last=performance.now(),rAcc=0;
+function loop(now){
+  const dt=Math.min(.1,(now-last)/1000);last=now;
+  if(!paused&&endWait<0){let sim=dt*2*speed;while(sim>1e-9){const r=simRate(),d=Math.min(.5,sim*r);step(d);sim-=d/r;if(advance())break;}}
+  tourLoop(dt);
+  animate(paused?0:dt);
+  rAcc+=dt;if(rAcc>.12){rAcc=0;render();}
+  requestAnimationFrame(loop);
+}
+setMode('normal');
+for(let i=0;i<60;i++)step(.5); // warm-up so charts open with data
+render();requestAnimationFrame(loop);
+})();
+</script>

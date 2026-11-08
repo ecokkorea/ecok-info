@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="ko" translate="no">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="google" content="notranslate">
+<meta http-equiv="Content-Language" content="ko">
+<title>SHCS-Agri 열관리 모니터</title>
+<style id="font-paperlogy">/* 페이퍼로지(Paperlogy) 내장 → 오프라인에서도 동일 표시 */
+
+
+
+
+</style>
+<style>
+:root{
+  color-scheme: dark;
+  --bg:#111317; --panel:#181b21; --panel2:#1e222a; --line:#2b313b; --line2:#353c48;
+  --text:#e6e8ec; --muted:#8e97a6; --dim:#5d6573;
+  --grid:#22d3ee; --ess:#34d399; --pv:#facc15; --load:#fb923c; --alarm:#ef4444;
+  --lo:#3b5b7a; --mid:#1f7a74; --pk:#b7791f;
+  --sans:"Paperlogy","Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+  --mono:"Paperlogy","Malgun Gothic",sans-serif;  /* 숫자도 페이퍼로지 → 폰트 규칙: 모든 산출물 Paperlogy */
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg);color:var(--text)}
+body{font-family:var(--sans);font-size:14px;line-height:1.45;padding-inline:16px;padding-block:14px}
+.wrap{max-width:1440px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+/* header */
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;justify-content:space-between;border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:10px 14px}
+.brand{display:flex;flex-direction:column;gap:2px}
+.brand h1{margin:0;font-size:17px;font-weight:700;letter-spacing:.01em;text-wrap:balance}
+.brand small{color:var(--muted);font-size:12px}
+.status{display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--ess);display:inline-block;margin-right:6px;box-shadow:0 0 8px var(--ess)}
+.dot.alarm{background:var(--alarm);box-shadow:0 0 10px var(--alarm);animation:blink .6s steps(2) infinite}
+.clock{font-size:20px;color:var(--text);font-weight:600;letter-spacing:.04em}
+.band-pill{padding:3px 9px;border-radius:3px;font-family:var(--sans);font-weight:600;font-size:12px;color:#fff}
+/* modes */
+.modes{display:flex;gap:6px;flex-wrap:wrap}
+.mode{font:600 12.5px var(--sans);color:var(--muted);background:var(--panel2);border:1px solid var(--line2);border-radius:4px;padding:7px 11px;cursor:pointer;display:flex;gap:6px;align-items:center}
+.mode svg{width:14px;height:14px}
+.mode:hover{color:var(--text);border-color:var(--muted)}
+.mode[aria-pressed="true"]{color:#0b0d10;background:var(--ess);border-color:var(--ess)}
+.mode:focus-visible,.btn:focus-visible,input:focus-visible{outline:2px solid var(--grid);outline-offset:2px}
+/* layout */
+.main{display:grid;grid-template-columns:minmax(0,7fr) minmax(300px,3fr);gap:12px}
+.main>*{min-width:0}
+@media (max-width:980px){.main{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:600px){body{padding-inline:10px}.diagram svg,.daychart svg{min-width:560px}.phead{padding:8px 10px}}
+.panel{border:1px solid var(--line);background:var(--panel);border-radius:6px}
+.phead{display:flex;justify-content:space-between;align-items:center;padding:9px 14px;border-bottom:1px solid var(--line);font-size:12px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;gap:10px;flex-wrap:wrap}
+.phead b{color:var(--text);letter-spacing:.02em;text-transform:none;font-size:13px}
+.diagram{overflow-x:auto}
+.diagram svg{display:block;width:100%;min-width:640px;height:auto}
+/* timeline */
+.tl{padding:12px 14px 14px;display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line)}
+.tl-row{display:flex;gap:10px;align-items:center}
+.btn{font:600 12px var(--sans);color:var(--text);background:var(--panel2);border:1px solid var(--line2);border-radius:4px;padding:6px 10px;cursor:pointer;display:flex;gap:6px;align-items:center;white-space:nowrap}
+.btn svg{width:13px;height:13px}
+.bands{display:grid;grid-template-columns:repeat(24,1fr);gap:2px;height:8px}
+.bands span{border-radius:1px}
+input[type=range]{width:100%;accent-color:var(--grid);margin:0}
+.ticks{display:flex;justify-content:space-between;font:11px var(--mono);color:var(--dim)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+/* right panel */
+.side{display:flex;flex-direction:column;gap:12px}
+.metrics{padding:12px 14px;display:flex;flex-direction:column;gap:14px}
+.m-label{font-size:11.5px;color:var(--muted);letter-spacing:.05em;display:flex;justify-content:space-between}
+.m-val{font:700 26px var(--mono);font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.m-val small{font-size:13px;color:var(--muted);font-weight:400;margin-left:4px}
+.bar{height:8px;background:#0c0e11;border:1px solid var(--line);border-radius:2px;position:relative;overflow:hidden}
+.bar > div{height:100%;transition:width .4s,background .3s}
+.bar .mark{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--alarm)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.soc{display:flex;gap:12px;align-items:center}
+.batt{width:62px;height:30px;border:2px solid var(--muted);border-radius:4px;position:relative;padding:2px;flex:none}
+.batt:after{content:"";position:absolute;right:-6px;top:8px;width:4px;height:10px;background:var(--muted);border-radius:0 2px 2px 0}
+.batt > div{height:100%;background:var(--ess);border-radius:1px;transition:width .5s}
+.calc{padding:12px 14px 14px;display:flex;flex-direction:column;gap:10px}
+.calc .line{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px dashed var(--line);padding-bottom:6px;gap:10px}
+.calc .line span{color:var(--muted);font-size:12.5px}
+.calc .line b{font:600 15px var(--mono);font-variant-numeric:tabular-nums}
+.calc .total b{font-size:20px;color:var(--ess)}
+.warn{font-size:12px;color:#fca5a5;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.35);border-radius:4px;padding:6px 8px}
+.note{font-size:11.5px;color:var(--dim);line-height:1.5}
+.side>section.logp{flex:1 1 0;min-height:180px;display:flex;flex-direction:column}
+.event{padding:10px 14px;font:12px var(--mono);color:var(--muted);display:flex;flex-direction:column;gap:3px;flex:1 1 0;min-height:0;overflow:auto}
+@media (max-width:980px){.event{max-height:220px}}
+.event div b{color:var(--text);font-weight:600}
+/* ess rule */
+.rule{padding:12px 14px 14px;display:flex;flex-direction:column;gap:9px}
+.rstrip{display:grid;grid-template-columns:repeat(24,1fr);gap:2px;height:20px}
+.rstrip span{border-radius:2px;position:relative}
+.rstrip span.now{outline:2px solid #fff;outline-offset:1px;z-index:1}
+.rticks{position:relative;height:13px;font:10.5px var(--mono);color:var(--dim);margin-top:-5px}
+.rticks span{position:absolute;transform:translateX(-50%)}.rticks span:first-child{transform:none}.rticks span:last-child{transform:translateX(-100%)}
+.rlist{display:flex;flex-direction:column;gap:5px}
+.ritem{display:grid;grid-template-columns:10px 64px 1fr;gap:8px;align-items:center;font-size:12.5px;color:var(--muted);padding:5px 7px;border-radius:4px;border:1px solid transparent}
+.ritem i{width:10px;height:10px;border-radius:2px}
+.ritem b{font:600 12px var(--mono);color:var(--text)}
+.ritem.on{background:var(--panel2);border-color:var(--line2);color:var(--text)}
+/* day chart */
+.daychart{padding:10px 14px 0;overflow-x:auto}
+.daychart svg{display:block;width:100%;min-width:640px;height:auto;cursor:pointer}
+.dc-leg{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);padding:6px 14px 0}
+.dc-leg i{display:inline-block;width:14px;height:3px;margin-right:5px;vertical-align:3px}
+.axis{fill:var(--dim);font:10.5px var(--mono)}
+/* svg */
+.flow{fill:none;stroke-linecap:round;stroke-dasharray:10 12;animation:dash 1.1s linear infinite}
+.flow.rev{animation-direction:reverse}
+.flow.off{stroke:var(--line2)!important;animation:none;stroke-dasharray:4 8}
+.wire{fill:none;stroke:var(--line2);stroke-width:2}
+.node{fill:var(--panel2);stroke:var(--line2);stroke-width:1.5}
+.nlabel{fill:var(--text);font:600 13px var(--sans)}
+.nsub{fill:var(--muted);font:11px var(--sans)}
+.nval{font:700 15px var(--mono);font-variant-numeric:tabular-nums}
+.alarmflash{animation:flash .7s steps(2) infinite}
+@keyframes dash{to{stroke-dashoffset:-44}}
+@keyframes flash{50%{stroke:var(--alarm);fill:rgba(239,68,68,.18)}}
+@keyframes blink{50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.flow{animation:none}.alarmflash,.dot.alarm{animation:none}}
+</style>
+<style>
+/* 스마트팜 열관리 모니터 전용 추가 스타일 (ESS 모니터 템플릿 디자인 계승) */
+:root{--nut:#34d399;--cold:#60a5fa;--hot:#ff6b6b;--heatin:#fb923c;--dc:#facc15;--vpp:#a78bfa;--ok:#34d399;--warnc:#f59e0b;--cool:#22d3ee;--heatm:#fb923c}
+.left{display:flex;flex-direction:column;gap:12px;min-width:0}
+.left>.panel:first-child{flex:1 1 auto;display:flex;flex-direction:column}
+.left .diagram svg{min-width:720px}
+.left .diagram{display:flex;flex-direction:column;justify-content:center}
+.status4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;padding:12px 14px}
+@media (max-width:700px){.status4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.big{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.big .m-val{font-size:30px}
+.stack{display:flex;height:26px;border-radius:3px;overflow:hidden;border:1px solid var(--line)}
+.stack span{display:flex;align-items:center;justify-content:center;font:600 11.5px var(--mono);color:#0b0d10;white-space:nowrap;overflow:hidden;transition:flex-grow .4s}
+.skey{display:flex;gap:12px;flex-wrap:wrap;font-size:11.5px;color:var(--muted)}
+.skey i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.vgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.vt{background:var(--panel2);border:1px solid var(--line2);border-radius:4px;padding:7px 4px;text-align:center;display:flex;flex-direction:column;gap:2px}
+.vt small{font-size:11px;color:var(--muted)}
+.vt b{font:700 17px var(--mono);color:var(--text)}
+.vt em{font-style:normal;font:11px var(--mono);color:var(--dim)}
+.sgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:12px 14px}
+.sgrid .vt{text-align:left;padding:6px 8px}
+.sgrid .vt b{font-size:15px}
+.full .daychart svg{min-width:760px}
+.ritem{grid-template-columns:10px 112px 1fr}
+.rticks span{white-space:nowrap}
+.rstrip span{display:flex;align-items:center;justify-content:center;font:600 10.5px var(--mono);color:rgba(255,255,255,.9);overflow:hidden}
+@media (max-width:600px){.rstrip span{font-size:8.5px}.sgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.modes{align-items:center}
+.hbar{flex:1 1 300px;min-width:240px;margin-left:8px;display:flex;flex-direction:column;gap:4px}
+.hbar .rstrip{height:22px;cursor:pointer}
+.hbar .rstrip span:hover{filter:brightness(1.3)}
+.hbar .hleg{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--muted)}
+.hbar .hleg i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.sig{fill:none;stroke:var(--vpp);stroke-width:2;stroke-dasharray:3 6;stroke-linecap:round;animation:dash 1.4s linear infinite}
+.sig.off{stroke:var(--line2);animation:none;opacity:.6}
+.dose{fill:none;stroke:#7dd3a8;stroke-width:1.6;stroke-dasharray:2 5;opacity:.7}
+.tag circle{fill:#0c0e11;stroke:var(--muted);stroke-width:1.3}
+.tag text{fill:var(--muted);font:600 9.5px var(--mono);text-anchor:middle}
+.pump circle{fill:var(--panel2);stroke:var(--line2);stroke-width:1.5}
+.cmp{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;color:var(--muted);border-bottom:1px dashed var(--line);padding-bottom:6px}
+.cmp b{font:600 14px var(--mono);color:var(--text)}
+.ifgrp{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding-left:12px;margin-left:4px;border-left:1px solid var(--line2)}
+.iflab{font-size:11.5px;color:var(--muted);letter-spacing:.04em}
+.mode.ifb b{font-family:var(--mono);margin-right:2px}
+.mode.ifb[aria-pressed="true"]{background:var(--cool);border-color:var(--cool);color:#0b0d10}
+@media (max-width:600px){.ifgrp{border-left:none;padding-left:0;margin-left:0}}
+.seg .btn[aria-pressed="true"]{background:var(--cool);color:#0b0d10;border-color:var(--cool)}
+.cmp b s{color:var(--dim);font-weight:400;text-decoration:none;margin-right:6px}
+</style>
+<style>@font-face{font-family:'Paperlogy';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-4Regular.woff2') format('woff2');font-weight:400}@font-face{font-family:'Paperlogy';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-6SemiBold.woff2') format('woff2');font-weight:600}@font-face{font-family:'Paperlogy';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-7Bold.woff2') format('woff2');font-weight:700}@font-face{font-family:'Paperlogy';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-8ExtraBold.woff2') format('woff2');font-weight:800}</style></head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <h1 id="hTitle">스마트팜 열관리 모니터</h1>
+      <small id="hSub"></small>
+    </div>
+    <div class="status">
+      <span id="stateTxt"><span class="dot" id="stDot"></span>정상 운전</span>
+      <span class="band-pill" id="bandPill">-</span>
+      <span id="scnTxt">폭염일</span>
+      <span style="display:flex;flex-direction:column;align-items:flex-end;line-height:1.1"><span style="font-size:10.5px;color:var(--dim)">시뮬레이션 시각</span><span class="clock" id="clock">오후 12:00</span></span>
+    </div>
+  </header>
+
+  <div class="modes" role="group" aria-label="대표일" id="modes">
+    <div class="hbar" aria-label="24시간 운전 상태">
+      <div class="rstrip" id="hstrip"></div>
+      <div class="rticks" id="hticks"></div>
+      <div class="hleg" id="hleg"></div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="left">
+      <section class="panel" aria-label="계통 모식도">
+        <div class="phead"><b id="pidTitle">양액·열관리 계통도 · 열 흐름</b><span id="pidLeg"></span></div>
+        <div class="diagram" style="flex:1 1 auto">
+          <svg id="pid" viewBox="0 0 900 560" role="img" aria-label="스마트팜 양액 회로와 열관리 회로 흐름">
+            <defs>
+              <pattern id="gridbg" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" fill="none" stroke="#1c2027" stroke-width="1"/></pattern>
+              <pattern id="tecp" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="#2a2f38"/><path d="M0 3H6" stroke="#8a94a3" stroke-width="1"/></pattern>
+              <linearGradient id="gCold" x1="0" x2="1"><stop offset="0" stop-color="#1d4ed8"/><stop offset="1" stop-color="#60a5fa"/></linearGradient>
+              <linearGradient id="gHot" x1="0" x2="1"><stop offset="0" stop-color="#f87171"/><stop offset="1" stop-color="#b91c1c"/></linearGradient>
+            </defs>
+            <rect id="dbg" x="0" y="0" width="900" height="560" fill="url(#gridbg)"/>
+            <g id="dg">
+              <!-- 온실 내부 영역 : 열 유입원 -->
+              <rect x="16" y="16" width="306" height="518" rx="8" fill="rgba(251,146,60,.035)" stroke="var(--heatin)" stroke-width="1.2" stroke-dasharray="6 5" opacity=".75"/>
+              <text x="26" y="550" class="nsub" id="zoneTxt" style="fill:var(--heatin)">온실 내부 → 공기·일사 열이 베드·배관·탱크 표면으로 유입</text>
+              <!-- 배관 바탕선 -->
+              <path class="wire" d="M70 167 V380"/>
+              <path class="wire" data-if="base B1 B2" d="M250 470 H300 V245 H220 V167"/>
+              <path class="wire vs" data-if="A" d="M250 470 H300 V315 H340 M340 245 H220 V167"/>
+              <!-- 양액 흐름 -->
+              <path id="fNutR" class="flow" d="M70 167 V380" stroke="var(--nut)"/>
+              <path id="fNutS" class="flow" data-if="base B1 B2" d="M250 470 H300 V245 H220 V167" stroke="var(--nut)"/>
+              <path id="fNutS2" class="flow vs" data-if="A" d="M250 470 H300 V315 H340 M340 245 H220 V167" stroke="var(--nut)"/>
+              <path class="wire" d="M200 470 H220"/>
+              <path id="fNutT" class="flow" d="M200 470 H220" stroke="var(--nut)"/>
+              <!-- 열 유입 -->
+              <path id="fHeatBed" class="flow" d="M330 88 H304" stroke="var(--heatin)"/>
+              <path id="fHeatPipe" class="flow" d="M322 405 H307" stroke="var(--heatin)"/>
+              <path id="fHeatTank" class="flow" d="M238 432 H204" stroke="var(--heatin)"/>
+              <text x="208" y="424" class="nsub" id="hTank" style="fill:var(--heatin);font-size:10px">탱크</text>
+              <text x="294" y="400" class="nsub" id="hPipe" style="fill:var(--heatin);font-size:10px" text-anchor="end">배관</text>
+              <text x="316" y="108" class="nsub" id="hBed" style="fill:var(--heatin);font-size:9.5px" text-anchor="middle">베드</text>
+
+              <!-- 재배 베드 -->
+              <g>
+                <rect class="node" id="bedBox" x="30" y="30" width="270" height="137" rx="5"/>
+                <text x="46" y="54" class="nlabel">재배 베드 · 작물 / 근권</text>
+                <text x="46" y="72" class="nsub" id="bedSub">-</text>
+                <text x="46" y="118" class="nval" id="vRoot" fill="var(--nut)">- ℃</text>
+                <text x="46" y="138" class="nsub" id="vRootSub">근권 (양액) 온도</text>
+                <text x="46" y="155" class="nsub" id="vFlowTxt" style="fill:var(--dim)">양액 공급</text>
+                <g id="crops"></g>
+              </g>
+              <!-- 온실 환경 -->
+              <g>
+                <rect class="node" id="envBox" x="330" y="30" width="250" height="112" rx="5"/>
+                <g transform="translate(346,44)" stroke="var(--pv)" stroke-width="1.8" fill="none"><circle cx="10" cy="10" r="5"/><path d="M10 0v2M10 18v2M0 10h2M18 10h2M3 3l1.5 1.5M15.5 15.5 17 17M3 17l1.5-1.5M15.5 4.5 17 3"/></g>
+                <text x="374" y="58" class="nlabel">온실 환경</text>
+                <text x="346" y="90" class="nval" id="vGh" fill="var(--heatin)">- ℃</text>
+                <text x="346" y="110" class="nsub" id="vEnvSub">외기 · 일사</text>
+                <text x="346" y="128" class="nsub" id="vQin" style="fill:var(--heatin)">양액 열유입 -</text>
+              </g>
+              <!-- 양액탱크 -->
+              <g>
+                <rect class="node" id="tankBox" x="30" y="380" width="170" height="140" rx="5"/>
+                <rect x="44" y="398" width="54" height="72" rx="6" fill="none" stroke="#7dd3a8" stroke-width="1.8"/>
+                <rect id="tankLiq" x="47" y="418" width="48" height="49" rx="3" fill="var(--nut)" opacity=".55"/>
+                <text x="108" y="414" class="nlabel">양액탱크</text>
+                <text x="108" y="432" class="nsub" id="tankSub">- m³ · 기존</text>
+                <text x="108" y="462" class="nval" id="vTank" fill="var(--nut)">- ℃</text>
+                <text x="44" y="496" class="nsub" id="vEc">EC → · pH -</text>
+                <text x="44" y="512" class="nsub" id="vDo" style="fill:var(--dim)">DO 포화 -</text>
+              </g>
+              <!-- P-1 -->
+              <g class="pump"><circle cx="235" cy="470" r="15"/><path d="M229 462 L243 470 L229 478 Z" fill="var(--nut)"/></g>
+              <text x="235" y="502" class="nsub" text-anchor="middle">P-1 양액펌프</text>
+              <text x="235" y="516" class="nsub" text-anchor="middle" style="fill:var(--dim)">기존 설비</text>
+
+              <!-- ===== 기존 시스템 전용 ===== -->
+              <g class="vb">
+                <rect class="node" id="rootBox" x="620" y="30" width="250" height="137" rx="5"/>
+                <text x="636" y="54" class="nlabel">근권 상태 진단</text>
+                <text x="636" y="72" class="nsub" id="okTxt">적정 -</text>
+                <text x="636" y="106" class="nval" id="bState" fill="var(--ok)" style="font-size:20px">적정</text>
+                <text x="636" y="128" class="nsub" id="bDo">용존산소 포화 -</text>
+                <text x="636" y="148" class="nsub" id="bHint" style="fill:var(--dim)"></text>
+
+                <rect class="node" x="620" y="200" width="250" height="140" rx="5"/>
+                <text x="636" y="224" class="nlabel">양액 열유입 구성</text>
+                <text x="636" y="242" class="nsub">Q = UA(T온실 − T양액) + 일사 + 펌프</text>
+                <text x="636" y="272" class="nsub" id="qAir">온실 공기 → 양액 -</text>
+                <text x="636" y="292" class="nsub" id="qSun">일사 (베드·배관) -</text>
+                <text x="636" y="312" class="nsub" id="qPump">펌프 발열 -</text>
+                <text x="636" y="332" class="nsub" id="qTot" style="fill:var(--heatin)">합계 -</text>
+
+                <rect class="node" x="330" y="230" width="230" height="110" rx="5"/>
+                <g transform="translate(346,246)" stroke="#7dd3a8" stroke-width="1.7" fill="none"><rect x="0" y="0" width="22" height="26" rx="3"/><path d="M5 8h12M5 14h12M5 20h8"/></g>
+                <text x="378" y="258" class="nlabel">양액기 (EC·pH 조정)</text>
+                <text x="378" y="276" class="nsub">A·B액 · 산 주입 · 기존 설비</text>
+                <text x="346" y="310" class="nval" id="vDose" fill="#7dd3a8" style="font-size:14px">EC → · pH -</text>
+                <text x="346" y="330" class="nsub" style="fill:var(--dim)">온도 조절 기능 없음</text>
+                <path class="dose" d="M330 322 H175 V380"/>
+
+                <rect class="node" id="emsBox" x="620" y="380" width="250" height="140" rx="5" style="stroke:var(--vpp)"/>
+                <g transform="translate(636,396)" stroke="var(--vpp)" stroke-width="1.8" fill="none"><rect x="0" y="2" width="26" height="20" rx="2"/><path d="M4 26h18M13 22v4M5 8h6M5 13h10"/></g>
+                <text x="672" y="410" class="nlabel">기존 환경제어기</text>
+                <text x="672" y="428" class="nsub">EMS / PLC · RS-485</text>
+                <text x="636" y="462" class="nval" id="emsCmd" fill="var(--vpp)" style="font-size:14px">양액 순환 운전</text>
+                <text x="636" y="482" class="nsub" id="emsSub">급액 스케줄 · EC/pH 제어</text>
+                <text x="636" y="500" class="nsub" id="emsSub2" style="fill:var(--dim)">양액 냉각 수단 없음</text>
+                <path class="sig" d="M620 420 H590 V285 H560"/>
+                <path class="sig" d="M620 440 H235 V455"/>
+              </g>
+
+              <!-- ===== SHCS-Agri 전용 ===== -->
+              <g class="vs">
+                <!-- 열 수지 -->
+                <rect class="node" x="620" y="30" width="250" height="100" rx="5"/>
+                <text x="636" y="54" class="nlabel">열 수지 · Qh = Qc + P</text>
+                <text x="636" y="80" class="nsub" id="bQc">흡수열 Qc -</text>
+                <text x="636" y="98" class="nsub" id="bP">TEC 전력 P -</text>
+                <text x="636" y="116" class="nsub" id="bQh" style="fill:var(--hot)">방열 Qh -</text>
+                <!-- A안 : 판형 열교환기 -->
+                <g data-if="A">
+                <rect class="node" id="hxBox" x="340" y="220" width="70" height="120" rx="4"/>
+                <g stroke="#9aa4b2" stroke-width="1.4"><path d="M352 232V328M360 232V328M368 232V328M376 232V328M384 232V328M392 232V328M400 232V328"/></g>
+                <text x="375" y="358" class="nsub" text-anchor="middle">판형 열교환기</text>
+                <text x="375" y="374" class="nsub" text-anchor="middle" style="fill:var(--dim)">양액 ↔ 저온수</text>
+                <path class="wire" d="M478 250 H410 M410 315 H478"/>
+                <path id="fColdA" class="flow" d="M478 250 H410 M410 315 H478" stroke="var(--cold)"/>
+                </g>
+                <!-- B-1 : 탱크 내 코일 -->
+                <g data-if="B1">
+                <path class="wire" d="M478 250 H415 V352 H60 V412 M478 315 H425 V362 H85 V412"/>
+                <path id="fColdB1" class="flow" d="M478 250 H415 V352 H60 V412 M85 412 V362 H425 V315 H478" stroke="var(--cold)"/>
+                <path d="M60 412 V424 H88 V432 H56 V440 H88 V448 H56 V456 H85 V412" fill="none" stroke="#bfdbfe" stroke-width="2" stroke-linejoin="round"/>
+                <text x="336" y="392" class="nsub" style="fill:var(--cold)">탱크 내 코일 (침지형)</text>
+                </g>
+                <!-- B-2 : 배관 열교환기 -->
+                <g data-if="B2">
+                <path class="wire" d="M478 250 H312 M312 315 H478"/>
+                <path id="fColdB2" class="flow" d="M478 250 H312 M312 315 H478" stroke="var(--cold)"/>
+                <rect x="287" y="238" width="26" height="92" rx="7" fill="rgba(96,165,250,.18)" stroke="var(--cold)" stroke-width="1.6"/>
+                <path d="M292 244 V324 M308 244 V324" stroke="#bfdbfe" stroke-width="1" opacity=".6"/>
+                <text x="322" y="280" class="nsub">배관 열교환기</text>
+                <text x="322" y="296" class="nsub" style="fill:var(--dim)">이중관 · 인라인</text>
+                </g>
+                <!-- 저온 순환수 -->
+                <g class="pump"><circle cx="444" cy="315" r="10"/><path d="M439 309 L450 315 L439 321 Z" fill="var(--cold)"/></g>
+                <text x="454" y="243" class="nsub" text-anchor="middle" id="tCs" style="fill:var(--cold);font-size:10.5px">-</text>
+                <text x="444" y="340" class="nsub" text-anchor="middle" id="tCr" style="fill:var(--cold);font-size:10.5px">-</text>
+                <text x="444" y="296" class="nsub" text-anchor="middle" style="font-size:9.5px;fill:var(--dim)">P-3</text>
+                <!-- TEC 모듈 -->
+                <rect class="node" id="tecBox" x="470" y="200" width="200" height="150" rx="5"/>
+                <text x="570" y="222" class="nlabel" text-anchor="middle">성하 열전모듈 (TEC)</text>
+                <rect id="tecC" x="478" y="232" width="80" height="100" rx="3" fill="url(#gCold)" opacity=".35"/>
+                <rect x="558" y="232" width="24" height="100" fill="url(#tecp)"/>
+                <rect id="tecH" x="582" y="232" width="80" height="100" rx="3" fill="url(#gHot)" opacity=".35"/>
+                <text x="518" y="256" class="nsub" text-anchor="middle" style="fill:#dbeafe">Cold Side</text>
+                <text x="622" y="256" class="nsub" text-anchor="middle" style="fill:#fee2e2">Hot Side</text>
+                <text x="518" y="292" class="nval" text-anchor="middle" id="tQc" fill="#e0f2fe" style="font-size:14px">0 kW</text>
+                <text x="622" y="292" class="nval" text-anchor="middle" id="tQh" fill="#fee2e2" style="font-size:14px">0 kW</text>
+                <text x="518" y="312" class="nsub" text-anchor="middle" style="fill:#dbeafe;font-size:10px">흡수 Qc</text>
+                <text x="622" y="312" class="nsub" text-anchor="middle" style="fill:#fee2e2;font-size:10px">방출 Qh</text>
+                <text x="570" y="345" class="nsub" text-anchor="middle" id="tecSub" style="font-size:10.5px">대기</text>
+                <!-- 방열수 -->
+                <path class="wire" d="M662 250 H730 M730 315 H662"/>
+                <path id="fHot" class="flow" d="M662 250 H730 M730 315 H662" stroke="var(--hot)"/>
+                <g class="pump"><circle cx="700" cy="315" r="10"/><path d="M695 309 L706 315 L695 321 Z" fill="var(--hot)"/></g>
+                <text x="710" y="243" class="nsub" text-anchor="middle" id="tHs" style="fill:var(--hot);font-size:10.5px">-</text>
+                <text x="700" y="340" class="nsub" text-anchor="middle" id="tHr" style="fill:var(--hot);font-size:10.5px">-</text>
+                <text x="700" y="296" class="nsub" text-anchor="middle" style="font-size:9.5px;fill:var(--dim)">P-2</text>
+                <!-- 라디에이터 -->
+                <rect class="node" id="radBox" x="730" y="200" width="140" height="150" rx="5"/>
+                <text x="800" y="222" class="nlabel" text-anchor="middle">라디에이터 + 팬</text>
+                <g id="fans" stroke="#9aa4b2" stroke-width="1.5" fill="none"><circle cx="770" cy="266" r="21"/><circle cx="830" cy="266" r="21"/></g>
+                <g id="blade1" fill="#8a94a3"></g><g id="blade2" fill="#8a94a3"></g><circle cx="770" cy="266" r="4" fill="#cbd5e1"/><circle cx="830" cy="266" r="4" fill="#cbd5e1"/>
+                <text x="800" y="318" class="nval" text-anchor="middle" id="rQh" fill="var(--hot)" style="font-size:14px">0 kW</text>
+                <text x="800" y="338" class="nsub" text-anchor="middle" id="rSub">외기로 방출</text>
+                <path id="fOut" class="flow" d="M770 196 V156 M800 196 V150 M830 196 V156" stroke="var(--hot)"/>
+                <text x="800" y="144" class="nsub" text-anchor="middle" style="fill:var(--hot)">열 방출 (외기)</text>
+                <!-- DC 전원 -->
+                <path class="wire" d="M430 400 V375 H570 V350"/>
+                <path id="fDC" class="flow" d="M430 400 V375 H570 V350" stroke="var(--dc)"/>
+                <rect class="node" id="psuBox" x="330" y="400" width="200" height="120" rx="5"/>
+                <g transform="translate(346,414)" stroke="var(--dc)" stroke-width="1.7" fill="none"><rect x="0" y="0" width="26" height="18" rx="2"/><path d="M5 6h4M12 6h4M5 12h16"/></g>
+                <text x="380" y="428" class="nlabel">DC 전원공급장치</text>
+                <text x="346" y="448" class="nsub" id="psuSub">열전모듈 구동</text>
+                <text x="346" y="480" class="nval" id="vPsu" fill="var(--dc)">0 kW</text>
+                <text x="346" y="502" class="nsub" id="vPsuAc">AC 입력 0 kW</text>
+                <!-- 스마트 제어기 -->
+                <rect class="node" id="ctlBox" x="560" y="400" width="310" height="120" rx="5" style="stroke:var(--vpp)"/>
+                <g transform="translate(576,414)" stroke="var(--vpp)" stroke-width="1.8" fill="none"><rect x="0" y="2" width="26" height="20" rx="2"/><path d="M4 26h18M13 22v4M5 8h6M5 13h10"/></g>
+                <text x="612" y="428" class="nlabel">스마트 제어기</text>
+                <text x="612" y="446" class="nsub">온도 · 유량 · 모드 제어 (0.1℃)</text>
+                <text x="576" y="478" class="nval" id="cCmd" fill="var(--vpp)" style="font-size:14px">대기</text>
+                <text x="576" y="497" class="nsub" id="cSub">-</text>
+                <text x="576" y="513" class="nsub" style="fill:var(--dim)">RS-485 Modbus RTU ↔ 기존 EMS/PLC</text>
+                <path id="sTec" class="sig" d="M640 400 V350"/>
+                <path id="sRad" class="sig" d="M800 400 V350"/>
+              </g>
+              <g id="tags"></g>
+            </g>
+          </svg>
+        </div>
+        <div class="tl">
+          <div class="tl-row">
+            <button class="btn" id="play" aria-pressed="false"><svg viewBox="0 0 24 24" fill="currentColor" id="playIco"><path d="M7 4v16l13-8z"/></svg><span id="playTxt">24시간 재생</span></button>
+            <label for="hour" class="note" style="white-space:nowrap">시각</label>
+            <input type="range" id="hour" min="0" max="23" step="1" value="14" aria-label="시뮬레이션 시각">
+          </div>
+          <div class="bands" id="bands" aria-hidden="true"></div>
+          <div class="ticks"><span>자정</span><span>오전 3</span><span>오전 6</span><span>오전 9</span><span>정오</span><span>오후 3</span><span>오후 6</span><span>오후 9</span><span>오후 11</span></div>
+          <div class="legend" id="tlLeg"></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="phead"><b>실시간 상태</b><span id="modeTxt">자동 운전</span></div>
+        <div class="status4">
+          <div>
+            <div class="m-label"><span>양액 온도</span><span id="solPct">-</span></div>
+            <div class="m-val" id="mSol">0<small>℃</small></div>
+            <div class="bar" style="margin-top:6px"><div id="solBar" style="width:0;background:var(--nut)"></div><span class="mark" id="solMark"></span></div>
+          </div>
+          <div><div class="m-label"><span id="m2L">-</span></div><div class="m-val" id="m2" style="color:var(--cold)">0</div><div class="note" id="m2n">-</div></div>
+          <div><div class="m-label"><span id="m3L">-</span></div><div class="m-val" id="m3" style="color:var(--dc)">0</div><div class="note" id="m3n">-</div></div>
+          <div><div class="m-label"><span id="m4L">-</span></div><div class="m-val" id="m4" style="color:var(--text)">0</div><div class="note" id="m4n">-</div></div>
+        </div>
+      </section>
+      <section class="panel">
+        <div class="phead"><b id="ruleTitle">운전기준</b><span id="ruleSub"></span></div>
+        <div class="rule">
+          <div class="rstrip" id="rstrip" aria-hidden="true"></div>
+          <div class="rticks" id="rticks"></div>
+          <div class="rlist" id="rlist"></div>
+          <div class="note" id="opNote"></div>
+        </div>
+      </section>
+    </div>
+
+    <aside class="side">
+      <section class="panel">
+        <div class="phead"><b id="sTitle">-</b><span id="sSub">대표일 시뮬레이션</span></div>
+        <div class="calc">
+          <div class="big">
+            <div><div class="m-label"><span id="k1L">-</span></div><div class="m-val" id="k1">0</div></div>
+            <div style="text-align:right"><div class="m-label"><span id="k2L">-</span></div><div class="m-val" id="k2" style="font-size:22px">0</div></div>
+          </div>
+          <div class="stack" id="stk"></div>
+          <div class="skey" id="stkKey"></div>
+          <div class="vgrid">
+            <div class="vt"><small id="g1L">-</small><b id="g1">-</b><em id="g1u">-</em></div>
+            <div class="vt"><small id="g2L">-</small><b id="g2">-</b><em id="g2u">-</em></div>
+            <div class="vt"><small id="g3L">-</small><b id="g3">-</b><em id="g3u">-</em></div>
+          </div>
+          <div id="lines" style="display:flex;flex-direction:column;gap:6px"></div>
+          <div id="sliders" style="display:flex;flex-direction:column;gap:10px"></div>
+          <div class="warn" id="warn" hidden></div>
+          <div class="note" id="econNote"></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="phead"><b>센서 현황</b><span id="senSub">현재 시각</span></div>
+        <div class="sgrid" id="sgrid"></div>
+      </section>
+
+      <section class="panel logp">
+        <div class="phead"><b>이벤트 로그</b><span>최근 순</span></div>
+        <div class="event" id="log" aria-live="polite"></div>
+      </section>
+    </aside>
+  </div>
+
+  <section class="panel full">
+    <div class="phead"><b id="dayTitle">24시간 온도 · 열량</b><span>클릭하면 해당 시각으로 이동</span></div>
+    <div class="dc-leg" id="dcLeg"></div>
+    <div class="daychart" style="padding-bottom:10px"><svg id="day" viewBox="0 0 1200 300" role="img" aria-label="24시간 온도와 열량 그래프"></svg></div>
+  </section>
+</div>
+<script>
+(function(){
+  /* =====================================================================
+     스마트팜 열관리 모니터 → 프로젝트마다 이 CONFIG 블록만 바꾸세요.
+     variant: 'base' = 기존 양액 시스템 / 'shcs' = SHCS-Agri 열전 열관리 적용
+     ===================================================================== */
+  const CONFIG={
+    variant:'shcs',
+    site:{name:'스마트팜 실증 온실 (예시)', crop:'엽채류 (상추)', beds:'다단 재배 베드 3단 × 6열'},
+    sol:{tankM3:3, loopM3:0.4, flowLpm:80, ec:1.8, ph:6.0, ok:[18,22], hot:25},   // 적정 근권(양액) 온도·고온 경보
+    heat:{UA:0.30, solarKw:1.5, pumpKw:0.4},   // 양액계 열관류(kW/K) · 일사 1,000W/m² 때 흡열(kW) · P-1 전력(발열 50%)
+    tec:{modules:20, qcPer:0.40, setpoint:20, zt:0.9, eta:0.70, dTj:8, hotApp:5, heatMode:true,
+         iface:'A',   // 기본 Thermal Interface
+         ifaces:{A: {name:'A안 · 판형 열교환기', short:'A 판형', coldApp:4, note:'양액·냉각수 완전 분리(표준). 기존 공급배관에 판형 열교환기를 끼워 넣음. 전열 효율이 높아 저온수를 목표−4℃ 정도만 낮추면 됨.'},
+                 B1:{name:'B안 · 탱크 내 코일', short:'B 탱크코일', coldApp:8, note:'기존 양액탱크에 코일을 넣는 방식. 배관 공사 최소. 전열면적·교반이 작아 저온수를 목표−8℃ 수준까지 낮춰야 해 COP가 떨어짐. 코일 결로·세척 관리 필요.'},
+                 B2:{name:'B안 · 배관 열교환기', short:'B 배관', coldApp:6, note:'공급배관에 이중관(관형) 열교환기를 직렬 설치. 설치 간단, 판형보다 전열면적 작아 저온수 목표−6℃ 수준.'}},
+         psuEff:0.94, pumpCold:0.25, pumpHot:0.25, fanKw:0.35, flowCold:60, flowHot:60},
+    // qcPer: 모듈당 정격 흡열(kW) · zt/eta: 열전 성능지수·실효율 · dTj: 열교환 접합부 온도차 · coldApp/hotApp: 저온수(목표−)·방열수(외기+) 근접온도
+    price:{kwh:60},   // 전력량요금 가정 단가(원/kWh) → 농사용 요금표 확인 후 수정
+    days:[{key:'hot',  name:'여름 폭염일', tmin:26,tmax:35,irr:900,rise:5.6,set:19.7,gh:3.5},
+          {key:'sum',  name:'여름 평균',   tmin:23,tmax:31,irr:750,rise:5.8,set:19.5,gh:3.5},
+          {key:'mid',  name:'봄 · 가을',   tmin:11,tmax:23,irr:650,rise:6.4,set:18.6,gh:6,ghMin:15}],
+    opNote:'메인 EMS에서 목표 양액온도만 내려주면 스마트 제어기가 열전모듈 출력·펌프·팬을 부하에 맞춰 조절합니다. 목표보다 1℃ 이상 낮아지면 극성을 바꿔 난방합니다.',
+    econNote:'열부하·열전 성능·요금은 가정값(CONFIG)입니다. 실제 적용 전에는 대상 농가 열부하 산정서와 제조사 COP 곡선, 농사용 요금표로 교체해야 합니다. 금액 VAT 별도.'
+  };
+  /* ===================================================================== */
+
+  const C=CONFIG, S=C.sol, H=C.heat, T=C.tec, SH=C.variant==='shcs';
+  let IF=SH?T.iface:'base';
+  const CA=(k)=>T.ifaces[k||IF]?T.ifaces[k||IF].coldApp:4;
+  function applyIface(){ document.querySelectorAll('[data-if]').forEach(e=>{e.style.display=e.dataset.if.split(' ').includes(IF)?'':'none';}); }
+  document.querySelectorAll(SH?'.vb':'.vs').forEach(e=>e.remove());
+  const $=id=>document.getElementById(id);
+  const f0=n=>Math.round(n).toLocaleString('ko-KR');
+  const f1=n=>(Math.round(n*10)/10).toFixed(1);
+  const ap=h=>{h=((h%24)+24)%24; return (h<12?'오전 ':'오후 ')+(h%12===0?12:h%12);};
+  const apc=h=>ap(h)+':00', aps=h=>{h=((h%24)+24)%24; return h===0?'자정':h===12?'정오':ap(h)+'시';};
+  const NS='http://www.w3.org/2000/svg';
+  function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);parent&&parent.appendChild(e);return e;}
+  const DOSAT=t=>14.62-0.3898*t+0.006969*t*t-0.00005897*t*t*t;   // 담수 용존산소 포화(mg/L)
+
+  let day=C.days[0], hour=14, playing=false, jitter=0;
+  let opt={tank:S.tankM3, set:T.setpoint, modules:T.modules};
+
+  function env(d,t){
+    const tt=((t%24)+24)%24; let s;
+    if(tt>=5&&tt<=15) s=(1-Math.cos(Math.PI*(tt-5)/10))/2; else {const dd=(tt-15+24)%24; s=(1+Math.cos(Math.PI*dd/14))/2;}
+    const tout=d.tmin+(d.tmax-d.tmin)*s;
+    const irr=tt>d.rise&&tt<d.set? d.irr*Math.pow(Math.sin(Math.PI*(tt-d.rise)/(d.set-d.rise)),1.3):0;
+    const tgh=Math.max(d.ghMin??-99, tout+0.5+d.gh*irr/1000);
+    return {tout,irr,tgh};
+  }
+  function copC(tcw,thw){   // 열전 냉각 COP (접합부 온도 기준 이론 최대 × 실효율)
+    const Tc=tcw-T.dTj/2+273.15, Th=thw+T.dTj/2+273.15, dT=Th-Tc;
+    if(dT<1) return 3; const z=Math.sqrt(1+T.zt), cm=Tc/dT*(z-Th/Tc)/(z+1);
+    return Math.min(3,Math.max(0.12,T.eta*cm));
+  }
+  function sim(d,o,tec){ const ca=o.ca??CA();
+    const Cth=(o.tank+S.loopM3)*1.163, cap=o.modules*T.qcPer, capH=cap*1.2, set=o.set, dt=0.25;
+    let tb=(d.tmin+d.tmax)/2+2, ts=set, rows=[];
+    for(let n=0;n<6;n++){ rows=[];
+      for(let h=0;h<24;h++){
+        const r={h,tout:0,irr:0,tgh:0,tb:0,ts:0,qinB:0,qAir:0,qSun:0,qin:0,qc:0,pt:0,aux:0,cop:0};
+        for(let k=0;k<4;k++){
+          const e=env(d,h+(k+.5)/4), sun=H.solarKw*e.irr/1000, pmp=H.pumpKw*0.5;
+          const qb=H.UA*(e.tgh-tb)+sun+pmp; tb+=qb*dt/Cth;
+          const qin=H.UA*(e.tgh-ts)+sun+pmp; let qc=0, pt=0, aux=0;
+          if(tec){
+            const need=qin+(ts-set)*Cth;
+            if(need>0) qc=Math.min(cap,need);
+            else if(T.heatMode){ const nh=qin+(ts-(set-1))*Cth; if(nh<0) qc=Math.max(-capH,nh); }
+            if(qc>0) pt=qc/copC(set-ca, e.tout+T.hotApp);
+            else if(qc<0) pt=-qc/(1+copC(e.tout-T.hotApp, set-1+ca));
+            if(qc!==0) aux=T.pumpCold+T.pumpHot+T.fanKw*Math.min(1,(Math.abs(qc)+pt)/(cap*2.2));
+          }
+          ts+=(qin-qc)*dt/Cth;
+          r.tout+=e.tout/4; r.irr+=e.irr/4; r.tgh+=e.tgh/4; r.tb+=tb/4; r.ts+=ts/4; r.qinB+=qb/4;
+          r.qAir+=H.UA*(e.tgh-(tec?ts:tb))/4; r.qSun+=sun/4; r.qin+=(tec?qin:qb)/4; r.qc+=qc/4; r.pt+=pt/4; r.aux+=aux/4;
+        }
+        r.pe=r.pt/T.psuEff+r.aux; r.qh=r.qc>0? r.qc+r.pt:0; r.cop=r.pt>0.01? Math.abs(r.qc)/r.pt:0;
+        r.sol= tec? r.ts : r.tb;
+        rows.push(r);
+      }
+    }
+    return rows;
+  }
+  const cap=()=>opt.modules*T.qcPer;
+  function bandOf(r){
+    if(SH){ if(r.qc>cap()*0.97) return 'max'; if(r.qc>0.05) return 'cool'; if(r.qc<-0.05) return 'heat'; return 'idle'; }
+    if(r.sol>S.hot) return 'hot'; if(r.sol>S.ok[1]) return 'warn'; if(r.sol<S.ok[0]) return 'cold'; return 'ok';
+  }
+  const BAND=SH? {cool:['냉각 운전','var(--cool)'],max:['최대 출력','var(--pk)'],heat:['난방 모드','var(--heatm)'],idle:['대기','var(--lo)']}
+               : {ok:['근권 적정','var(--mid)'],warn:['주의 (고온)','var(--pk)'],hot:['근권 고온','var(--alarm)'],cold:['저온','var(--lo)']};
+  const ORDER=SH?['cool','max','heat','idle']:['ok','warn','hot','cold'];
+
+  let D=[], DB=[];
+  function resim(){ D=sim(day,opt,SH); DB=SH? sim(day,opt,false) : D; }
+
+  /* ---------- 고정 문구 ---------- */
+  (function init(){
+    const title=SH? 'SHCS-Agri 열관리 모니터':'스마트팜 양액 시스템 모니터 (기존)';
+    $('hTitle').textContent=C.site.name+' · '+title;
+    document.title=SH?'SHCS-Agri 열관리 모니터':'스마트팜 양액 모니터 (기존)';
+    $('hSub').textContent=C.site.crop+' · '+C.site.beds+' · 양액탱크 '+S.tankM3+'m³ · 순환 '+S.flowLpm+'L/min'+(SH?' · 열전모듈 '+T.modules+'EA (정격 흡열 '+f1(T.modules*T.qcPer)+'kW) · 열교환 A/B안 전환':' · 양액 냉각 설비 없음')+' · 시뮬레이션 화면';
+    $('bedSub').textContent=C.site.beds;
+    applyIface(); $('pidTitle').textContent=SH?'열관리 계통도 · '+T.ifaces[IF].name:'기존 양액 계통도 · 열 유입';
+    $('pidLeg').innerHTML=SH? '<span style="color:var(--nut)">━ 양액</span> · <span style="color:var(--cold)">━ 저온 순환수</span> · <span style="color:var(--hot)">━ 방열수</span> · <span style="color:var(--heatin)">━ 열 유입</span> · <span style="color:var(--dc)">━ DC 전원</span> · <span style="color:var(--vpp)">┅ 제어</span>'
+                           : '<span style="color:var(--nut)">━ 양액</span> · <span style="color:var(--heatin)">━ 열 유입 (선 굵기 = kW)</span> · <span style="color:#7dd3a8">┅ 양액 조성</span> · <span style="color:var(--vpp)">┅ 제어</span>';
+    $('tankSub').textContent=S.tankM3+' m³ · 기존';
+    if(!SH) $('okTxt').textContent='적정 근권온도 '+S.ok[0]+'~'+S.ok[1]+'℃ · 고온 경보 '+S.hot+'℃';
+    if(SH) $('psuSub').textContent='열전모듈 구동 · 효율 '+Math.round(T.psuEff*100)+'%';
+    $('opNote').textContent=SH? C.opNote : '기존 설비는 EC·pH와 급액량만 제어하고 양액 온도는 온실 공기와 일사를 따라 올라갑니다. 적정 근권온도 '+S.ok[0]+'~'+S.ok[1]+'℃, '+S.hot+'℃를 넘으면 용존산소가 줄고 뿌리 갈변 위험이 커집니다.';
+    $('econNote').textContent=C.econNote;
+    $('ruleTitle').textContent=SH?'열전 운전기준':'근권 온도 판정기준';
+    $('ruleSub').textContent=SH?'목표 양액온도 추종 · 부하만큼만 냉각':'양액 = 근권 온도';
+    $('rlist').innerHTML=(SH?[
+      ['cool','냉각 운전','열유입만큼 흡열 · 목표온도 ±0.1℃ 유지'],
+      ['max','최대 출력','모듈 정격 도달 · 목표온도 이탈 시작 (용량 검토)'],
+      ['heat','난방 모드','목표 −1℃ 이하 · 극성 반전 가열 (COP+1)'],
+      ['idle','대기','부하 없음 · 펌프·팬 정지']]
+     :[['ok','근권 적정',S.ok[0]+'~'+S.ok[1]+'℃ · 생육 정상'],
+       ['warn','주의',S.ok[1]+'~'+S.hot+'℃ · 용존산소 감소 시작'],
+       ['hot','근권 고온',S.hot+'℃ 초과 · 뿌리 갈변·병해 위험'],
+       ['cold','저온',S.ok[0]+'℃ 미만 · 생육 지연']]).map(([k,a,b])=>'<div class="ritem" data-r="'+k+'"><i style="background:'+BAND[k][1]+'"></i><b>'+a+'</b><span>'+b+'</span></div>').join('');
+    $('hleg').innerHTML=ORDER.map(k=>'<span><i style="background:'+BAND[k][1]+'"></i>'+BAND[k][0]+'</span>').join('');
+    $('tlLeg').innerHTML=$('hleg').innerHTML;
+    // 대표일 버튼
+    const sun='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5 19 19M5 19l1.5-1.5M17.5 6.5 19 5"/></svg>';
+    const hb=document.querySelector('.hbar');
+    C.days.forEach((d,i)=>{const b=document.createElement('button'); b.className='mode'; b.dataset.k=d.key; b.setAttribute('aria-pressed',i===0); b.innerHTML=sun+d.name;
+      b.onclick=()=>{document.querySelectorAll('.mode[data-k]').forEach(x=>x.setAttribute('aria-pressed','false')); b.setAttribute('aria-pressed','true'); day=d; calc(); log('대표일 → '+d.name+' (외기 '+d.tmin+'~'+d.tmax+'℃)'); render();};
+      $('modes').insertBefore(b,hb);});
+    if(SH){ const g=document.createElement('div'); g.className='ifgrp'; g.setAttribute('role','group'); g.setAttribute('aria-label','열교환 방식');
+      g.innerHTML='<span class="iflab">열교환 방식</span>'+Object.keys(T.ifaces).map(k=>'<button class="mode ifb" data-if-btn="'+k+'" aria-pressed="'+(k===IF)+'"><b>'+k.replace('1','-1').replace('2','-2')+'</b>'+T.ifaces[k].name.split('· ')[1]+'</button>').join('');
+      $('modes').insertBefore(g,hb); }
+    // 작물 선반
+    const cg=$('crops'); [96,122,148].forEach(y=>{ el('path',{d:'M170 '+y+' H290',stroke:'#6b7482','stroke-width':2},cg);
+      for(let i=0;i<5;i++){const x=180+i*24; el('path',{d:'M'+x+' '+(y-2)+' q-7 -4 -8 -12 q7 1 8 8 q1 -9 9 -10 q-1 8 -9 14z',fill:'#4ade80',opacity:.85},cg);} });
+    // 센서 태그
+    const tg=$('tags'); const tag=(x,y,t)=>{const g=el('g',{class:'tag'},tg); el('circle',{cx:x,cy:y,r:11},g); el('text',{x:x,y:y+3.5},g).textContent=t;};
+    tag(186,506,'TT1'); tag(300,380,'FT1');
+    if(SH){ tag(424,250,'TT2'); tag(680,250,'TT3'); }
+    // 운전기준 · 상단 스트립 눈금
+    [0,6,12,18,24].forEach(h=>{['hticks','rticks'].forEach(id=>{const e=document.createElement('span');e.style.left=(h/24*100).toFixed(2)+'%';e.textContent=h===24?'자정':aps(h);$(id).appendChild(e);});});
+    // 우측 패널 골격
+    if(SH){
+      $('sTitle').textContent='열관리 성능 · 하루';
+      $('k1L').textContent='하루 소비전력 (AC)'; $('k2L').textContent='하루 흡열량';
+      $('g1L').textContent='평균 COP'; $('g2L').textContent='근권 적정 유지'; $('g3L').textContent='최고 양액온도';
+      $('stkKey').innerHTML='<span><i style="background:var(--cold)"></i>흡열 Qc</span><span><i style="background:var(--dc)"></i>TEC 전력</span><span><i style="background:#64748b"></i>펌프·팬·전원손실</span><span style="color:var(--dim)">흡열 + TEC 전력 = 방열</span>';
+      $('sliders').innerHTML='<div><div class="m-label"><span>열교환 방식 (상단에서 선택)</span><span id="ifName" style="color:var(--cool)"></span></div><div class="note" id="ifNote" style="margin-top:4px"></div></div>'+'<div><div class="m-label"><label for="set">목표 양액온도</label><span id="setV" style="font-family:var(--mono);color:var(--text)"></span></div><input type="range" id="set" min="16" max="24" step="0.5" value="'+T.setpoint+'"><div class="ticks"><span>16℃</span><span>24℃</span></div></div>'+
+        '<div><div class="m-label"><label for="mods">열전모듈 수량</label><span id="modV" style="font-family:var(--mono);color:var(--text)"></span></div><input type="range" id="mods" min="4" max="40" step="1" value="'+T.modules+'"><div class="ticks"><span>4EA</span><span>40EA</span></div></div>';
+      $('set').oninput=e=>{opt.set=+e.target.value; calc(); render();};
+      document.querySelectorAll('[data-if-btn]').forEach(b=>b.onclick=()=>{ IF=b.dataset.ifBtn; document.querySelectorAll('[data-if-btn]').forEach(x=>x.setAttribute('aria-pressed',x===b)); applyIface();
+        $('pidTitle').textContent='열관리 계통도 · '+T.ifaces[IF].name; calc(); log('열교환 방식 → '+T.ifaces[IF].name+' (저온수 목표−'+CA()+'℃)'); render(); });
+      $('mods').oninput=e=>{opt.modules=+e.target.value; calc(); render();};
+    } else {
+      $('sTitle').textContent='근권 온도 진단 · 하루';
+      $('k1L').textContent='최고 양액온도'; $('k2L').textContent='적정범위 이탈';
+      $('g1L').textContent=S.hot+'℃ 초과'; $('g2L').textContent='최저 DO 포화'; $('g3L').textContent='하루 열유입';
+      $('stkKey').innerHTML=ORDER.map(k=>'<span><i style="background:'+BAND[k][1]+'"></i>'+BAND[k][0]+'</span>').join('');
+      $('sliders').innerHTML='<div><div class="m-label"><label for="tank">양액탱크 용량 (열용량)</label><span id="tankV" style="font-family:var(--mono);color:var(--text)"></span></div><input type="range" id="tank" min="1" max="10" step="0.5" value="'+S.tankM3+'"><div class="ticks"><span>1m³</span><span>10m³</span></div></div>';
+      $('tank').oninput=e=>{opt.tank=+e.target.value; calc(); render();};
+    }
+    $('dcLeg').innerHTML=(SH?[['var(--muted)','외기'],['var(--heatin)','온실 공기'],['var(--alarm)','양액 (기존, 무냉각)'],['var(--cool)','양액 (SHCS 적용)'],['rgba(52,211,153,.5)','적정 근권 '+S.ok[0]+'~'+S.ok[1]+'℃'],['var(--cold)','흡열 Qc kW (난방은 주황)'],['var(--dc)','소비전력 kW']]
+      :[['var(--muted)','외기'],['var(--heatin)','온실 공기'],['var(--alarm)','양액 온도'],['rgba(52,211,153,.5)','적정 근권 '+S.ok[0]+'~'+S.ok[1]+'℃'],['rgba(251,146,60,.7)','양액 열유입 kW']])
+      .map(([c,t])=>'<span><i style="background:'+c+'"></i>'+t+'</span>').join('');
+  })();
+
+  /* ---------- 요약 계산 ---------- */
+  let SUM={};
+  function calc(){
+    resim();
+    const inR=r=>r.sol>=S.ok[0]-0.05&&r.sol<=S.ok[1]+0.05;
+    const s={qc:0,qh:0,heat:0,pt:0,aux:0,pe:0,pk:0,max:0,maxB:0,inH:0,inB:0,hotB:0,doMin:99,qin:0};
+    D.forEach(r=>{ s.qc+=Math.max(0,r.qc); s.heat+=Math.max(0,-r.qc); s.pt+=r.pt; s.aux+=r.pe-r.pt; s.pe+=r.pe; s.pk=Math.max(s.pk,r.pe);
+      s.max=Math.max(s.max,r.sol); s.inH+=inR(r)?1:0; s.doMin=Math.min(s.doMin,DOSAT(r.sol)); s.qin+=Math.max(0,r.qin); });
+    DB.forEach(r=>{ s.maxB=Math.max(s.maxB,r.tb); s.inB+=(r.tb>=S.ok[0]&&r.tb<=S.ok[1])?1:0; s.hotB+=r.tb>S.hot?1:0; });
+    SUM=s;
+    const cnt={}; ORDER.forEach(k=>cnt[k]=0); D.forEach(r=>cnt[bandOf(r)]++);
+    if(SH){
+      $('setV').textContent=f1(opt.set)+' ℃'; $('modV').textContent=opt.modules+'EA · '+f1(cap())+'kW';
+      $('k1').innerHTML=f0(s.pe)+'<small>kWh</small>'; $('k2').innerHTML=f0(s.qc)+'<small>kWh</small>';
+      const tot=s.qc+s.pt+s.aux||1;
+      $('stk').innerHTML=[[s.qc,'var(--cold)','흡열 '+f0(s.qc)],[s.pt,'var(--dc)','TEC '+f0(s.pt)],[s.aux,'#64748b','보조 '+f0(s.aux)]].map(([v,c,t])=>'<span style="flex:'+(v/tot).toFixed(3)+' 0 0;background:'+c+'" title="'+t+'kWh">'+(v/tot>0.14?t:'')+'</span>').join('');
+      $('g1').textContent=s.pt>0?f1((s.qc+s.heat)/s.pt):'-'; $('g1u').textContent='흡열 ÷ TEC 전력';
+      $('g2').textContent=s.inH+'/24'; $('g2u').textContent='시간 (기존 '+s.inB+')';
+      $('g3').textContent=f1(s.max)+'℃'; $('g3u').textContent='기존 '+f1(s.maxB)+'℃';
+      const won=s.pe*C.price.kwh;
+      $('lines').innerHTML=
+        '<div class="line"><span>최대 소비전력 (계약전력 검토)</span><b>'+f1(s.pk)+' kW</b></div>'+
+        '<div class="line"><span>전기요금 (가정 '+C.price.kwh+'원/kWh)</span><b>하루 '+f0(won/1e3)+'천 · 30일 '+f0(won*30/1e4)+'만원</b></div>'+
+        (s.heat>0.5?'<div class="line"><span>하루 난방량 (극성 반전)</span><b>'+f0(s.heat)+' kWh</b></div>':'')+
+        '<div class="line"><span>하루 방열량 (라디에이터)</span><b>'+f0(D.reduce((a,r)=>a+r.qh,0))+' kWh</b></div>';
+      $('ifNote').textContent=T.ifaces[IF].note; $('ifName').textContent=T.ifaces[IF].name;
+      $('lines').innerHTML+='<div class="line"><span>방식별 하루 소비전력 · 평균 COP</span><b style="font-size:12.5px">'+Object.keys(T.ifaces).map(k=>{const rr=sim(day,{...opt,ca:CA(k)},true); const pe=rr.reduce((a,r)=>a+r.pe,0), q=rr.reduce((a,r)=>a+Math.abs(r.qc),0), pt=rr.reduce((a,r)=>a+r.pt,0); return '<span style="'+(k===IF?'color:var(--cool)':'color:var(--muted)')+'">'+T.ifaces[k].short+' '+f0(pe)+'kWh·'+(pt?f1(q/pt):'-')+'</span>';}).join(' / ')+'</b></div>';
+      const short=D.some(r=>r.qc>cap()*0.97 && r.sol>opt.set+0.3);
+      $('warn').hidden=!short; $('warn').textContent='모듈 용량 '+f1(cap())+'kW가 부족해 오후 피크에 목표온도를 지키지 못합니다. 모듈 수량을 늘리거나 목표온도를 올려야 합니다.';
+    } else {
+      $('tankV').textContent=f1(opt.tank)+' m³';
+      $('k1').innerHTML=f1(s.max)+'<small>℃</small>'; $('k1').style.color=s.max>S.hot?'var(--alarm)':s.max>S.ok[1]?'var(--pk)':'var(--ok)';
+      $('k2').innerHTML=(24-s.inH)+'<small>시간</small>';
+      $('stk').innerHTML=ORDER.filter(k=>cnt[k]).map(k=>'<span style="flex:'+cnt[k]+' 0 0;background:'+BAND[k][1]+';color:#fff">'+(cnt[k]>=3?cnt[k]+'h':'')+'</span>').join('');
+      $('g1').textContent=s.hotB; $('g1u').textContent='시간 / 24';
+      $('g2').textContent=f1(s.doMin); $('g2u').textContent='mg/L';
+      $('g3').textContent=f0(s.qin); $('g3u').textContent='kWh (무냉각)';
+      $('lines').innerHTML='<div class="line"><span>하루 양액 온도 범위</span><b>'+f1(Math.min(...D.map(r=>r.sol)))+' ~ '+f1(s.max)+' ℃</b></div>'+
+        '<div class="line"><span>'+S.ok[1]+'℃ 유지에 필요한 최대 냉각</span><b>'+f1(Math.max(...sim(day,{...opt,set:S.ok[1],modules:999},true).map(r=>r.qc)))+' kW</b></div>';
+      $('warn').hidden=s.hotB===0; $('warn').textContent='양액 온도가 하루 '+s.hotB+'시간 동안 '+S.hot+'℃를 넘습니다. 용존산소가 부족해지고 뿌리 갈변·병해 위험이 큰 구간입니다.';
+    }
+    // 스트립
+    ['hstrip','rstrip'].forEach(id=>{const r=$(id); r.innerHTML=''; for(let h=0;h<24;h++){const sp=document.createElement('span'); const b=bandOf(D[h]); sp.style.background=BAND[b][1]; sp.title=ap(h)+'시 · '+BAND[b][0]; sp.textContent=(h%12===0?12:h%12); if(id==='hstrip') sp.onclick=()=>{hour=h;$('hour').value=h;render();}; r.appendChild(sp);} });
+    const bands=$('bands'); bands.innerHTML=''; for(let h=0;h<24;h++){const s2=document.createElement('span'); s2.style.background=BAND[bandOf(D[h])][1]; bands.appendChild(s2);}
+  }
+
+  /* ---------- 그래프 ---------- */
+  function drawDay(){
+    const svg=$('day'); svg.innerHTML='';
+    const L=56,R=1136,Tp=14,B=264, TMIN=5,TMAX=45;
+    const Y=v=>B-(v-TMIN)/(TMAX-TMIN)*(B-Tp), X=h=>L+(h+0.5)*(R-L)/24;
+    const kMax=SH? Math.max(4,Math.ceil(Math.max(cap(),...D.map(r=>r.pe),...D.map(r=>Math.abs(r.qc)))/2)*2) : Math.max(4,Math.ceil(Math.max(...D.map(r=>r.qin))/2)*2);
+    const YK=v=>B-v/kMax*(B-Tp)*0.55;
+    for(let v=TMIN;v<=TMAX;v+=5){el('line',{x1:L,x2:R,y1:Y(v),y2:Y(v),stroke:'#1f242c','stroke-width':1},svg); el('text',{x:L-6,y:Y(v)+3.5,'text-anchor':'end',class:'axis'},svg).textContent=v+'℃';}
+    for(let k=0;k<=kMax;k+=kMax/4) el('text',{x:R+6,y:YK(k)+3.5,class:'axis',fill:'var(--dim)'},svg).textContent=f1(k)+'kW';
+    el('rect',{x:L,y:Y(S.ok[1]),width:R-L,height:Y(S.ok[0])-Y(S.ok[1]),fill:'rgba(52,211,153,.08)'},svg);
+    el('line',{x1:L,x2:R,y1:Y(S.hot),y2:Y(S.hot),stroke:'rgba(239,68,68,.45)','stroke-dasharray':'2 4'},svg);
+    el('text',{x:L+4,y:Y(S.hot)-4,class:'axis',fill:'rgba(239,68,68,.8)'},svg).textContent='고온 경보 '+S.hot+'℃';
+    for(let h=0;h<24;h++) el('rect',{x:L+h*(R-L)/24+0.5,y:B+6,width:(R-L)/24-1,height:5,fill:BAND[bandOf(D[h])][1]},svg);
+    for(let h=0;h<24;h+=3) el('text',{x:X(h),y:B+26,'text-anchor':'middle',class:'axis'},svg).textContent=aps(h);
+    const bw=(R-L)/24*0.34;
+    D.forEach(r=>{
+      if(SH){ if(Math.abs(r.qc)>0.02) el('rect',{x:X(r.h)-bw,y:YK(Math.abs(r.qc)),width:bw-1,height:B-YK(Math.abs(r.qc)),fill:r.qc>0?'var(--cold)':'var(--heatm)',opacity:.75},svg);
+              if(r.pe>0.02) el('rect',{x:X(r.h)+1,y:YK(r.pe),width:bw-1,height:B-YK(r.pe),fill:'var(--dc)',opacity:.75},svg); }
+      else if(r.qin>0.02) el('rect',{x:X(r.h)-bw/2,y:YK(r.qin),width:bw,height:B-YK(r.qin),fill:'rgba(251,146,60,.55)'},svg);
+    });
+    const line=(key,c,w,dash,arr)=>{let p=''; (arr||D).forEach((r,i)=>p+=(i?' L':'M')+X(r.h)+' '+Y(r[key])); el('path',{d:p,fill:'none',stroke:c,'stroke-width':w,'stroke-dasharray':dash||'','stroke-linejoin':'round'},svg);};
+    line('tout','var(--muted)',1.3,'5 4'); line('tgh','var(--heatin)',2);
+    line('tb','var(--alarm)',2.4,'',DB);
+    if(SH){ line('ts','var(--cool)',2.8); el('text',{x:R-4,y:Y(opt.set)-5,'text-anchor':'end',class:'axis',fill:'var(--cool)'},svg).textContent='목표 '+f1(opt.set)+'℃'; }
+    const cx=X(hour); el('rect',{x:cx-(R-L)/48,y:Tp,width:(R-L)/24,height:B-Tp,fill:'rgba(34,211,238,.08)'},svg);
+    el('line',{x1:cx,x2:cx,y1:Tp,y2:B,stroke:'var(--grid)','stroke-width':1},svg);
+    const r=D[hour];
+    el('text',{x:Math.min(cx+8,R-420),y:Tp+12,class:'axis',fill:'var(--text)'},svg).textContent=ap(hour)+'시  외기 '+f1(r.tout)+' · 온실 '+f1(r.tgh)+' · 양액 '+f1(r.sol)+'℃'+(SH?' (기존 '+f1(DB[hour].tb)+'℃) · Qc '+f1(r.qc)+' · 전력 '+f1(r.pe)+'kW':' · 열유입 '+f1(r.qin)+'kW');
+    svg.onclick=ev=>{const pt=svg.createSVGPoint();pt.x=ev.clientX;pt.y=ev.clientY;const lp=pt.matrixTransform(svg.getScreenCTM().inverse());hour=Math.max(0,Math.min(23,Math.floor((lp.x-L)/((R-L)/24))));$('hour').value=hour;render();};
+    $('dayTitle').textContent='24시간 온도 · 열량 · '+day.name+' (외기 '+day.tmin+'~'+day.tmax+'℃, 일사 최대 '+day.irr+'W/m²)';
+  }
+
+  let DH=560;
+  function setDH(){ $('pid').setAttribute('viewBox','0 0 900 '+DH); $('dbg').setAttribute('height',DH); $('dg').setAttribute('transform','translate(0,'+((DH-560)/2).toFixed(1)+')'); }
+  function fitLeft(){
+    const main=document.querySelector('.main'), svg=$('pid'), box=svg.parentNode;
+    DH=560; setDH();
+    if(getComputedStyle(main).gridTemplateColumns.split(' ').length<2){ drawDay(); return; }
+    const w=svg.getBoundingClientRect().width, avail=box.getBoundingClientRect().height;
+    if(avail>w*560/900+4){ DH=Math.min(1000,avail*900/w); setDH(); }
+    drawDay();
+  }
+  let fitT; addEventListener('resize',()=>{clearTimeout(fitT);fitT=setTimeout(fitLeft,120);});
+
+  function setFlow(e,kw,max,dir){ if(!e) return; if(kw<0.02){e.classList.add('off');e.style.strokeWidth=2;return;}
+    e.classList.remove('off'); e.classList.toggle('rev',dir<0); e.style.strokeWidth=(2+5*Math.min(1,kw/max)).toFixed(1); }
+  function log(msg){const l=$('log');const d=document.createElement('div');d.innerHTML='<b>'+apc(hour)+'</b> '+msg;l.prepend(d);while(l.children.length>30)l.lastChild.remove();}
+  const solCol=t=>t>S.hot?'var(--alarm)':t>S.ok[1]?'var(--pk)':t<S.ok[0]?'var(--cold)':'var(--nut)';
+  let lastBand='';
+
+  function render(){
+    const r=D[hour], b=bandOf(r), sol=r.sol+jitter*0.3, col=solCol(sol);
+    $('clock').textContent=apc(hour);
+    const bp=$('bandPill'); bp.textContent=BAND[b][0]; bp.style.background=BAND[b][1];
+    $('scnTxt').textContent=day.name; $('modeTxt').textContent='자동 운전 · '+day.name;
+    [...$('rstrip').children,...$('hstrip').children].forEach((sp,i)=>sp.classList.toggle('now',i%24===hour));
+    document.querySelectorAll('.ritem').forEach(e=>e.classList.toggle('on',e.dataset.r===b));
+    // 공통 노드
+    $('vRoot').textContent=f1(sol)+' ℃'; $('vRoot').setAttribute('fill',col); $('bedBox').style.stroke=sol>S.ok[1]+0.3?col:'';
+    $('vRootSub').textContent='근권 (양액) 온도';
+    $('vFlowTxt').textContent='양액 공급 '+S.flowLpm+' L/min';
+    $('vTank').textContent=f1(sol)+' ℃'; $('vTank').setAttribute('fill',col); $('tankLiq').setAttribute('fill',col);
+    const ec=S.ec+jitter*0.8, ph=S.ph+jitter*1.5;
+    $('vEc').textContent='EC '+ec.toFixed(2)+' · pH '+ph.toFixed(1); $('vDo').textContent='DO 포화 '+f1(DOSAT(sol))+' mg/L';
+    $('vGh').textContent='온실 '+f1(r.tgh)+' ℃'; $('vEnvSub').textContent='외기 '+f1(r.tout)+'℃ · 일사 '+f0(r.irr)+' W/m²';
+    $('vQin').textContent='양액 열유입 '+f1(r.qin)+' kW';
+    { const qa=Math.max(0,r.qAir), qs=r.qSun, qb=qa*0.5+qs*0.7, qp=qa*0.2+qs*0.3, qt=qa*0.3;   // 표면적·일사 노출 비율(가정)
+      setFlow($('fHeatBed'),qb,4,1); setFlow($('fHeatPipe'),qp,2,1); setFlow($('fHeatTank'),qt,2,1);
+      $('hBed').textContent=f1(qb)+'kW'; $('hPipe').textContent='배관 '+f1(qp)+' kW'; $('hTank').textContent='탱크 '+f1(qt)+' kW';
+      $('zoneTxt').textContent='온실 내부 '+f1(r.tgh)+'℃ · 일사 '+f0(r.irr)+'W/m² → 베드·배관·탱크 표면으로 열 유입 (합계 '+f1(Math.max(0,r.qin))+'kW, 펌프 발열 포함)'; }
+    ['fNutR','fNutS','fNutS2','fNutT'].forEach(id=>setFlow($(id),3,4,1));
+    // 실시간 상태
+    $('mSol').innerHTML=f1(sol)+'<small>℃</small>'; $('mSol').style.color=col;
+    $('solBar').style.width=Math.min(100,(sol-10)/25*100)+'%'; $('solBar').style.background=col;
+    $('solMark').style.left=((S.ok[1]-10)/25*100)+'%'; $('solPct').textContent='적정 ≤ '+S.ok[1]+'℃';
+    const alarm= SH? (b==='max'&&sol>opt.set+0.3) : sol>S.hot;
+    $('stDot').classList.toggle('alarm',alarm);
+    $('stateTxt').lastChild.textContent= SH? (alarm?'용량 부족':'정상 운전') : (sol>S.hot?'근권 고온 경보':sol>S.ok[1]?'주의 · 양액 고온':'정상');
+    if(SH){
+      $('m2L').textContent='흡열 Qc (양액 냉각)'; $('m2').innerHTML=f1(Math.abs(r.qc))+'<small>kW</small>'; $('m2').style.color=r.qc<0?'var(--heatm)':'var(--cold)';
+      $('m2n').textContent=r.qc>0.02?'열유입 '+f1(r.qin)+'kW 상쇄':r.qc<-0.02?'난방 (극성 반전)':'대기';
+      $('m3L').textContent='소비전력 (AC)'; $('m3').innerHTML=f1(r.pe)+'<small>kW</small>'; $('m3n').textContent='TEC '+f1(r.pt/T.psuEff)+' · 펌프·팬 '+f1(r.aux)+'kW';
+      $('m4L').textContent='COP (TEC)'; $('m4').innerHTML=r.cop?f1(r.cop):'-'; $('m4n').textContent='외기 '+f1(r.tout)+'℃ 기준 · 기존 양액 '+f1(DB[hour].tb)+'℃';
+      // TEC 계통
+      const on=Math.abs(r.qc)>0.02, heat=r.qc<-0.02, k=Math.min(1,Math.abs(r.qc)/cap());
+      const cw=S=>S; const tcs= on? (heat? opt.set-1+CA() : opt.set-CA()) : sol;
+      const mc=T.flowCold/60*4.186, mh=T.flowHot/60*4.186;
+      const tcr= on? tcs+ r.qc/mc : sol;
+      const ths= on? (heat? r.tout-T.hotApp : r.tout+T.hotApp+r.qh/mh) : r.tout, thr= on? (heat? ths+(Math.abs(r.qc)-r.pt)/mh : r.tout+T.hotApp) : r.tout;
+      $('tCs').textContent=f1(tcs)+'℃'; $('tCr').textContent='환수 '+f1(tcr)+'℃';
+      $('tHs').textContent=f1(ths)+'℃'; $('tHr').textContent=f1(thr)+'℃';
+      $('tQc').textContent=f1(Math.abs(r.qc))+' kW'; $('tQh').textContent=f1(heat?Math.abs(r.qc)-r.pt:r.qh)+' kW';
+      $('tecC').setAttribute('opacity',(0.25+0.65*k).toFixed(2)); $('tecH').setAttribute('opacity',(0.25+0.65*k).toFixed(2));
+      $('tecSub').textContent= !on?'대기':heat?'난방 모드 · 극성 반전':'부하율 '+Math.round(k*100)+'% · COP '+f1(r.cop);
+      $('tecBox').style.stroke= b==='max'?'var(--pk)':on?'var(--cool)':'';
+      $('tecBox').classList.toggle('alarmflash',alarm);
+      setFlow($('fCold'+IF),on?Math.abs(r.qc):0,cap(),heat?-1:1); setFlow($('fHot'),on?r.qh+Math.abs(r.qc):0,cap()*2.2,1);
+      setFlow($('fOut'),r.qh,cap()*2.2,1); setFlow($('fDC'),r.pt,cap()*1.5,1);
+      $('rQh').textContent= heat? '흡열 '+f1(Math.abs(r.qc)-r.pt)+' kW':'방열 '+f1(r.qh)+' kW'; $('rSub').textContent=(heat?'외기에서 열 회수':'외기로 방출')+(fanSpd?' · 팬 '+Math.round(40+60*Math.min(1,(r.qh+Math.abs(r.qc))/(cap()*2.2)))+'%':' · 팬 정지');
+      $('radBox').style.stroke= r.qh>0.05?'var(--hot)':'';
+      fanSpd= RM?0 : (Math.abs(r.qc)>0.02? 0.4+2.6*Math.min(1,(r.qh+Math.abs(r.qc))/(cap()*2.2)) : 0);
+      $('fans').setAttribute('stroke',fanSpd?'var(--hot)':'#9aa4b2');
+      $('vPsu').textContent='DC '+f1(r.pt)+' kW'; $('vPsuAc').textContent='AC 입력 '+f1(r.pt/T.psuEff)+' kW';
+      $('bQc').textContent=(heat?'가열 ':'흡수열 Qc ')+f1(Math.abs(r.qc))+' kW'; $('bP').textContent='TEC 전력 P '+f1(r.pt)+' kW';
+      $('bQh').textContent=heat?'외기 흡열 '+f1(Math.abs(r.qc)-r.pt)+' kW':'방열 Qh '+f1(r.qh)+' kW';
+      const cmd= b==='max'?'최대 출력 '+f1(r.qc)+'kW' : b==='cool'?'냉각 '+f1(r.qc)+'kW' : b==='heat'?'가열 '+f1(-r.qc)+'kW':'대기';
+      $('cCmd').textContent=cmd; $('cSub').textContent='목표 '+f1(opt.set)+'℃ · 현재 '+f1(sol)+'℃ · 저온수 '+T.flowCold+'L/min';
+      $('sTec').classList.toggle('off',!on); $('sRad').classList.toggle('off',!on);
+      $('sgrid').innerHTML=[['TT1 양액',f1(sol),'℃'],['TT2 저온수 공급',f1(tcs),'℃'],['TT2 저온수 환수',f1(tcr),'℃'],['TT3 방열수 출구',f1(ths),'℃'],['FT1 양액 유량',S.flowLpm,'L/min'],['FT2 저온수 유량',on?T.flowCold:0,'L/min'],['EC',ec.toFixed(2),'mS/cm'],['pH',ph.toFixed(1),''],['일사',f0(r.irr),'W/m²']]
+        .map(([a,v,u])=>'<div class="vt"><small>'+a+'</small><b>'+v+'</b><em>'+u+'</em></div>').join('');
+    } else {
+      $('m2L').textContent='온실 공기'; $('m2').innerHTML=f1(r.tgh)+'<small>℃</small>'; $('m2').style.color='var(--heatin)'; $('m2n').textContent='외기 '+f1(r.tout)+'℃';
+      $('m3L').textContent='양액 열유입'; $('m3').innerHTML=f1(r.qin)+'<small>kW</small>'; $('m3').style.color='var(--heatin)'; $('m3n').textContent='공기 '+f1(r.qAir)+' · 일사 '+f1(r.qSun)+'kW';
+      $('m4L').textContent='용존산소 포화'; $('m4').innerHTML=f1(DOSAT(sol))+'<small>mg/L</small>'; $('m4').style.color=sol>S.hot?'var(--alarm)':'var(--text)'; $('m4n').textContent='20℃ 기준 '+f1(DOSAT(20))+' mg/L';
+      $('bState').textContent=BAND[b][0]; $('bState').setAttribute('fill',BAND[b][1]==='var(--mid)'?'var(--ok)':BAND[b][1]);
+      $('bDo').textContent='용존산소 포화 '+f1(DOSAT(sol))+' mg/L (20℃ 대비 '+Math.round((DOSAT(sol)/DOSAT(20)-1)*100)+'%)';
+      $('bHint').textContent= b==='hot'?'뿌리 갈변·병해 위험 · 냉각 필요':b==='warn'?'온도 상승 중 · 오후 피크 주의':b==='cold'?'저온 · 생육 지연':'생육 정상 범위';
+      $('rootBox').style.stroke=b==='hot'?'var(--alarm)':b==='warn'?'var(--pk)':'';
+      $('rootBox').classList.toggle('alarmflash',b==='hot');
+      $('qAir').textContent='온실 공기 → 양액 '+f1(r.qAir)+' kW'; $('qSun').textContent='일사 (베드·배관) '+f1(r.qSun)+' kW';
+      $('qPump').textContent='펌프 발열 '+f1(H.pumpKw*0.5)+' kW'; $('qTot').textContent='합계 '+f1(r.qin)+' kW → 양액 '+(r.qin>0?'상승':'하강');
+      $('vDose').textContent='EC '+ec.toFixed(2)+' · pH '+ph.toFixed(1);
+      $('emsSub2').textContent= b==='hot'?'경보만 가능 · 양액 냉각 수단 없음':'양액 냉각 수단 없음';
+      $('emsBox').classList.toggle('alarmflash',b==='hot');
+      $('sgrid').innerHTML=[['TT1 양액',f1(sol),'℃'],['온실 공기',f1(r.tgh),'℃'],['외기',f1(r.tout),'℃'],['FT1 양액 유량',S.flowLpm,'L/min'],['EC',ec.toFixed(2),'mS/cm'],['pH',ph.toFixed(1),''],['일사',f0(r.irr),'W/m²'],['CO₂',f0(420+230*Math.max(0,1-r.irr/300)),'ppm'],['DO 포화',f1(DOSAT(sol)),'mg/L']]
+        .map(([a,v,u])=>'<div class="vt"><small>'+a+'</small><b>'+v+'</b><em>'+u+'</em></div>').join('');
+    }
+    if(b!==lastBand && lastBand){
+      const m=SH? {cool:'냉각 운전 → 양액 목표 '+f1(opt.set)+'℃ 추종',max:'<span style="color:var(--pk)">최대 출력</span> → 모듈 정격 '+f1(cap())+'kW 도달',heat:'난방 모드 → 극성 반전 가열',idle:'대기 → 열부하 없음'}
+                : {ok:'근권 적정 범위 복귀',warn:'<span style="color:var(--pk)">주의</span> → 양액 '+S.ok[1]+'℃ 초과',hot:'<span style="color:var(--alarm)">근권 고온 경보</span> → 양액 '+f1(sol)+'℃',cold:'저온 → 양액 '+S.ok[0]+'℃ 미만'};
+      log(m[b]);
+    }
+    lastBand=b;
+    drawDay();
+  }
+
+  // 라디에이터 팬 회전 (방열량 비례)
+  let fanSpd=0, fanAng=0;
+  const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  (function(){ if(!SH) return; ['blade1','blade2'].forEach(id=>{const g=$(id); [0,120,240].forEach(a=>el('path',{d:'M0 0 C4 -6 6 -14 0 -18 C-6 -14 -4 -6 0 0Z',transform:'rotate('+a+')'},g));});
+    let last=performance.now();
+    (function loop(now){ const dt=(now-last)/1000; last=now; fanAng=(fanAng+fanSpd*360*dt)%360;
+      $('blade1').setAttribute('transform','translate(770 266) rotate('+fanAng.toFixed(1)+')');
+      $('blade2').setAttribute('transform','translate(830 266) rotate('+(-fanAng+30).toFixed(1)+')');
+      requestAnimationFrame(loop); })(last); })();
+  $('hour').addEventListener('input',e=>{hour=+e.target.value; render();});
+  $('play').addEventListener('click',()=>{
+    playing=!playing; $('play').setAttribute('aria-pressed',playing);
+    $('playTxt').textContent=playing?'정지':'24시간 재생';
+    $('playIco').innerHTML=playing?'<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>':'<path d="M7 4v16l13-8z"/>';
+  });
+  let t=0;
+  setInterval(()=>{ t++; jitter=(Math.sin(t*1.7)+Math.sin(t*0.63))*0.02;
+    if(playing && t%2===0){ hour=(hour+1)%24; $('hour').value=hour; }
+    render(); },1000);
+
+  calc(); render(); lastBand=bandOf(D[hour]);
+  log(SH? '시스템 기동 → SHCS-Agri 열전모듈 '+opt.modules+'EA · 목표 양액 '+f1(opt.set)+'℃' : '감시 기동 → 기존 양액 시스템 (냉각 설비 없음)');
+  fitLeft(); if(document.fonts) document.fonts.ready.then(fitLeft);
+  $('play').click();
+})();
+</script>
+</body>
+</html>

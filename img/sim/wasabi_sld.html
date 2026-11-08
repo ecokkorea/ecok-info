@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ko" translate="no">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="google" content="notranslate">
+<style id="font-paperlogy">/* 페이퍼로지(Paperlogy) 내장 → 오프라인에서도 동일 표시 */
+
+
+
+
+</style>
+<title>하이브리드 열관리 단선결선도</title>
+<style>
+:root{--paper:#ffffff;--bg:#eef1f4;--ink:#111827;--mute:#5b6573;--line:#1f2937;--grid:#e5e7eb;--ac:#c2410c;--dc:#1d4ed8;--bat:#15803d;--dead:#b8c0c8;--pv:#b7791f;--com:#7c3aed;
+  --sans:"Paperlogy","Malgun Gothic","Apple SD Gothic Neo",sans-serif}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans)}
+.wrap{max-width:1680px;margin:0 auto;padding-block:16px;padding-inline:16px;display:flex;flex-direction:column;gap:12px}
+.top{display:flex;flex-wrap:wrap;gap:10px 20px;align-items:center;justify-content:space-between}
+h1{margin:0;font-size:19px;font-weight:700;text-wrap:balance}
+.sub{font-size:12.5px;color:var(--mute);margin-top:2px}
+.modes{display:flex;gap:6px;flex-wrap:wrap}
+.mode{font:600 13px var(--sans);padding:8px 14px;border-radius:5px;border:1px solid #c7ced6;background:#fff;color:#374151;cursor:pointer}
+.mode[aria-pressed="true"]{background:#111827;color:#fff;border-color:#111827}
+.mode:focus-visible{outline:2px solid var(--dc);outline-offset:2px}
+.info{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media (max-width:900px){.info{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.card{background:#fff;border:1px solid #d6dbe1;border-radius:6px;padding:10px 12px}
+.card small{display:block;font-size:11.5px;color:var(--mute)}
+.card b{display:block;font-size:17px;margin-top:2px;font-variant-numeric:tabular-nums}
+.card p{margin:4px 0 0;font-size:12px;color:#374151;line-height:1.45}
+.sheet{background:var(--paper);border:1px solid #cfd5dc;border-radius:4px;overflow-x:auto}
+.sheet svg{display:block;width:100%;min-width:1100px;height:auto}
+.desc{background:#fff;border:1px solid #d6dbe1;border-radius:6px;padding:12px 14px;font-size:13px;line-height:1.6}
+.desc b{color:#111827}
+svg text{font-family:var(--sans)}
+.t{font-size:12px;fill:#111827}.ts{font-size:10.5px;fill:#4b5563}.tb{font-size:13px;font-weight:700;fill:#111827}.tt{font-size:15px;font-weight:700;fill:#111827}
+.wl{fill:none;stroke-width:2.4;stroke-linecap:round;transition:stroke .3s}
+.wl.ac{stroke:var(--ac)}.wl.dc{stroke:var(--dc)}.wl.bat{stroke:var(--bat)}.wl.pv{stroke:var(--pv)}
+.wl.dead{stroke:var(--dead)!important;stroke-dasharray:6 5}
+.bus{stroke-width:6}
+.sym{fill:none;stroke:#111827;stroke-width:1.6}
+.box{fill:#fff;stroke:#111827;stroke-width:1.5}
+.com{fill:none;stroke:var(--com);stroke-width:1.3;stroke-dasharray:3 4}
+.open .cont{stroke:#dc2626}
+@media (prefers-reduced-motion:reduce){.wl{transition:none}}
+</style>
+<style>@font-face{font-family:'Paperlogy';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-4Regular.woff2') format('woff2');font-weight:400}@font-face{font-family:'Paperlogy';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-6SemiBold.woff2') format('woff2');font-weight:600}@font-face{font-family:'Paperlogy';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-7Bold.woff2') format('woff2');font-weight:700}@font-face{font-family:'Paperlogy';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-8ExtraBold.woff2') format('woff2');font-weight:800}</style></head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div>
+      <h1>단선결선도 (안) · 태양광 + 히트펌프 + 열전 하이브리드 열관리</h1>
+      <div class="sub">고추냉이 다단 식물공장 실증 · 한전 저압 3φ4W 380/220V · 태양광 20kWp 자가소비 (A 5kWp DC 직결 + B 15kWp AC 연계) · DC 48V 버스 · 배터리 3kWh(UPS)</div>
+    </div>
+    <div class="modes" role="group" aria-label="운전 상태">
+      <button class="mode" data-m="day" aria-pressed="true">주간 · 태양광 자가소비</button>
+      <button class="mode" data-m="night" aria-pressed="false">야간 · 계통 수전</button>
+      <button class="mode" data-m="out" aria-pressed="false">한전 정전</button>
+    </div>
+  </div>
+  <div class="info" id="info"></div>
+  <div class="sheet"><svg id="sld" viewBox="0 0 1600 1060" role="img" aria-label="한전 수전, 주분전반, 태양광 인버터, 히트펌프, 정류기, DC 48V 버스, 배터리, 열전 드라이버로 구성된 단선결선도"></svg></div>
+  <div class="desc" id="desc"></div>
+</div>
+<script>
+(function(){
+  const NS='http://www.w3.org/2000/svg', svg=document.getElementById('sld');
+  const el=(t,a,p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e;};
+  const tx=(x,y,s,c,anchor,p)=>{const e=el('text',{x,y,class:c||'t','text-anchor':anchor||'start'},p);e.textContent=s;return e;};
+  // 선 : k = ac|dc|bat|pv, m = 살아있는 모드
+  const W=(d,k,m,extra)=>el('path',{d,class:'wl '+k+(extra?' '+extra:''),'data-m':m});
+  const ALL='day night out', DN='day night', D='day';
+
+  // ── 도면 틀 ──
+  el('rect',{x:10,y:10,width:1580,height:1040,fill:'none',stroke:'#111827','stroke-width':2});
+  el('rect',{x:18,y:18,width:1564,height:1024,fill:'none',stroke:'#111827','stroke-width':.8});
+
+  // ── 기호 ──
+  function brk(x,y,lab,sub,m,k,elb){ // 수직 차단기 y~y+44
+    const g=el('g',{class:'brk','data-m':m});
+    el('circle',{cx:x,cy:y+8,r:2.2,fill:'#111827'},g);
+    el('path',{d:`M${x} ${y+8} L${x+13} ${y+34}`,class:'sym cont'},g);
+    el('path',{d:`M${x-4} ${y+4} L${x+4} ${y+12} M${x+4} ${y+4} L${x-4} ${y+12}`,class:'sym'},g);
+    el('circle',{cx:x,cy:y+36,r:2.2,fill:'#111827'},g);
+    if(elb){ el('rect',{x:x+16,y:y+13,width:14,height:12,class:'box'},g); tx(x+23,y+23,'E','ts','middle',g); }
+    tx(x+(elb?34:18),y+18,lab,'ts','start',g); if(sub) tx(x+(elb?34:18),y+32,sub,'ts','start',g);
+    return g;
+  }
+  function gnd(x,y){ el('path',{d:`M${x} ${y} V${y+8} M${x-10} ${y+8} H${x+10} M${x-6} ${y+12} H${x+6} M${x-2} ${y+16} H${x+2}`,class:'sym'}); }
+  function spd(x,y,lab){ el('rect',{x:x-10,y,width:20,height:24,class:'box'}); el('path',{d:`M${x} ${y+5} L${x-4} ${y+13} H${x+4} L${x} ${y+20}`,class:'sym'}); gnd(x,y+24); tx(x-16,y+16,lab,'ts','end'); }
+  function conv(x,y,w,h,top,bot,lab,sub){ el('rect',{x:x-w/2,y,width:w,height:h,class:'box'}); el('path',{d:`M${x-w/2} ${y+h} L${x+w/2} ${y}`,class:'sym'}); tx(x-w/2+6,y+15,top,'ts'); tx(x+w/2-6,y+h-6,bot,'ts','end');
+    tx(x+w/2+8,y+h/2-2,lab,'t'); if(sub) tx(x+w/2+8,y+h/2+13,sub,'ts'); }
+  function pvArr(x,y,lab,sub){ const g=el('g',{}); for(let i=0;i<4;i++)for(let j=0;j<2;j++) el('rect',{x:x-44+i*22,y:y+j*16,width:20,height:14,fill:'#dbeafe',stroke:'#1e3a8a','stroke-width':1},g);
+    tx(x+52,y+13,lab,'tb'); tx(x+52,y+29,sub,'ts'); }
+  function load(x,y,lab,sub,motor){ if(motor){ el('circle',{cx:x,cy:y+18,r:18,class:'box'}); tx(x,y+23,'M','tb','middle'); } else { el('rect',{x:x-34,y,width:68,height:36,class:'box'}); }
+    tx(x,y+(motor?54:54),lab,'t','middle'); if(sub) tx(x,y+70,sub,'ts','middle'); }
+
+  // ── 한전 수전 (x=200) ──
+  tx(200,44,'한전 저압 수전','tb','middle'); tx(200,60,'3φ4W 380/220V 60Hz','ts','middle');
+  W('M200 66 V330','ac',DN);
+  el('circle',{cx:200,cy:96,r:16,class:'box'}); tx(200,100,'Wh','ts','middle'); tx(222,100,'전력량계 (한전)','ts');
+  el('circle',{cx:200,cy:140,r:7,class:'sym'}); tx(150,144,'CT','ts','middle');
+  el('rect',{x:240,y:128,width:74,height:26,class:'box'}); tx(277,145,'32 RPR','ts','middle'); el('path',{d:'M207 140 H240',class:'sym'});
+  tx(320,138,'역전력 계전기','ts'); tx(320,152,'역송 시 주차단기 트립','ts');
+  el('path',{d:'M277 154 V176 H214',class:'com'});
+  brk(200,184,'MCCB 3P 100AF/75AT','주차단기',DN,'ac');
+  el('path',{d:'M200 262 H150',class:'sym'}); spd(150,262-12,'AC SPD');
+
+  // ── AC 주분전반 모선 ──
+  W('M110 330 H1000','ac bus',DN);
+  tx(110,318,'주분전반 3φ4W 380/220V','tb');
+
+  // ── 태양광 B → 계통연계 인버터 (x=440) ──
+  pvArr(440,34,'태양광 B · 15 kWp','AC 연계 · 자가소비');
+  W('M440 66 V330','pv',D);
+  el('rect',{x:410,y:92,width:60,height:30,class:'box'}); tx(478,104,'DC 접속반','ts'); tx(478,117,'퓨즈 · DC SPD','ts');
+  conv(440,140,60,48,'=','~','계통연계 인버터','15 kW · 3φ · 단독운전 방지');
+  brk(440,226,'MCCB 3P 50AF/30AT','',D,'ac');
+
+  // ── 통합 EMS ──
+  el('rect',{x:700,y:36,width:280,height:130,rx:6,fill:'#f5f3ff',stroke:'#7c3aed','stroke-width':1.4});
+  tx(716,60,'통합 EMS (에코 케이 코리아)','tb'); tx(716,80,'RS-485 Modbus','ts');
+  ['인버터 · MPPT · BMS · 정류기','히트펌프 칠러 · 열전 드라이버','기존 환경제어기 · 전력량계 펄스','PV 우선 운전 · 역송 감시 · 정전 부하차단'].forEach((s,i)=>tx(716,100+i*16,s,'ts'));
+  const ct=(x,y)=>{ const g=el('g',{}); el('rect',{x,y,width:46,height:15,rx:3,fill:'#f5f3ff',stroke:'#7c3aed','stroke-width':1},g); const t=tx(x+23,y+11,'RS-485','ts','middle',g); t.style.fill='#7c3aed'; t.style.fontSize='9px'; };
+  ct(400,192); ct(1330,250); ct(1206,512); ct(1206,768); ct(1277,846); ct(486,494);
+
+  // ── AC 분기 ──
+  const br=[[180,'LED 조명반','15 kW','ELB 3P 50AF/40AT'],[320,'공조 (기존)','약 6 kW','ELB 3P 30AF/20AT'],[460,'히트펌프 칠러','냉각 6 kW · 입력 약 2.5 kW','ELB 3P 30AF/15AT',1],[620,'양액·환경제어반','기존 · 약 3 kW','ELB 3P 30AF/15AT']];
+  br.forEach(([x,l,s,b,m])=>{ W(`M${x} 330 V470`,'ac',DN); brk(x,356,b,'',DN,'ac',1); load(x,470,l,s,m); });
+  // 예비
+  W('M900 330 V380','ac','none'); brk(900,356,'ELB 3P 30AF','예비','none','ac',1);
+  // 정류기 분기 (x=760) → DC 측
+  W('M760 330 V430 H1150 V470','ac','night'); brk(760,356,'ELB 3P 30AF/15AT','정류기 전원','night','ac',1);
+  conv(1150,470,56,44,'~','=','정류기 AC/DC','48V 100A · 계통 백업');
+  W('M1150 514 V620','dc','night'); brk(1150,532,'DC 2P 125A','','night','dc');
+
+  // ── 태양광 A → MPPT (x=1290) ──
+  pvArr(1290,34,'태양광 A · 5 kWp','DC 직결');
+  W('M1290 66 V620','pv',D);
+  el('rect',{x:1260,y:92,width:60,height:30,class:'box'}); tx(1328,104,'DC 접속반','ts'); tx(1328,117,'퓨즈 · DC SPD','ts');
+  el('rect',{x:1255,y:196,width:70,height:50,class:'box'}); tx(1290,218,'MPPT','tb','middle'); tx(1290,234,'DC/DC','ts','middle');
+  tx(1334,216,'MPPT 충전컨트롤러','t'); tx(1334,232,'5 kW · 48V 100A','ts');
+  brk(1290,290,'DC 2P 125A','',D,'dc');
+
+  // ── DC 48V 버스 ──
+  W('M1110 620 H1570','dc bus',ALL); tx(1110,608,'DC 48V 버스','tb'); tx(1400,608,'(비상 시 배터리 공급)','ts');
+  // 배터리
+  W('M1180 620 V760','bat',ALL); brk(1180,640,'DC 2P 125A','',ALL,'bat');
+  el('path',{d:'M1160 720 H1200 M1168 730 H1192 M1160 740 H1200 M1168 750 H1192',class:'sym'}); tx(1206,730,'LFP 배터리','t'); tx(1206,745,'48V 60Ah · 3 kWh','ts'); tx(1206,760,'BMS · UPS 역할','ts');
+  // 열전 드라이버
+  W('M1300 620 V780','dc','day night'); const lsb=brk(1300,640,'DC 2P 125A','LS 정전 시 개방','day night','dc'); lsb.setAttribute('data-ls','1');
+  el('rect',{x:1264,y:780,width:72,height:40,class:'box'}); tx(1300,798,'열전','ts','middle'); tx(1300,812,'드라이버 ×10','ts','middle'); tx(1300,838,'SHCS 트림 · 최대 4 kW','ts','middle');
+  // 순환펌프
+  W('M1410 620 V780','dc',ALL); brk(1410,640,'DC 2P 16A','',ALL,'dc'); load(1410,780,'순환펌프 (BLDC)','약 0.5 kW',1);
+  // EMS 24V
+  W('M1500 620 V780','dc',ALL); brk(1500,640,'DC 2P 10A','',ALL,'dc');
+  el('rect',{x:1470,y:780,width:60,height:40,class:'box'}); tx(1500,798,'DC/DC','ts','middle'); tx(1500,812,'24V','ts','middle'); tx(1500,838,'EMS·센서','ts','middle');
+  gnd(1110,640); el('path',{d:'M1110 620 V640',class:'sym'}); tx(1080,676,'DC SPD · 접지','ts','middle');
+
+  // ── 범례 ──
+  const lg=[[ 'ac','AC 통전'],['pv','태양광 DC'],['dc','DC 48V 통전'],['bat','배터리'],['dead','무전압 · 정지']];
+  tx(40,640,'범례','tb');
+  lg.forEach(([k,t],i)=>{ el('path',{d:`M40 ${664+i*24} H90`,class:'wl '+(k==='dead'?'ac dead':k)}); tx(100,668+i*24,t,'ts'); });
+  el('path',{d:'M260 664 H310',class:'com'}); tx(320,668,'트립 신호','ts'); { const g=el('g',{}); el('rect',{x:420,y:657,width:46,height:15,rx:3,fill:'#f5f3ff',stroke:'#7c3aed','stroke-width':1},g); const t=tx(443,668,'RS-485','ts','middle',g); t.style.fill='#7c3aed'; t.style.fontSize='9px'; tx(474,668,'EMS 통신 연결','ts'); }
+  const bg=el('g',{}); brk(280,684,'','', 'x','ac'); tx(300,700,'MCCB 배선용차단기','ts');
+  el('rect',{x:296,y:738,width:14,height:12,class:'box'}); tx(303,748,'E','ts','middle'); tx(318,748,'ELB 누전차단기','ts');
+  el('rect',{x:260,y:770,width:36,height:26,class:'box'}); el('path',{d:'M260 796 L296 770',class:'sym'}); tx(304,788,'전력변환장치 (인버터·정류기)','ts');
+
+  // ── 주기 ──
+  tx(40,880,'주기','tb');
+  ['1. 차단기 정격·기기 용량은 시뮬레이션 부하(LED 15kW · 공조 6kW · 히트펌프 입력 약 2.5kW · 정류기 5kW) 기준 가정값이며, 실시설계 시 부하계산서로 확정한다.',
+   '2. 태양광 B는 자가소비 전용으로, 역전력 계전기(32 RPR)와 인버터 출력제한으로 역송을 방지한다. 한전 협의 필요.',
+   '3. 한전 정전 시 인버터는 단독운전 방지 기능으로 정지한다. DC 버스는 배터리로 순환펌프·EMS를 유지하고 열전 드라이버는 부하차단(LS)한다.',
+   '4. 분기회로는 누전차단기(ELB)를 적용하고, AC·DC 측에 서지보호장치(SPD)와 접지를 설치한다.',
+   '5. DC 48V 버스 접지방식, 케이블 규격, 태양광 스트링 구성은 기기 선정 후 확정한다.'].forEach((s,i)=>tx(40,904+i*20,s,'ts'));
+
+  // ── 표제란 ──
+  el('rect',{x:1150,y:872,width:432,height:170,class:'box'});
+  [[902,'도면명','단선결선도 (안) · 하이브리드 열관리'],[930,'사업명','고추냉이 다단 식물공장 실증'],[958,'도 번','EK-SHCS-E-001   축척 NONE'],[986,'작 성','2026. 09. 29   기본설계(안) · 검토용'],[1014,'설 계','에코 케이 코리아 (Eco K Korea)']].forEach(([y,a,b])=>{
+    el('path',{d:`M1150 ${y+8} H1582`,stroke:'#111827','stroke-width':.8}); tx(1164,y,a,'ts'); tx(1230,y,b,'t'); });
+  el('path',{d:'M1218 872 V1042',stroke:'#111827','stroke-width':.8});
+
+  // ── 모드 ──
+  const INFO={
+    day:{cards:[['태양광 발전','14.4 kW','A 3.6 kW → DC 버스 · B 10.8 kW → 주분전반'],['한전 수전','약 9 kW','LED·공조 부하 중 태양광으로 못 채운 만큼 · 역송 0'],['히트펌프 칠러','1.0 kW','태양광 전력으로 축냉 충전'],['DC 48V 버스','0.7 kW','열전 0.2 · 펌프·EMS 0.5 · 배터리 충전']],
+      desc:'<b>주간 · 태양광 자가소비</b> → 태양광 A는 MPPT를 거쳐 DC 48V 버스로 들어가 열전 드라이버·순환펌프·EMS를 직접 돌리고 배터리를 채웁니다. 태양광 B는 계통연계 인버터로 주분전반에 들어가 히트펌프 칠러와 LED·공조가 먼저 사용합니다. 부하가 태양광보다 커서 역송은 생기지 않으며, 32 RPR이 역송을 상시 감시합니다. 정류기는 대기합니다. (수치는 모니터 폭염일 오후 1시 예시)'},
+    night:{cards:[['태양광 발전','0 kW','A·B 모두 정지'],['한전 수전','전량','LED·공조·양액반 + 정류기'],['히트펌프 칠러','대기','축냉 탱크 방출 중 (12℃ 초과 시만 운전)'],['DC 48V 버스','정류기 공급','열전 트림 · 펌프 · EMS']],
+      desc:'<b>야간 · 계통 수전</b> → 태양광이 없으므로 DC 48V 버스는 정류기(48V 100A)로 계통 전력을 받아 열전 드라이버·순환펌프·EMS를 유지합니다. 히트펌프는 축냉 탱크 냉열을 쓰는 동안 정지해 있다가, 탱크가 12℃를 넘으면 계통 전력으로 보조 충전합니다.'},
+    out:{cards:[['한전 수전','정전','주분전반 무전압'],['태양광 인버터','정지','단독운전 방지 기능'],['DC 48V 버스','배터리 공급','순환펌프·EMS 약 0.5 kW → 약 6시간'],['수온 유지','약 5.3시간','축냉 탱크 냉열 · 열전 부하차단']],
+      desc:'<b>한전 정전</b> → 인버터는 단독운전 방지 기능으로 즉시 정지하고 히트펌프·LED·공조도 멈춥니다. DC 48V 버스는 배터리 3kWh가 이어받고, EMS가 열전 드라이버를 부하차단(LS)해 순환펌프·EMS에만 전력을 씁니다(약 6시간). 양액은 축냉 탱크 냉열로 약 5.3시간 동안 16℃ 이하로 유지됩니다. 낮 정전이면 태양광 A가 MPPT를 통해 DC 버스를 계속 충전할 수 있습니다.'}};
+  function setMode(m){
+    document.querySelectorAll('.mode').forEach(b=>b.setAttribute('aria-pressed',b.dataset.m===m));
+    svg.querySelectorAll('.wl[data-m]').forEach(p=>p.classList.toggle('dead',!p.dataset.m.split(' ').includes(m)));
+    svg.querySelectorAll('.brk').forEach(g=>g.classList.toggle('open', g.dataset.m==='none' || (g.dataset.ls==='1' && m==='out')));
+    const I=INFO[m];
+    document.getElementById('info').innerHTML=I.cards.map(c=>'<div class="card"><small>'+c[0]+'</small><b>'+c[1]+'</b><p>'+c[2]+'</p></div>').join('');
+    document.getElementById('desc').innerHTML=I.desc;
+  }
+  document.querySelectorAll('.mode').forEach(b=>b.onclick=()=>setMode(b.dataset.m));
+  setMode('day');
+})();
+</script>
+</body>
+</html>
