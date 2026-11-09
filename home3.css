@@ -75,6 +75,13 @@ main small{display:block;font-size:15px}
 .s-end .phone{display:block;font-size:clamp(60px,10vw,168px);font-weight:800;line-height:1.08;letter-spacing:-.03em;color:#fff;text-decoration:none;margin:14px 0 14px}
 .s-end .mail{font-size:clamp(19px,1.6vw,24px);color:#fff}
 
+.mark{background:var(--mist);color:var(--ink);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.mark .in{height:72px;display:flex;align-items:center;justify-content:space-between;padding:0 var(--edge)}
+.mark b{display:flex;align-items:center;gap:16px;font-size:clamp(19px,1.5vw,22px);font-weight:800;letter-spacing:-.02em}
+.mark i{font-style:normal;display:grid;place-items:center;width:34px;height:34px;border:2px solid var(--blue);color:var(--blue);font-size:17px}
+.mark span{font-size:15px;color:var(--slate);font-variant-numeric:tabular-nums}
+#site,#design,#super,#bill{scroll-margin-top:72px}
+
 @media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
 @media (max-width:860px){
  .hx{grid-template-columns:1fr;min-height:0}.hx .c{padding:40px var(--gut) 8px}.hx svg{height:auto}
@@ -87,6 +94,8 @@ main small{display:block;font-size:15px}
  .s-docs .hd{height:auto;display:block;padding:36px var(--gut) 22px}.s-docs .hd p{margin-top:8px}
  .strip{grid-template-columns:minmax(0,1fr);height:auto}.strip div{aspect-ratio:4/3}
  .s-end{padding-bottom:58px}
+ .mark .in{height:60px;padding:0 var(--gut)}.mark i{width:30px;height:30px;font-size:15px}
+ #site,#design,#super,#bill{scroll-margin-top:60px}
 }
 @media (prefers-reduced-motion:reduce){
  .hx .dr{animation:none;stroke-dashoffset:0}.hx text{animation:none;opacity:1}
