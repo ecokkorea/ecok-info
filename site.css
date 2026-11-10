@@ -21,6 +21,14 @@ h1,h2,h3,p{margin:0}
 .menu a{text-decoration:none;padding:6px 0;border-bottom:2px solid transparent;white-space:nowrap}
 .menu a:hover,.menu a[aria-current]{border-color:var(--blue);color:var(--blue)}
 .call{font-weight:800;font-size:20px;text-decoration:none;color:var(--blue);white-space:nowrap}
+.lang{display:flex;align-items:center;gap:7px;font-weight:600;font-size:16px;white-space:nowrap;color:var(--slate)}
+.lang a{text-decoration:none;padding:6px 4px;color:var(--slate)}.lang a:hover{color:var(--blue)}
+.lang b{color:var(--blue);font-weight:800;padding:6px 4px;border-bottom:2px solid var(--blue)}
+body.en{word-break:normal;overflow-wrap:break-word}
+body.en .hx h1{font-size:clamp(40px,4.2vw,68px)}
+body.en .s-end .phone{white-space:nowrap;font-size:clamp(40px,8vw,140px)}
+body.en .s-say h2,body.en .s-sup h2,body.en .s-bill h2{font-size:clamp(32px,3.2vw,54px)}
+@media (max-width:860px){body.en .hx p br{display:none}}
 .burger{display:none;margin-left:auto;background:none;border:1px solid var(--line);border-radius:6px;font:600 16px Paperlogy;color:var(--ink);padding:8px 14px}
 
 /* 첫 화면 */
@@ -123,6 +131,7 @@ table.info tbody th{font-weight:600;white-space:nowrap;padding-right:28px}
  .menu.open{display:flex}
  .menu a{padding:12px 0;font-size:19px;border:0}
  .burger{display:block}
+ .lang{margin-left:6px}
  .top .call{display:none}
 }
 @media (max-width:860px){

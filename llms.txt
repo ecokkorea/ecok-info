@@ -62,3 +62,16 @@
 - [보호계전기 정정](https://ecokkorea.com/relay.html)
 - [실적](https://ecokkorea.com/works.html)
 - [문의](https://ecokkorea.com/contact.html)
+
+## English pages
+- [Home](https://ecokkorea.com/en/): site feasibility, permitting, EPC electrical design, supervision
+- [Site feasibility and permitting](https://ecokkorea.com/en/permit.html)
+- [EPC electrical design](https://ecokkorea.com/en/electrical.html)
+- [Construction supervision](https://ecokkorea.com/en/supervision.html)
+- [BOQ and quantity take-off](https://ecokkorea.com/en/quantity.html)
+- [Fire alarm and telecom](https://ecokkorea.com/en/fire-telecom.html)
+- [Design calculators](https://ecokkorea.com/en/design-tools.html)
+- [Protection relay coordination](https://ecokkorea.com/en/relay.html)
+- [Projects](https://ecokkorea.com/en/works.html)
+- [Company facts](https://ecokkorea.com/en/company.html)
+- [Contact](https://ecokkorea.com/en/contact.html)
