@@ -51,3 +51,14 @@
 
 ## 자료실
 - [자료실 첫 화면](https://ecokkorea.com/library.html): 질문과 답, 사례, 계산기 모음
+
+## 업무별 쪽
+- [입지·인허가](https://ecokkorea.com/permit.html)
+- [전기설계](https://ecokkorea.com/electrical.html)
+- [감리](https://ecokkorea.com/supervision.html)
+- [내역서·물량산출](https://ecokkorea.com/quantity.html)
+- [소방·통신 내역서](https://ecokkorea.com/fire-telecom.html)
+- [계산 도구](https://ecokkorea.com/design-tools.html)
+- [보호계전기 정정](https://ecokkorea.com/relay.html)
+- [실적](https://ecokkorea.com/works.html)
+- [문의](https://ecokkorea.com/contact.html)
