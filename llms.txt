@@ -62,6 +62,7 @@
 - [보호계전기 정정](https://ecokkorea.com/relay.html)
 - [실적](https://ecokkorea.com/works.html)
 - [문의](https://ecokkorea.com/contact.html)
+- [강의 자료 받기](https://ecokkorea.com/materials.html): 유튜브 구독자용 PVsyst·쏠라프로 강의 요약 카드, 연습 파일, 계산서 견본
 
 ## English pages
 - [Home](https://ecokkorea.com/en/): site feasibility, permitting, EPC electrical design, supervision
