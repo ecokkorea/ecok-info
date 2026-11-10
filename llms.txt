@@ -76,3 +76,11 @@
 - [Projects](https://ecokkorea.com/en/works.html)
 - [Company facts](https://ecokkorea.com/en/company.html)
 - [Contact](https://ecokkorea.com/en/contact.html)
+
+## English insights (engineering notes from Korean projects)
+- [All insights](https://ecokkorea.com/en/insights/)
+- [Korean solar permitting setback rules explained](https://ecokkorea.com/en/insights/korean-solar-setback-rules.html): 200 m house cap, house count, no road setback since 2026-09-18
+- [How we size ESS for peak shaving with 15 minute data](https://ecokkorea.com/en/insights/ess-peak-shaving-15-minute-data.html): KEPCO billing demand, two dispatch models, capacity sweep
+- [PVsyst vs Solar Pro cross-check on a 619 kWp roof](https://ecokkorea.com/en/insights/pvsyst-solar-pro-cross-check-619-kwp-roof.html): same inputs, 2.2% unshaded, shading 1.22% vs 1.46%
+- [Agrivoltaic structure design basics](https://ecokkorea.com/en/insights/agrivoltaic-structure-design-basics.html): 4 m clearance, KDS loads, 3D column check
+- [Electrical BOQ and quantity take-off workflow](https://ecokkorea.com/en/insights/electrical-boq-quantity-take-off.html): conductor counts, conduit sizes, Korean public BOQ format
