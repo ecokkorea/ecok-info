@@ -2757,6 +2757,58 @@ html,body{margin:0;background:#fff;overflow-x:hidden}body{font-family:Paperlogy,
 }
 /* ⑤ 계산기 결과칸(output): 폭 45px에 '14.2 kW'가 두 줄 → 결과 숫자·단위는 한 줄로 */
 #doz_body output{white-space:nowrap}
+</style><style>:root{--ink:#16212c;--slate:#4a5763;--line:#d5dce2;--mist:#eef2f5;--blue:#1d4f91;--blue-dark:#163d70}
+.gate{margin-top:0;border:1.5px solid var(--ink);background:#fff;display:grid;grid-template-columns:1fr auto;gap:28px;align-items:center;padding:clamp(22px,3vw,36px)}
+.gate h2{font-size:clamp(24px,2.4vw,32px);font-weight:800;letter-spacing:-.02em;line-height:1.35}
+.gate ol{margin:14px 0 0;padding-left:1.4em;color:var(--slate)}.gate ol li{margin:4px 0}
+.gate .note{margin-top:12px;font-size:16px;color:var(--slate)}
+.subbtn{display:inline-flex;align-items:center;gap:12px;padding:18px 30px;border-radius:10px;background:#c4161c;color:#fff;font-weight:800;font-size:21px;text-decoration:none;white-space:nowrap}
+.subbtn:hover{background:#9f1015}.subbtn svg{width:30px;height:21px;flex:none}
+.gate .ok{display:none;font-weight:800;color:#1b6b3a;font-size:20px}
+.gate.done .ok{display:block}.gate.done .subbtn{background:#fff;color:#c4161c;border:2px solid #c4161c;padding:14px 24px;font-size:18px}
+
+.pg-bar{margin:22px 0 0;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.pg-save{font:800 19px Paperlogy,'Malgun Gothic',sans-serif;padding:15px 28px;border:0;border-radius:10px;background:#1d4f91;color:#fff;cursor:pointer}
+.pg-save:hover{background:#163d70}.pg-hint{font-size:15px;color:#4a5763}
+.pg-gatebox{display:none;margin-top:18px}.pg-gatebox.show{display:block}
+.pg-gatebox .gate{grid-template-columns:1fr}.pg-gatebox .subbtn{justify-self:start}
+#pg-sheet{display:none}
+@media print{
+ @page{size:A4;margin:10mm}
+ html,body{background:#fff!important;overflow:visible!important}
+ body>*:not(#pg-sheet){display:none!important}
+ #pg-sheet{display:block!important;width:190mm;color:#16212c;font-family:Paperlogy,'Malgun Gothic',sans-serif;word-break:keep-all;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+#pg-sheet.pg-fr{display:block}
+#pg-sheet.fuse .pgw>div,#pg-sheet.string .pgw>div{column-count:2;column-gap:14px}
+#pg-sheet.string .pgw .sec{break-inside:avoid}
+#pg-sheet.string .pgw .sec:has(table){column-span:all}
+#pg-sheet.fuse .pgw .sh,#pg-sheet.fuse .pgw .chk{break-inside:avoid}
+#pg-sheet *{box-sizing:border-box}
+#pg-sheet .pg-hd{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #1d4f91;padding-bottom:6px}
+#pg-sheet .pg-hd img{height:26px;width:auto}#pg-sheet .pg-dt{font-size:12px;color:#4a5763}
+#pg-sheet .pg-t{font-size:20px;font-weight:800;margin:10px 0 2px;line-height:1.3}
+#pg-sheet .pg-s{font-size:12px;color:#4a5763;margin:0 0 6px}
+#pg-sheet h2{font-size:14px;font-weight:800;margin:10px 0 4px;color:#1d4f91}
+#pg-sheet table.pg-in{width:100%;border-collapse:collapse;table-layout:fixed;font-size:11.5px}
+#pg-sheet table.pg-in th,#pg-sheet table.pg-in td{border-bottom:1px solid #d5dce2;padding:3px 6px;line-height:1.35;vertical-align:top;word-break:keep-all;overflow-wrap:break-word}
+#pg-sheet table.pg-in th{text-align:left;font-weight:600;color:#4a5763;background:#f4f6f8;width:27%}
+#pg-sheet table.pg-in td{font-weight:800;width:23%}
+#pg-sheet .pgw{max-width:none;margin:0;padding:0;color:#16212c}
+#pg-sheet .pgw .sh{margin-top:6px}
+#pg-sheet .pg-ft{margin-top:10px;border-top:1px solid #d5dce2;padding-top:6px;font-size:12px;display:flex;justify-content:space-between;gap:12px}
+#pg-sheet .pg-ft b{font-weight:800}
+
+#pg-sheet.fuse .pgw *,#pg-sheet.string .pgw *{font-size:10.5px!important;line-height:1.45!important}
+#pg-sheet.fuse .pgw .sh,#pg-sheet.string .pgw .sec h3,#pg-sheet.string .pgw .ekmppt h3{font-size:12px!important}
+#pg-sheet.fuse .pgw .sh{padding:5px 10px!important;margin-top:8px!important;break-after:avoid}
+#pg-sheet.fuse .pgw .sb{padding:5px 8px!important}
+#pg-sheet.fuse .pgw .chk{margin-bottom:4px!important;grid-template-columns:1fr 66px!important}
+#pg-sheet.fuse .pgw .chk .f{padding:4px 8px!important}
+#pg-sheet.fuse .pgw .chk .f .v,#pg-sheet.fuse .pgw .chk .f .s{padding:0 4px!important}
+#pg-sheet.string .pgw .sec{margin-top:8px!important}
+#pg-sheet.string .pgw .calcline{padding:3px 6px!important;margin-bottom:3px!important;gap:4px!important}
+#pg-sheet.string .pgw .verdict{padding:5px 8px!important;margin-top:6px!important}
 </style></head><body><div class="_widget_data " data-widget-name="코드" data-widget-type="code" data-widget-anim="none" data-widget-anim-duration="0.7" data-widget-anim-delay="0" data-widget-parent-is-mobile="N">
 
 
@@ -2859,4 +2911,64 @@ html,body{margin:0;background:#fff;overflow-x:hidden}body{font-family:Paperlogy,
 </div>
 
 </div>
-<script>(function(){function s(){parent.postMessage({h:document.documentElement.scrollHeight},'*')}addEventListener('load',s);new ResizeObserver(s).observe(document.body);setTimeout(s,800)})()</script></body></html>
+<div class="pg-bar" id="pg-bar"><button type="button" class="pg-save" id="pg-save">보고서 PDF로 저장</button><span class="pg-hint">A4 한 장, 입력값과 결과 표</span></div><div class="pg-gatebox" id="pg-gatebox"><div class="gate" id="subgate"><div><h2>유튜브 채널을 구독하시면 PDF 보고서가 저장됩니다</h2><ol><li>아래 빨간 단추를 누르면 유튜브 구독 창이 새로 열립니다.</li><li>구독을 마치고 이 창으로 돌아오시면 PDF 저장이 바로 열립니다.</li></ol><p class="note">계산은 구독 없이 무료입니다. 이미 구독 중이시면 같은 단추를 누르고 돌아오시면 됩니다. 한 번 열면 이 브라우저에서는 홈페이지 어디서나 계속 열려 있습니다.</p><p class="ok" role="status">열렸습니다. 구독해 주셔서 고맙습니다.</p></div><a class="subbtn" id="subbtn" href="https://www.youtube.com/channel/UCpRTUvMiZQxXk-7BLJQlUZQ?sub_confirmation=1" target="_blank" rel="noopener"><svg viewBox="0 0 30 21" aria-hidden="true"><rect width="30" height="21" rx="5" fill="#fff"/><path d="M12 6l8 4.5-8 4.5z" fill="#c4161c"/></svg>유튜브 구독하고 PDF 저장</a></div></div><script>(function(){var R=document.getElementById("ocout"),b=document.getElementById('pg-bar'),g=document.getElementById('pg-gatebox');if(R&&R.parentNode){R.parentNode.insertBefore(b,R.nextSibling);b.parentNode.insertBefore(g,b.nextSibling)}})();(function(){
+var K='ecok_sub_ok',KEY="fuse",ROOT="ekoc",FIT=(KEY==='fuse'||KEY==='string')?1005:960,RID="ocout",CO="☎ 1555-2859 · www.ecokkorea.kr · info@ecokkorea.co.kr",NOTE="참고용 계산, 실제 설계는 현장 조건 확인",ok=false,clicked=0,pending=false;
+function setOk(){try{window.localStorage.setItem(K,'1')}catch(e){}try{document.cookie=K+'=1; max-age=31536000; path=/; SameSite=Lax'}catch(e){}}
+function getOk(){var v=false;try{v=window.localStorage.getItem(K)==='1'}catch(e){}
+ if(!v){try{v=/(?:^|; )ecok_sub_ok=1/.test(document.cookie)}catch(e){}}
+ if(v)setOk();return v}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function rows(){var out=[];document.querySelectorAll('.sheet .row').forEach(function(r){
+ var el=r.querySelector('input,select,output');if(!el)return;
+ var lb=r.querySelector('label');if(!lb)return;var c=lb.cloneNode(true);
+ c.querySelectorAll('small').forEach(function(s){var t=s.textContent.trim();if(t.length<=6)s.replaceWith(document.createTextNode(' ('+t+')'));else s.remove()});
+ var name=c.textContent.replace(/\s+/g,' ').trim(),v;
+ if(el.type==='checkbox')v=el.checked?'예':'아니오';
+ else if(el.tagName==='SELECT')v=el.options[el.selectedIndex]?el.options[el.selectedIndex].text:'';
+ else if(el.tagName==='OUTPUT')v=el.textContent;
+ else v=el.value||'자동';
+ out.push([name,String(v).replace(/\s+/g,' ').trim()])});return out}
+function sheetHtml(){
+ var R=document.getElementById(RID);if(!R)return null;
+ var cl=R.cloneNode(true);cl.removeAttribute('id');cl.querySelectorAll('[id]').forEach(function(n){n.removeAttribute('id')});
+ if(KEY==='string')cl.querySelectorAll('table').forEach(function(t){if(t.rows[0]&&t.rows[0].cells.length>10)t.remove()});
+ var rs=rows(),h='';
+ for(var i=0;i<rs.length;i+=2){var a=rs[i],b=rs[i+1];
+  h+='<tr><th>'+esc(a[0])+'</th><td>'+esc(a[1])+'</td>'+(b?'<th>'+esc(b[0])+'</th><td>'+esc(b[1])+'</td>':'<th></th><td></td>')+'</tr>'}
+ var h1=document.querySelector('h1'),title=h1?h1.textContent.trim():document.title;
+ var d=new Date(),ds=d.getFullYear()+'.'+(d.getMonth()+1)+'.'+d.getDate();
+ var w=document.createElement('div');w.className='pgw '+ROOT;w.appendChild(cl);
+ var extra='';
+ if(KEY==='fire'){var t1=document.getElementById('ft1'),t2=document.getElementById('ft2');
+  if(t1&&t2){var nt=t1.closest('.tw').previousElementSibling,x=document.createElement('div');x.className='pgw '+ROOT;
+   if(nt)x.appendChild(nt.cloneNode(true));[t1,t2].forEach(function(t){var c=t.closest('.tw').cloneNode(true);c.querySelectorAll('[id]').forEach(function(n){n.removeAttribute('id')});x.appendChild(c)});
+   extra='<h2>감지면적 표 (NFTC 203 원문)</h2>'+x.outerHTML}}
+ return '<div id="pg-sheet" class="pg-fr '+KEY+'"><div class="pg-hd"><img src="img/logo.png" alt="에코케이코리아"><span class="pg-dt">계산일 '+ds+'</span></div>'
+  +'<div class="pg-t">'+esc(title)+'</div><p class="pg-s">입력값과 계산 결과</p>'
+  +'<h2>입력값</h2><table class="pg-in"><tbody>'+h+'</tbody></table><h2>계산 결과</h2>'+w.outerHTML+extra
+  +'<div class="pg-ft"><b>'+esc(CO)+'</b><span>'+esc(NOTE)+'</span></div></div>'}
+function frameHtml(){var s=sheetHtml();if(!s)return null;
+ var bs=document.createElement('base');bs.href=document.baseURI;var heads='';document.querySelectorAll('head style').forEach(function(x){heads+=x.outerHTML});
+ return '<!doctype html><html lang="ko"><head><meta charset="utf-8">'+bs.outerHTML+heads+'<style>html,body{margin:0;background:#fff}</style></head><body>'+s+'</body></html>'}
+function doSave(){var html=frameHtml();if(!html)return;
+ var old=document.getElementById('pg-frame');if(old)old.remove();
+ var f=document.createElement('iframe');f.id='pg-frame';f.setAttribute('aria-hidden','true');
+ f.style.cssText='position:absolute;left:-9999px;top:0;width:190mm;height:1400px;border:0;visibility:hidden';
+ f.onload=function(){var w=f.contentWindow,doc=f.contentDocument,s=doc.getElementById('pg-sheet');if(!s)return;
+  var go=function(){var hh=s.scrollHeight;s.style.zoom=Math.min(1,FIT/hh).toFixed(3);
+   setTimeout(function(){try{w.focus();w.print()}catch(e){try{window.print()}catch(e2){}}},120)};
+  (doc.fonts&&doc.fonts.ready?doc.fonts.ready:Promise.resolve()).then(function(){setTimeout(go,150)},go)};
+ document.body.appendChild(f);f.srcdoc=html}
+window.__pgFrameHtml=frameHtml;
+var box=document.getElementById('pg-gatebox'),btn=document.getElementById('pg-save');
+function openGate(){ok=true;setOk();var g=box.querySelector('.gate');g.classList.add('done');
+ if(pending){pending=false;doSave()}}
+ok=getOk();
+btn.addEventListener('click',function(){
+ if(ok){doSave();return}
+ pending=true;box.classList.add('show');try{box.scrollIntoView({block:'nearest'})}catch(e){}});
+document.getElementById('subbtn').addEventListener('click',function(){clicked=Date.now()});
+function back(){if(clicked&&!ok&&Date.now()-clicked>2500)openGate()}
+addEventListener('focus',back);document.addEventListener('visibilitychange',function(){if(!document.hidden)back()});
+window.__pgUnlock=openGate;
+})();</script><script>(function(){function s(){parent.postMessage({h:document.documentElement.scrollHeight},'*')}addEventListener('load',s);new ResizeObserver(s).observe(document.body);setTimeout(s,800)})()</script></body></html>
