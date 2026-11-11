@@ -2911,6 +2911,180 @@ html,body{margin:0;background:#fff;overflow-x:hidden}body{font-family:Paperlogy,
 </div>
 
 </div>
+<!-- 위젯 계산식(kr 원본에서 붙임) --><script>(function(){
+
+  if(window.__ekocInit)return;window.__ekocInit=1;
+
+  var STD=[10,12,15,16,20,25,30,32,35,40,45,50,63];
+
+  function g(id){var e=document.getElementById(id);if(!e)return NaN;if(e.tagName==='SELECT'||e.classList.contains('t'))return e.value;return e.value===''?NaN:parseFloat(e.value);}
+
+  function f(x,d){return isFinite(x)?x.toFixed(d==null?2:d):'-';}
+
+  function V(x){return '<span class="v">'+x+'</span>';}
+
+  function S(x){return '<span class="s">'+x+'</span>';}
+
+  function J(ok,txt){if(ok===null)return '<div class="j na">'+txt+'</div>';return '<div class="j '+(ok?'ps':'fl')+'">'+(txt||(ok?'PASS':'FAIL'))+'</div>';}
+
+  function C(formula,judge){return '<div class="chk"><div class="f">'+formula+'</div>'+judge+'</div>';}
+
+  function calc(){
+
+    var O=document.getElementById('ocout');if(!O)return;
+
+    var typ=g('typ'),rr=g('rr')/100,isc=g('isc'),iscb=g('iscb'),imp=g('imp'),ocpr=g('ocpr'),ntot=g('ntot');
+
+    var inf=g('inf'),dev=g('dev'),npd=g('npd'),impt=g('impt'),incb=g('incb'),iarr=g('iarr'),istr=g('istr');
+
+    var voc=g('voc'),bv=g('bv'),tmin=g('tmin'),ns=g('ns'),ufu=g('ufu'),ucb=g('ucb'),uinv=g('uinv'),ucab=g('ucab');
+
+    var iscm,basis;
+
+    if(typ==='mono'){iscm=isc;basis='단면형 : Isc(STC) '+f(isc)+'A';}
+
+    else if(typ==='bnpi'){iscm=iscb;basis='양면형 BNPI 명판 Isc '+f(iscb)+'A';}
+
+    else{iscm=isc*(1+rr);basis='STC Isc '+f(isc)+'A × (1+'+f(rr*100,0)+'%)';}
+
+    var io=document.getElementById('iscmod');if(io)io.textContent=f(iscm)+' A  ('+basis+')';
+
+    var lo=1.5*iscm,hi=2.4*iscm;
+
+    var p1=lo<inf&&inf<hi, p2=inf<=ocpr, pf=p1&&p2;
+
+    var isa=npd*iscm, k125=1.25*isa;
+
+    var p3,t3;
+
+    if(dev==='cb'){p3=k125<incb&&incb<=Math.min(2.4*isa,iarr);t3='(차단기) 1.25 × Isc_array '+V(f(k125))+' &lt; In '+S(incb)+' ≤ MIN( 2.4 × Isc_array '+V(f(2.4*isa))+' , 어레이 DC케이블 허용전류 '+V(f(iarr))+' )';}
+
+    else if(dev==='sw'){p3=k125<incb&&k125<=iarr;t3='(개폐기) 1.25 × Isc_array '+V(f(k125))+' &lt; In '+S(incb)+' , 1.25 × Isc_array ≤ 어레이 DC케이블 허용전류 '+V(f(iarr));}
+
+    else{p3=isa<=impt;t3='(인버터 내장 DC스위치) Isc_array '+V(f(isa))+' ≤ 인버터 MPPT당 허용 Isc '+S(impt)+' <small>← 설계내량 : 제조사가 보증하는 MPPT당 허용 최대 Isc 값</small>';}
+
+    var up=dev==='inv'?impt:incb, upName=dev==='inv'?'인버터 MPPT당 허용 Isc':(dev==='cb'?'어레이 차단기 In':'어레이 개폐기 In');
+
+    var p4=up>=inf, p5=inf<=istr, p6=dev==='inv'?k125<=iarr:null;   // ⑥ 1.25·Isc_array ≤ 어레이 케이블 (차단기·개폐기는 ③에 포함)
+
+    var impm=imp*(iscm/isc), i30=istr*0.3, p7=impm<=i30;
+
+    var bvs=bv>0?-bv:bv;                                          // 온도계수는 음수, + 로 넣으면 − 로 계산하고 알림
+
+    var bad=[];if(!(voc>0))bad.push('Voc는 0보다 커야 합니다');if(!isFinite(bv))bad.push('온도계수를 넣으세요');
+
+    if(!(tmin<=25))bad.push('최저 모듈온도가 25 ℃보다 높습니다');if(!(ns>=1&&Math.floor(ns)===ns))bad.push('직렬 수는 1 이상 정수');
+
+    var vmode=!TOUCHED.any?'ex':(VIDS.some(function(k){return TOUCHED[k];})?'user':'need');   // ex 첫 화면 예시 · need 전압 칸 그대로 · user
+
+    var vmx=ns*voc*(1+bvs/100*(tmin-25)), vok=!bad.length&&vmode!=='need';
+
+    var p8=vok?vmx<=ufu:null, p9=(vok&&dev!=='inv')?vmx<=ucb:null, p10=vok?vmx<=uinv:null, p11=vok?vmx<=ucab:null;
+
+    var vst=vmode==='need'?'need':(bad.length?'bad':(p8&&(p9===null||p9)&&p10&&p11?'ok':'fail'));
+
+    var ck=pf&&(dev==='inv'||p3), cd=(dev!=='inv'||(p3&&p6))&&p4&&p5;   // 안전공사 기준(전류) · 설계 검토
+
+    var pk=ck&&vst==='ok', pd=cd, all=pk&&pd;
+
+    function K(t){return '<span class="tg k">안전공사 기준</span>'+t;} function DZ(t){return '<span class="tg d">설계 검토</span>'+t;} function RF(t){return '<span class="tg r">참고</span>'+t;}
+
+    function JV(p,n){return vst==='need'?J(null,'입력 필요'):(vst==='bad'?J(false,'입력 확인'):J(p,p===null?'해당 없음':n+' '+(p?'PASS':'FAIL')));}
+
+    var h='<div class="sh">■ 2. 스트링 DC FUSE 정격전류 검토 [ ① and ② 동시 만족 시 적합 ]</div><div class="sb">'+
+
+      C(K('① 1.5 × Isc_mod ')+''+V(f(lo))+' &lt; 선정 In '+S(inf)+' &lt; 2.4 × Isc_mod '+V(f(hi)),J(p1,'① '+(p1?'PASS':'FAIL')))+
+
+      C(K('② 선정 In ')+S(f(inf))+' ≤ Imod max ocpr '+V(f(ocpr))+' <small>( KS C IEC 61730-2 모듈 과전류 보호정격, 모듈 제조사 또는 전기분야 기술사 제시값 )</small>',J(p2,'② '+(p2?'PASS':'FAIL')))+
+
+      C('<b>① and ② 동시 만족 여부 → 스트링 DC FUSE 정격 판정</b>',J(pf))+'</div>';
+
+    h+='<div class="sh">■ 3. 어레이 DC 과전류보호장치(차단기 / 개폐기) 정격전류 검토</div><div class="sb">'+
+
+      C('Isc_array = 1개 보호장치 담당 병렬 회로수 × Isc_mod (1회로 = +/− 2가닥) = '+npd+' 회로 × '+f(iscm)+' A = '+V(f(isa)+' A')+' <small>( 전체 '+ntot+'회로 )</small>',J(null,'계산값'))+
+
+      C((dev==='inv'?DZ:K)('③ '+t3),J(p3,'③ '+(p3?'PASS':'FAIL')))+'</div>';
+
+    h+='<div class="sh">■ 4. 상관관계 검토 ( 모듈 퓨즈 ↔ 어레이 보호장치 ↔ DC 케이블 )</div><div class="sb">'+
+
+      C(DZ('④ '+upName+' '+V(f(up))+' ≥ 스트링 DC FUSE In '+S(f(inf))+' [A] <small>(보호협조)</small>'),J(p4,'④ '+(p4?'PASS':'FAIL')))+
+
+      C(DZ('⑤ 스트링 DC FUSE 정격전류 '+S(inf)+' ≤ 스트링 DC케이블 허용전류 '+V(f(istr))+' [A] <small>(감소계수 적용 후, 퓨즈가 케이블 보호)</small>'),J(p5,'⑤ '+(p5?'PASS':'FAIL')))+
+
+      (dev==='inv'?C(DZ('⑥ 1.25 × Isc_array '+V(f(k125))+' ≤ 어레이 DC케이블 허용전류 '+V(f(iarr))+' [A] <small>(감소계수 적용 후 · 내장 DC스위치는 개폐기 조건을 적용)</small>'),J(p6,'⑥ '+(p6?'PASS':'FAIL'))):'<div class="chk dim"><div class="f">⑥ 어레이 DC케이블 허용전류, ③ '+(dev==='cb'?'(차단기 In ≤ 어레이 케이블)':'(1.25 × Isc_array ≤ 어레이 케이블)')+'에 포함</div>'+J(null,'③에 포함')+'</div>')+
+
+      C(RF('⑦ 모듈 최대동작전류 Imp')+''+(iscm!==isc?' (후면 보정 '+f(impm)+')':'')+' '+V(f(impm))+' ≤ 스트링케이블 허용전류 × 30% '+V(f(i30))+' [A] <small>(KEC 232.5.3, 참고 항목)</small>',J(null,p7?'30% 이내':'30% 초과<br>(감소계수 적용)'))+
+
+      '</div>';
+
+    var vrow=vst==='bad'?'<b style="color:#c62828">입력 확인 : '+bad.join(' · ')+'</b>':('Voc_max = 직렬 '+f(ns,0)+' EA × Voc '+f(voc)+' V × ( 1 + ('+f(bvs)+' %/℃) × ('+f(tmin,0)+' − 25) ℃ ) = '+V(f(vmx,1)+' V')+(bv>0?' <small style="color:#c62828">(온도계수를 + 로 넣어 − 로 계산했습니다)</small>':'')+(tmin>0&&tmin<=25?' <small style="color:#c62828">(최저 모듈온도가 0 ℃보다 높습니다, 겨울 최저(− 값)인지 확인)</small>':''));
+
+    if(vst==='need')vrow='<b>전압 검토 입력값 칸(최저 모듈온도·직렬 수·정격전압)과 모듈 Voc·온도계수를 넣으면 판정합니다.</b> <small>지금은 예시값이라 판정하지 않습니다.</small>';
+
+    var ttl=all?'PASS ( 적 합 )'+(vmode==='ex'?' <small>예시값 기준</small>':''):(ck&&cd&&vst==='need'?'판정 보류 ( 전압 입력 필요 )':'FAIL ( 재검토 필요 )');
+
+    var tcls=all?'ps':(ck&&cd&&vst==='need'?'na':'fl');
+
+    h+='<div class="sh">■ 5. DC 정격전압 검토 ( 최저 모듈온도 기준 스트링 최대 개방전압 )</div><div class="sb">'+
+
+      C(vrow,J(null,vst==='need'?'입력 필요':(vst==='bad'?'입력 확인':'계산값')))+
+
+      C(K('⑧ Voc_max '+V(f(vmx,1))+' ≤ DC FUSE 정격전압 '+S(f(ufu,0))+' [V]'),JV(p8,'⑧'))+
+
+      (dev==='inv'?'<div class="chk dim"><div class="f">⑨ 어레이 차단기·개폐기 정격전압, 내장 DC스위치는 ⑩ 인버터 정격전압으로 확인</div>'+J(null,'해당 없음')+'</div>'
+
+                  :C(K('⑨ Voc_max '+V(f(vmx,1))+' ≤ 어레이 차단기·개폐기 정격전압 '+S(f(ucb,0))+' [V]'),JV(p9,'⑨')))+
+
+      C(K('⑩ Voc_max '+V(f(vmx,1))+' ≤ 인버터 최대 DC 입력전압 '+S(f(uinv,0))+' [V]'),JV(p10,'⑩'))+
+
+      C(K('⑪ Voc_max '+V(f(vmx,1))+' ≤ DC케이블 정격전압 '+S(f(ucab,0))+' [V]'),JV(p11,'⑪'))+
+
+      '<div class="total"><div>◆ 종합 판정 ( 안전공사 기준 · 설계 검토 전 항목 충족 시 적합 )<small>안전공사 기준 '+(pk?'PASS':(ck&&vst==='need'?'전압 미확인':'FAIL'))+' · 설계 검토 '+(pd?'PASS':'FAIL')+'</small></div><div class="'+tcls+'">'+ttl+'</div></div>'+
+
+      '<p class="note">근거) 〔안전공사 기준〕 ① 1.5×Isc_mod &lt; In &lt; 2.4×Isc_mod ② In ≤ Imod max ocpr · ③ (차단기) 1.25×Isc_array &lt; In ≤ 2.4×Isc_array, In ≤ 어레이 케이블 (개폐기) 1.25×Isc_array &lt; In, 1.25×Isc_array ≤ 어레이 케이블 · ⑧~⑪ 최저 모듈온도 스트링 최대 Voc ≤ 퓨즈·차단기(개폐기)·인버터 DC 입력·케이블 정격전압 &nbsp;〔설계 검토〕 ③ 내장 DC스위치 Isc_array ≤ MPPT 허용 Isc · ④ 상위 보호장치 ≥ 퓨즈 In · ⑤ 퓨즈 In ≤ 스트링 케이블 · ⑥ 내장 DC스위치 1.25×Isc_array ≤ 어레이 케이블 &nbsp;〔참고〕 ⑦</p></div>';
+
+    // 5. 표준 정격 그래프
+
+    var W=980,H=360,L=50,R=20,T=24,B=48,maxY=Math.max(70,Math.ceil(Math.max(hi,ocpr,63)/10)*10+5);
+
+    function X(i){return L+(i+0.5)*(W-L-R)/STD.length;}function Y(v){return T+(maxY-v)*(H-T-B)/maxY;}
+
+    var bw=(W-L-R)/STD.length*0.62;
+
+    var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="표준 DC 퓨즈 정격별 적합성 그래프">';
+
+    for(var gv=0;gv<=maxY;gv+=10){s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+Y(gv)+'" y2="'+Y(gv)+'" stroke="#eef0f3"/><text x="'+(L-6)+'" y="'+(Y(gv)+4)+'" font-size="11" text-anchor="end" fill="#888">'+gv+'</text>';}
+
+    STD.forEach(function(r,i){var ok=lo<r&&r<hi&&r<=ocpr;s+='<rect x="'+(X(i)-bw/2)+'" y="'+Y(r)+'" width="'+bw+'" height="'+(Y(0)-Y(r))+'" fill="'+(ok?'#2e75b6':'#d0d0d0')+'"/><text x="'+X(i)+'" y="'+(Y(r)-5)+'" font-size="12" text-anchor="middle" fill="#333">'+r+'</text><text x="'+X(i)+'" y="'+(H-B+18)+'" font-size="12" text-anchor="middle" fill="#333">'+r+'</text>';});
+
+    [[lo,'#ed7d31','6,4','하한 '+f(lo,1)],[hi,'#c00000','8,4','상한 '+f(hi,1)],[ocpr,'#7030a0','2,3','ocpr '+f(ocpr,1)],[inf,'#1f4e79','','선정 '+f(inf,1)]].forEach(function(z){s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+Y(z[0])+'" y2="'+Y(z[0])+'" stroke="'+z[1]+'" stroke-width="2"'+(z[2]?' stroke-dasharray="'+z[2]+'"':'')+'/><text x="'+(L+6)+'" y="'+(Y(z[0])-4)+'" font-size="11.5" fill="'+z[1]+'">'+z[3]+'</text>';});
+
+    s+='<text x="'+(W/2)+'" y="'+(H-6)+'" font-size="12" text-anchor="middle" fill="#333">표준 DC FUSE 정격 [A]</text></svg>';
+
+    var okList=STD.filter(function(r){return lo<r&&r<hi&&r<=ocpr;});
+
+    h+='<div class="sh">■ 6. 표준 DC FUSE 정격별 적합성 판정 ( ① · ② 동시 만족 구간 )</div><div class="sb">'+s+
+
+      '<p class="legend"><i style="background:#2e75b6"></i>적합<i style="background:#d0d0d0"></i>부적합<i style="background:#ed7d31"></i>하한 1.5×Isc_mod<i style="background:#c00000"></i>상한 2.4×Isc_mod<i style="background:#7030a0"></i>Imod max ocpr<i style="background:#1f4e79"></i>선정 In</p>'+
+
+      '<p class="note">선정 가능 표준 정격 : <b>'+(okList.length?okList.join('A, ')+'A':'없음 (Imod max ocpr 또는 모듈 사양 확인)')+'</b> · 파란 막대만 ①·② 를 동시에 만족합니다.</p></div>';
+
+    O.innerHTML=h;
+
+  }
+
+  var VIDS=['voc','bv','tmin','ns','ufu','ucb','uinv','ucab'], TOUCHED={any:false};   // 사용자가 바꾼 칸
+
+  function mark(e){if(e.target.closest&&e.target.closest('#ekoc')){if(e.target.id&&e.target.id!=='mdl'){TOUCHED[e.target.id]=1;TOUCHED.any=true;}calc();}}
+
+  document.addEventListener('input',mark);
+
+  document.addEventListener('change',mark);
+
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',calc);else calc();
+
+})();</script>
+
 <div class="pg-bar" id="pg-bar"><button type="button" class="pg-save" id="pg-save">보고서 PDF로 저장</button><span class="pg-hint">A4 한 장, 입력값과 결과 표</span></div><div class="pg-gatebox" id="pg-gatebox"><div class="gate" id="subgate"><div><h2>유튜브 채널을 구독하시면 PDF 보고서가 저장됩니다</h2><ol><li>아래 빨간 단추를 누르면 유튜브 구독 창이 새로 열립니다.</li><li>구독을 마치고 이 창으로 돌아오시면 PDF 저장이 바로 열립니다.</li></ol><p class="note">계산은 구독 없이 무료입니다. 이미 구독 중이시면 같은 단추를 누르고 돌아오시면 됩니다. 한 번 열면 이 브라우저에서는 홈페이지 어디서나 계속 열려 있습니다.</p><p class="ok" role="status">열렸습니다. 구독해 주셔서 고맙습니다.</p></div><a class="subbtn" id="subbtn" href="https://www.youtube.com/channel/UCpRTUvMiZQxXk-7BLJQlUZQ?sub_confirmation=1" target="_blank" rel="noopener"><svg viewBox="0 0 30 21" aria-hidden="true"><rect width="30" height="21" rx="5" fill="#fff"/><path d="M12 6l8 4.5-8 4.5z" fill="#c4161c"/></svg>유튜브 구독하고 PDF 저장</a></div></div><script>(function(){var R=document.getElementById("ocout"),b=document.getElementById('pg-bar'),g=document.getElementById('pg-gatebox');if(R&&R.parentNode){R.parentNode.insertBefore(b,R.nextSibling);b.parentNode.insertBefore(g,b.nextSibling)}})();(function(){
 var K='ecok_sub_ok',KEY="fuse",ROOT="ekoc",FIT=(KEY==='fuse'||KEY==='string')?1005:960,RID="ocout",CO="☎ 1555-2859 · www.ecokkorea.kr · info@ecokkorea.co.kr",NOTE="참고용 계산, 실제 설계는 현장 조건 확인",ok=false,clicked=0,pending=false;
 function setOk(){try{window.localStorage.setItem(K,'1')}catch(e){}try{document.cookie=K+'=1; max-age=31536000; path=/; SameSite=Lax'}catch(e){}}

@@ -2839,6 +2839,64 @@ html,body{margin:0;background:#fff;overflow-x:hidden}body{font-family:Paperlogy,
 </div>
 
 </div>
+<!-- 위젯 계산식(kr 원본에서 붙임) --><script>(function(){
+
+  var T={d1:[90,50,45,30],d2:[70,40,35,25],c1:[90,50,45,30],c2:[70,40,35,25],t0:[70,40,35,25],t1:[60,30,30,15],t2:[20,15,null,null]};
+
+  var NAME={d1:'차동식 스포트형 1종',d2:'차동식 스포트형 2종',c1:'보상식 스포트형 1종',c2:'보상식 스포트형 2종',t0:'정온식 스포트형 특종',t1:'정온식 스포트형 1종',t2:'정온식 스포트형 2종',s12:'연기감지기 1종·2종',s3:'연기감지기 3종'};
+
+  var S={s12:[150,75],s3:[50,null]};
+
+  function g(id){return document.getElementById(id);}
+
+  function f(v,d){return v.toLocaleString('ko-KR',{minimumFractionDigits:d||0,maximumFractionDigits:d||0});}
+
+  function fillTables(){
+
+    var h='<tr><th rowspan="2">감지기</th><th colspan="2">4m 미만</th><th colspan="2">4m 이상 8m 미만</th></tr><tr><th>내화구조</th><th>기타 구조</th><th>내화구조</th><th>기타 구조</th></tr>';
+
+    ['d1','d2','c1','c2','t0','t1','t2'].forEach(function(k){h+='<tr><td class="l">'+NAME[k]+'</td>'+T[k].map(function(v){return '<td>'+(v==null?'–':v)+'</td>';}).join('')+'</tr>';});
+
+    g('ft1').innerHTML='<caption style="caption-side:top;text-align:left;font-weight:800;padding:0 0 6px">표 2.4.3.5 스포트형 열감지기 (바닥면적마다 1개 이상)</caption>'+h;
+
+    g('ft2').innerHTML='<caption style="caption-side:top;text-align:left;font-weight:800;padding:0 0 6px">표 2.4.3.10.1 연기감지기 (바닥면적마다 1개 이상)</caption><tr><th>부착 높이</th><th>1종 및 2종</th><th>3종</th></tr><tr><td class="l">4m 미만</td><td>150</td><td>50</td></tr><tr><td class="l">4m 이상 20m 미만</td><td>75</td><td>–</td></tr>';
+
+  }
+
+  function calc(){
+
+    var x=parseFloat(g('fx').value),y=parseFloat(g('fy').value),st=+g('fs').value,hh=+g('fh').value,k=g('fk').value,o=g('fout');
+
+    if(!(x>0&&y>0)){o.innerHTML='<div class="msg">가로·세로를 0보다 크게 입력하세요.</div>';return;}
+
+    var A=x*y,sa=null,why='';
+
+    if(k.charAt(0)==='s'){var col=hh===0?0:1;sa=S[k][col];if(sa==null)why='연기감지기 3종은 부착 높이 4m 미만에만 쓸 수 있습니다(표 2.4.3.10.1).';}
+
+    else{if(hh===2)why='스포트형 열감지기 감지면적 표는 부착 높이 8m 미만까지만 있습니다(표 2.4.3.5). 연기감지기를 고르거나 다른 형식을 검토하세요.';else{sa=T[k][hh*2+st];if(sa==null)why='이 조건의 '+NAME[k]+'는 원문 표에 감지면적이 없습니다(–). 1종이나 특종, 또는 연기감지기를 검토하세요.';}}
+
+    var st1=k.charAt(0)==='s'?'':(st===0?'내화구조':'기타 구조')+' · ';
+
+    var hn=['4m 미만','4m 이상 8m 미만','8m 이상 20m 미만'][hh];
+
+    if(sa==null){o.innerHTML='<div class="fm">바닥면적 <span class="v">'+f(x,1)+' × '+f(y,1)+' = '+f(A,1)+' ㎡</span></div><div class="msg">'+why+'</div>';return;}
+
+    var n=Math.ceil(A/sa-1e-9);
+
+    o.innerHTML='<div class="big"><div><small>바닥면적</small><b>'+f(A,1)+'<em>㎡</em></b></div><div><small>감지기 1개 감지면적</small><b>'+sa+'<em>㎡</em></b></div><div><small>필요 감지기</small><b>'+n+'<em>개</em></b></div><div><small>종류</small><b style="font-size:17px">'+NAME[k]+'</b></div></div>'
+
+      +'<div class="fm">① 바닥면적 <span class="v">'+f(x,1)+' × '+f(y,1)+'</span> = <span class="s">'+f(A,1)+' ㎡</span><br>② 감지면적(표) <span class="v">'+st1+hn+' · '+NAME[k]+'</span> = <span class="s">'+sa+' ㎡</span><br>③ 개수 = '+f(A,1)+' ÷ '+sa+' = '+f(A/sa,2)+' → 올림 <span class="s">'+n+'개</span></div>';
+
+  }
+
+  fillTables();
+
+  ['fx','fy','fs','fh','fk'].forEach(function(id){g(id).addEventListener('input',calc);g(id).addEventListener('change',calc);});
+
+  calc();
+
+})();</script>
+
 <div class="pg-bar" id="pg-bar"><button type="button" class="pg-save" id="pg-save">보고서 PDF로 저장</button><span class="pg-hint">A4 한 장, 입력값과 결과 표</span></div><div class="pg-gatebox" id="pg-gatebox"><div class="gate" id="subgate"><div><h2>유튜브 채널을 구독하시면 PDF 보고서가 저장됩니다</h2><ol><li>아래 빨간 단추를 누르면 유튜브 구독 창이 새로 열립니다.</li><li>구독을 마치고 이 창으로 돌아오시면 PDF 저장이 바로 열립니다.</li></ol><p class="note">계산은 구독 없이 무료입니다. 이미 구독 중이시면 같은 단추를 누르고 돌아오시면 됩니다. 한 번 열면 이 브라우저에서는 홈페이지 어디서나 계속 열려 있습니다.</p><p class="ok" role="status">열렸습니다. 구독해 주셔서 고맙습니다.</p></div><a class="subbtn" id="subbtn" href="https://www.youtube.com/channel/UCpRTUvMiZQxXk-7BLJQlUZQ?sub_confirmation=1" target="_blank" rel="noopener"><svg viewBox="0 0 30 21" aria-hidden="true"><rect width="30" height="21" rx="5" fill="#fff"/><path d="M12 6l8 4.5-8 4.5z" fill="#c4161c"/></svg>유튜브 구독하고 PDF 저장</a></div></div><script>(function(){var R=document.getElementById("fout"),b=document.getElementById('pg-bar'),g=document.getElementById('pg-gatebox');if(R&&R.parentNode){R.parentNode.insertBefore(b,R.nextSibling);b.parentNode.insertBefore(g,b.nextSibling)}})();(function(){
 var K='ecok_sub_ok',KEY="fire",ROOT="ekol",FIT=(KEY==='fuse'||KEY==='string')?1005:960,RID="fout",CO="☎ 1555-2859 · www.ecokkorea.kr · info@ecokkorea.co.kr",NOTE="참고용 계산, 실제 설계는 현장 조건 확인",ok=false,clicked=0,pending=false;
 function setOk(){try{window.localStorage.setItem(K,'1')}catch(e){}try{document.cookie=K+'=1; max-age=31536000; path=/; SameSite=Lax'}catch(e){}}

@@ -2907,6 +2907,188 @@ html,body{margin:0;background:#fff;overflow-x:hidden}body{font-family:Paperlogy,
 </div>
 
 </div>
+<!-- 위젯 계산식(kr 원본에서 붙임) --><script>(function(){
+
+  if(window.__ekstInit)return;window.__ekstInit=1;
+
+  var cfg=[[15,6],[16,4]];
+
+  function g(id){var e=document.getElementById(id);if(!e)return NaN;if(e.type==='checkbox')return e.checked;if(e.classList.contains('t'))return e.value;return e.value===''?NaN:parseFloat(e.value);}
+
+  function f(x,d){return isFinite(x)?x.toFixed(d==null?2:d):'-';}
+
+  function c0(x){return isFinite(x)?Math.round(x).toLocaleString():'-';}
+
+  function line(parts){return '<div class="calcline">'+parts.join(' ')+'</div>';}
+
+  function V(x){return '<span class="v">'+x+'</span>';}
+
+  function calc(){
+
+    var O=document.getElementById('out');if(!O)return;
+
+    var pm=g('pm'),voc=g('voc'),isc=g('isc'),vmp=g('vmp'),imp=g('imp'),vocc=Math.abs(g('vocc')),vmpc=Math.abs(g('vmpc')),sysv=g('sysv'),noct=g('noct');
+
+    var pac=g('pac'),mpmin=g('mpmin'),mpmax=g('mpmax'),vinmax=g('vinmax'),iin=g('iinmax'),pin=g('pinmax'),tmin=g('tmin'),tmax=g('tmax'),d=g('dv')/100,bif=g('bif'),nsel=g('nsel');
+
+    var vmpL=vmp+(noct-tmin)*vmp*vmpc, vocL=voc+(noct-tmin)*voc*vocc, vmpH=vmp+(noct-tmax)*vmp*vmpc, vocH=voc+(noct-tmax)*voc*vocc;
+
+    var k=1-d;
+
+    var n1=Math.ceil(mpmin/(vocH*k)), n2=Math.floor(mpmax/(vocL*k)), n3=Math.floor(sysv/(vocL*k)), n4=Math.min(n2,n3);
+
+    // 전압강하 반영 선정 범위 (계산서 2쪽 표 기준): 최고온도 Vmpp ≥ MPPT 최저, 최저온도 Voc ≤ 최대입력전압
+
+    var sMin=Math.ceil(mpmin/(vmpH*k)), sMax=Math.floor(vinmax/(vocL*k));
+
+    if(!isFinite(nsel)||nsel<1)nsel=sMin<=sMax?sMin:n4;
+
+    var pStr=nsel*pm/1000;
+
+    var iscC=bif?isc*1.05*1.25:isc;
+
+    var napp=Math.floor(pac/pStr), nisc=Math.floor(iin/iscC), nimp=Math.floor(iin/imp), nrat=Math.min(napp,nisc,nimp), nm=Math.floor(pin/pStr);
+
+    var h='';
+
+    h+='<div class="sec"><h3>※ 계절별 온도 변화에 따른 태양광 모듈의 전압변동 값 계산</h3>'+
+
+      line(['최저온도',V(tmin+'℃'),'Vmpp = Vmp + (NOCT − 최저온도) × Vmp × Vmpc =',f(vmp,1),'+ (',noct,'− (',tmin,')) ×',f(vmp,1),'×',f(vmpc*100,2)+'% =',V(f(vmpL)+' V')])+
+
+      line(['','','Voc = Voc + (NOCT − 최저온도) × Voc × Vocc =',f(voc,1),'+ (',noct,'− (',tmin,')) ×',f(voc,1),'×',f(vocc*100,2)+'% =',V(f(vocL)+' V')])+
+
+      line(['최고온도',V(tmax+'℃'),'Vmpp = Vmp + (NOCT − 최고온도) × Vmp × Vmpc =',f(vmp,1),'+ (',noct,'− (',tmax,')) ×',f(vmp,1),'×',f(vmpc*100,2)+'% =',V(f(vmpH)+' V')])+
+
+      line(['','','Voc = Voc + (NOCT − 최고온도) × Voc × Vocc =',f(voc,1),'+ (',noct,'− (',tmax,')) ×',f(voc,1),'×',f(vocc*100,2)+'% =',V(f(vocH)+' V')])+
+
+      '<p class="legend">■ 최저온도는 설치 장소의 최저온도(한국전기안전공사 표기: 최저 모듈온도), 최고온도는 여름 모듈 셀 동작온도 기준입니다.</p></div>';
+
+    h+='<div class="sec"><h3>※ 전압변동값에 따른 최소/최대 모듈 수량 (전압강하율 '+f(d*100,1)+'% 반영)</h3>'+
+
+      line(['① 최소 수량 : 인버터 최저입력전압 ÷ 최고온도 Voc =',mpmin,'÷',f(vocH*k),'=',V(n1+' 개'),'<span class="hint">(이 개수 이하에서는 동작이 되지 않을 수 있다)</span>'])+
+
+      line(['② 최대 수량(인버터) : 인버터 MPPT 최고전압 ÷ 최저온도 Voc =',mpmax,'÷',f(vocL*k),'=',V(n2+' 개'),'<span class="hint">(이 개수 이상에서는 동작이 되지 않을 수 있다)</span>'])+
+
+      line(['③ 최대 수량(모듈) : 모듈 System Voltage ÷ 최저온도 Voc =',sysv,'÷',f(vocL*k),'=',V(n3+' 개'),'<span class="hint">(이 개수를 넘어서면 SYSTEM 전압이 초과될 수 있다)</span>'])+
+
+      line(['④ 최대 수량 : ②, ③ 중 작은 수 =',V(n4+' 개')])+'</div>';
+
+    h+='<div class="sec"><h3>※ 전압 강하율 및 전압특성에 따른 모듈 직렬 수량 선정</h3>'+
+
+      line(['인버터 입력 전압 범위가',V(mpmin),'~',V(mpmax),'V 이며, 동절기 Voc는 최대입력전압',V(vinmax),'V와 모듈·접속반·인버터 간 전압강하율을 감안하여 모듈 직렬 가능 수량은',V(sMin),'~',V(sMax),'까지로 선정할 수 있다'])+
+
+      '<p class="legend" style="color:#c62828">(계산된 직렬 수량은 이론적으로 최적의 효율을 낼 수 있는 수량으로 절대적인 값은 아님)</p>'+
+
+      line(['본 Project의 현장 여건을 감안하여','<span class="pick">'+nsel+'</span>','직렬을 적용한다 · 직렬출력전력',V(f(pStr,3)+' kWp')])+'</div>';
+
+    h+='<div class="sec"><h3>※ 병렬 계산</h3>'+
+
+      line(['병렬 수량(정격) : Napp = 정격출력전력 ÷ 직렬전력 =',pac,'÷',f(pStr),'=',V(napp+' 병렬')])+
+
+      line(['N[Isc] = 최대입력전류 ÷ '+(bif?'보정 Isc':'Isc')+' =',iin,'÷',f(iscC),'=',V(nisc+' 병렬'),'<span class="hint">(인버터의 전류값을 초과하여서는 안 된다)</span>'])+
+
+      line(['N[Imp] = 최대입력전류 ÷ Imp =',iin,'÷',f(imp,1),'=',V(nimp+' 병렬')])+
+
+      line(['정격 병렬수 = min(Napp, N[Isc], N[Imp]) =','<span class="pick">'+nrat+' 병렬</span>'])+
+
+      line(['최대 병렬 수량 : Nm = 최대입력전력 ÷ 직렬전력 =',pin,'÷',f(pStr),'=','<span class="pick">'+nm+' 병렬</span>'])+
+
+      (bif?line(['※ 양면형(Bifacial) 후면이득 보정 : 후면이득계수',V('1.05'),'안전율',V('1.25'),'보정 Isc =',V(f(iscC)+' A')]):'')+'</div>';
+
+    var vS=nsel*vocL*k, ok=vS<=vinmax&&nsel*vmpH*k>=mpmin&&vS<=sysv/k*k;
+
+    var okInv=vS<=vinmax, okMp=nsel*vmpH*k>=mpmin, okSys=nsel*vocL*k<=sysv;
+
+    h+='<div class="verdict '+(okInv&&okMp?'ok':'ng')+'">'+(okInv&&okMp?'✓ [적합] ':'✕ [확인 필요] ')+nsel+'S × 저온 Voc = '+f(vS)+'V '+(okInv?'≤':'>')+' 인버터 한계 '+vinmax+'V · 고온 Vmpp '+f(nsel*vmpH*k)+'V '+(okMp?'≥':'<')+' MPPT 최저 '+mpmin+'V'+(okSys?'':' · 모듈 System Voltage('+sysv+'V) 초과 주의')+'</div>';
+
+    // 2026-10-28 18:56 제안 5(케이 적용): MPPT 전압 범위 검사, 인버터 교체 때 확인
+
+    var m1=nsel*vmpH*k, m2=nsel*vmpL*k, m3=nsel*vocL*k;
+
+    function mr(ok,txt,bad){return '<li class="'+(ok?'ok':'ng')+'"><b>'+(ok?'OK':bad)+'</b> '+txt+'</li>';}
+
+    h+='<div class="sec ekmppt"><h3>MPPT 전압 범위 검사 ('+nsel+'직렬)</h3><ul>'+
+
+      mr(m1>=mpmin,'여름 최고 셀 온도 Vmp 합계 '+f(m1)+'V '+(m1>=mpmin?'≥':'<')+' MPPT 최소 '+mpmin+'V','주의 · 더운 날 발전 손실')+
+
+      mr(m2<=mpmax,'겨울 최저 셀 온도 Vmp 합계 '+f(m2)+'V '+(m2<=mpmax?'≤':'>')+' MPPT 최대 '+mpmax+'V','주의 · 최대전력점 추종 범위 벗어남')+
+
+      mr(m3<=vinmax,'겨울 최저 셀 온도 Voc 합계 '+f(m3)+'V '+(m3<=vinmax?'≤':'>')+' 인버터 최대 입력전압 '+vinmax+'V','위험 · 인버터 손상')+
+
+      '</ul><p class="legend">인버터 교체 때는 기존 모듈 직렬 수가 새 인버터 MPPT 범위에 맞는지 먼저 확인하세요. 위 입력칸의 MPPT 입력전압 최저·최고와 최대 입력전압을 새 인버터 명판 값으로 바꾸면 바로 다시 검사합니다.</p></div>';
+
+    // 직렬수별 전압표
+
+    var a=Math.max(1,Math.min(sMin,n1)-6), b=Math.max(sMax,n4)+4; if(b-a>16)a=b-16;
+
+    var ns=[];for(var n=a;n<=b;n++)ns.push(n);
+
+    function cls(v){return v>vinmax?'p':(v<mpmin?'r':'b');}
+
+    var rows=[['최저온도 Vmpp',vmpL],['최저온도 Voc',vocL],['최고온도 Vmpp',vmpH],['최고온도 Voc',vocH]];
+
+    var t='<div class="sec"><h3>※ 직렬수별 모듈 전압 vs 인버터 허용범위 (전압강하 '+f(d*100,1)+'% 적용)</h3><div class="tblwrap"><table class="vt"><tr><th>Module 직렬수</th>'+ns.map(function(n){return '<th'+(n>=sMin&&n<=sMax?' class="sel"':'')+'>'+n+'</th>';}).join('')+'</tr>';
+
+    rows.forEach(function(r){t+='<tr><td class="lab">'+r[0]+'</td>'+ns.map(function(n){var v=n*r[1]*k;return '<td class="'+cls(v)+'">'+c0(v)+'</td>';}).join('')+'</tr>';});
+
+    t+='<tr><td class="lab">MPPT 최저값</td>'+ns.map(function(){return '<td class="n">'+c0(mpmin)+'</td>';}).join('')+'</tr>';
+
+    t+='<tr><td class="lab">MPPT 최고값</td>'+ns.map(function(){return '<td class="n">'+c0(mpmax)+'</td>';}).join('')+'</tr>';
+
+    t+='<tr><td class="lab">최대입력전압</td>'+ns.map(function(){return '<td class="n">'+c0(vinmax)+'</td>';}).join('')+'</tr></table></div>';
+
+    t+='<p class="legend"><i style="background:#c00000"></i>빨강: 인버터 입력전압범위 밖(동작 불가)<i style="background:#0b6fbf"></i>파랑: 입력전압범위 내(정상 동작)<i style="background:#7030a0"></i>보라: 최대입력전압 초과(동작 불가)<i style="background:#93c47d"></i>초록 머리: 선정 가능 직렬 구간</p>';
+
+    // 그래프
+
+    var W=980,H=360,L=56,R=20,T=20,B=40;var maxV=Math.max(ns[ns.length-1]*vocL*k,vinmax)*1.05,minV=Math.min(ns[0]*vmpH*k,mpmin)*0.85;
+
+    function X(n){return L+(n-ns[0])*(W-L-R)/(ns.length-1);}function Y(v){return T+(maxV-v)*(H-T-B)/(maxV-minV);}
+
+    var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="직렬수별 전압 그래프">';
+
+    ns.forEach(function(n){if(n>=sMin&&n<=sMax)s+='<rect x="'+(X(n)-9)+'" y="'+T+'" width="18" height="'+(H-T-B)+'" fill="#d9d9d9"/>';});
+
+    for(var gv=Math.ceil(minV/100)*100;gv<=maxV;gv+=100){s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+Y(gv)+'" y2="'+Y(gv)+'" stroke="#eef0f3"/><text x="'+(L-6)+'" y="'+(Y(gv)+4)+'" font-size="11" text-anchor="end" fill="#888">'+gv+'</text>';}
+
+    [[mpmin,'#888','6,4'],[mpmax,'#333','10,5'],[vinmax,'#aaa','3,3']].forEach(function(z){s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+Y(z[0])+'" y2="'+Y(z[0])+'" stroke="'+z[1]+'" stroke-dasharray="'+z[2]+'" stroke-width="1.5"/>';});
+
+    var col=['#5b9bd5','#c00000','#9dc3e6','#ed7d31'];
+
+    rows.forEach(function(r,i){var pts=ns.map(function(n){return X(n)+','+Y(n*r[1]*k);}).join(' ');s+='<polyline fill="none" stroke="'+col[i]+'" stroke-width="2.4" points="'+pts+'"/>';ns.forEach(function(n){s+='<circle cx="'+X(n)+'" cy="'+Y(n*r[1]*k)+'" r="3" fill="'+col[i]+'"/>';});});
+
+    ns.forEach(function(n){s+='<text x="'+X(n)+'" y="'+(H-B+18)+'" font-size="12" text-anchor="middle" fill="#333">'+n+'</text>';});
+
+    s+='<text x="'+((W)/2)+'" y="'+(H-4)+'" font-size="12" text-anchor="middle" fill="#333">직렬수 (Module 직렬수)</text></svg>';
+
+    s+='<p class="legend"><i style="background:#5b9bd5"></i>최저온도 Vmpp<i style="background:#c00000"></i>최저온도 Voc<i style="background:#9dc3e6"></i>최고온도 Vmpp<i style="background:#ed7d31"></i>최고온도 Voc · 점선: MPPT 최저 / MPPT 최고 / 최대입력전압 · 회색 막대: 가능 직렬 구간</p></div>';
+
+    // 인버터 구성표
+
+    var c='<div class="sec"><h3>※ 인버터 구성 ('+g('imod')+' · 정격 '+pac+'kW)</h3><table class="cfg"><tr><th>직렬 회로수</th><th>병렬 회로수</th><th>Module 수량</th><th>설비용량</th></tr>';
+
+    var tp=0,tm=0,tk=0;
+
+    cfg.forEach(function(r,i){var m=r[0]*r[1],kw=m*pm/1000;tp+=r[1];tm+=m;tk+=kw;c+='<tr><td><input type="number" data-c="'+i+'" data-k="0" value="'+r[0]+'"></td><td><input type="number" data-c="'+i+'" data-k="1" value="'+r[1]+'"></td><td>'+m+'</td><td>'+f(kw)+' kW</td></tr>';});
+
+    var iT=0;cfg.forEach(function(r){iT+=r[1]*iscC;});
+
+    c+='<tr class="tot"><td>합계</td><td>'+tp+'</td><td>'+tm+'</td><td>'+f(tk)+' kW</td></tr></table>'+
+
+      '<p class="legend">DC/AC 비 '+f(tk/pac)+' · 병렬 전류 합 '+f(iT,1)+'A '+(iT<=iin?'≤':'>')+' 최대입력전류 '+iin+'A '+(iT<=iin?'<b style="color:#1a7f37">적합</b>':'<b style="color:#c62828">초과</b>')+' · '+g('mmod')+' '+pm+'W 기준</p></div>';
+
+    O.innerHTML=h+t+s+c;
+
+  }
+
+  document.addEventListener('input',function(e){var t=e.target;if(!t.closest||!t.closest('#ekst'))return;if(t.hasAttribute('data-c')){var v=parseInt(t.value,10);cfg[+t.getAttribute('data-c')][+t.getAttribute('data-k')]=isFinite(v)?v:0;clearTimeout(window.__ekT);window.__ekT=setTimeout(calc,400);return;}calc();});
+
+  document.addEventListener('change',function(e){if(e.target.closest&&e.target.closest('#ekst'))calc();});
+
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',calc);else calc();
+
+})();</script>
+
 <div class="pg-bar" id="pg-bar"><button type="button" class="pg-save" id="pg-save">보고서 PDF로 저장</button><span class="pg-hint">A4 한 장, 입력값과 결과 표</span></div><div class="pg-gatebox" id="pg-gatebox"><div class="gate" id="subgate"><div><h2>유튜브 채널을 구독하시면 PDF 보고서가 저장됩니다</h2><ol><li>아래 빨간 단추를 누르면 유튜브 구독 창이 새로 열립니다.</li><li>구독을 마치고 이 창으로 돌아오시면 PDF 저장이 바로 열립니다.</li></ol><p class="note">계산은 구독 없이 무료입니다. 이미 구독 중이시면 같은 단추를 누르고 돌아오시면 됩니다. 한 번 열면 이 브라우저에서는 홈페이지 어디서나 계속 열려 있습니다.</p><p class="ok" role="status">열렸습니다. 구독해 주셔서 고맙습니다.</p></div><a class="subbtn" id="subbtn" href="https://www.youtube.com/channel/UCpRTUvMiZQxXk-7BLJQlUZQ?sub_confirmation=1" target="_blank" rel="noopener"><svg viewBox="0 0 30 21" aria-hidden="true"><rect width="30" height="21" rx="5" fill="#fff"/><path d="M12 6l8 4.5-8 4.5z" fill="#c4161c"/></svg>유튜브 구독하고 PDF 저장</a></div></div><script>(function(){var R=document.getElementById("out"),b=document.getElementById('pg-bar'),g=document.getElementById('pg-gatebox');if(R&&R.parentNode){R.parentNode.insertBefore(b,R.nextSibling);b.parentNode.insertBefore(g,b.nextSibling)}})();(function(){
 var K='ecok_sub_ok',KEY="string",ROOT="ekst",FIT=(KEY==='fuse'||KEY==='string')?1005:960,RID="out",CO="☎ 1555-2859 · www.ecokkorea.kr · info@ecokkorea.co.kr",NOTE="참고용 계산, 실제 설계는 현장 조건 확인",ok=false,clicked=0,pending=false;
 function setOk(){try{window.localStorage.setItem(K,'1')}catch(e){}try{document.cookie=K+'=1; max-age=31536000; path=/; SameSite=Lax'}catch(e){}}

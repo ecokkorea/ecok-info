@@ -2886,6 +2886,102 @@ html,body{margin:0;background:#fff;overflow-x:hidden}body{font-family:Paperlogy,
 </div>
 
 </div>
+<!-- 위젯 계산식(kr 원본에서 붙임) --><script>(function(){
+
+  if(window.__ekolInit)return;window.__ekolInit=1;
+
+  var RI=[0.3,0.4,0.5,0.6,0.8,1.0,1.25,1.5,2.0,2.5,3.0,4.0,5.0];
+
+  var U={
+
+   "5":[[0.1966,0.2961,0.3911,0.4771,0.5508,0.6436,0.7344,0.7774,0.8591,0.9144,0.9542,1.0073,1.0421],[0.1935,0.2919,0.3858,0.4708,0.5414,0.6327,0.7217,0.7629,0.8421,0.8957,0.9342,0.9855,1.0191],[0.142,0.2249,0.3088,0.3888,0.4521,0.5437,0.6367,0.6796,0.767,0.828,0.873,0.9346,0.9753],[0.1399,0.2219,0.305,0.384,0.4443,0.5338,0.6241,0.6642,0.747,0.8043,0.8462,0.9032,0.9406],[0.1123,0.183,0.2579,0.3321,0.3863,0.4731,0.5627,0.601,0.6834,0.7407,0.7827,0.8402,0.8779]],
+
+   "3":[[0.2465,0.3673,0.4799,0.5787,0.6358,0.7328,0.8244,0.8558,0.9274,0.9744,1.0077,1.0512,1.0793],[0.2443,0.3642,0.4758,0.5737,0.6279,0.7233,0.8132,0.8427,0.9118,0.957,0.9888,1.0304,1.0571],[0.1916,0.2985,0.4033,0.4995,0.5493,0.6474,0.7432,0.7745,0.8518,0.9038,0.9413,0.9915,1.0241],[0.1901,0.2963,0.4003,0.4955,0.5425,0.6383,0.7314,0.7597,0.8321,0.8802,0.9145,0.96,0.9891],[0.1605,0.2565,0.3545,0.4472,0.4902,0.585,0.6786,0.7051,0.777,0.8246,0.8585,0.9034,0.932]],
+
+   "6":[[0.1657,0.2524,0.3354,0.4112,0.4859,0.5721,0.6576,0.7035,0.7866,0.8448,0.8875,0.946,0.9854],[0.1624,0.2476,0.3292,0.4038,0.4754,0.5598,0.6436,0.6876,0.7684,0.8248,0.8664,0.9232,0.9615],[0.1139,0.1823,0.2521,0.3194,0.3814,0.4633,0.5482,0.593,0.6801,0.743,0.7906,0.8579,0.9039],[0.1117,0.1788,0.2476,0.3137,0.3727,0.4526,0.5349,0.577,0.6597,0.7191,0.7638,0.8268,0.8697],[0.0864,0.1419,0.2016,0.2615,0.3128,0.3881,0.4679,0.5076,0.5889,0.6479,0.6926,0.7563,0.7998]],
+
+   "2":[[0.2939,0.4321,0.5566,0.6619,0.6998,0.7961,0.8846,0.9056,0.9678,1.0082,1.0366,1.0737,1.0977],[0.2922,0.4295,0.5531,0.6575,0.6927,0.7875,0.8742,0.8932,0.9529,0.9913,1.0183,1.0533,1.0759],[0.2383,0.365,0.4848,0.5901,0.6216,0.7204,0.8142,0.8342,0.9015,0.9461,0.978,1.0205,1.048],[0.2372,0.3632,0.4822,0.5866,0.6153,0.7118,0.8026,0.8196,0.8819,0.9225,0.9511,0.9889,1.013],[0.206,0.3233,0.4382,0.5421,0.5672,0.6637,0.7558,0.7703,0.8315,0.8712,0.899,0.9355,0.9586]]};
+
+  function g(id){var e=document.getElementById(id);if(!e)return NaN;if(e.tagName==='SELECT')return e.value;return e.value===''?NaN:parseFloat(e.value);}
+
+  function f(x,d){return isFinite(x)?x.toFixed(d==null?2:d):'-';}
+
+  function V(x){return '<span class="v">'+x+'</span>';}function S(x){return '<span class="s">'+x+'</span>';}
+
+  function J(cls,txt){return '<div class="j '+cls+'">'+txt+'</div>';}
+
+  function C(formula,judge){return '<div class="chk"><div class="f">'+formula+'</div>'+judge+'</div>';}
+
+  function ulook(bz,ri,k){var t=U[bz][ri];if(k<=RI[0])return t[0];if(k>=RI[RI.length-1])return t[t.length-1];for(var i=1;i<RI.length;i++){if(k<=RI[i]){var a=RI[i-1],b=RI[i];return t[i-1]+(t[i]-t[i-1])*(k-a)/(b-a);}}return t[t.length-1];}
+
+  function grid(n,x,y){var nc=Math.max(1,Math.round(Math.sqrt(n*x/y))),nr=Math.ceil(n/nc);while(nc*nr<n)nr++;return [nc,nr];}
+
+  function calc(){
+
+    var O=document.getElementById('lxout');if(!O)return;
+
+    var x=g('lx'),y=g('ly'),hc=g('hc'),hw=g('hw'),rho=parseInt(g('rho')),bz=g('typ'),w=g('w'),eff=g('eff'),fl=g('flux'),mf=g('mf'),e=g('e'),nIn=g('n');
+
+    var F=isFinite(fl)&&fl>0?fl:w*eff;
+
+    var A=x*y,H=hc-hw,K=A/(H*(x+y));
+
+    var ak=document.getElementById('ak');if(ak)ak.textContent=f(A,1)+' m²  /  K = '+f(K,2);
+
+    var u=ulook(bz,rho,K);
+
+    var nReq=e*A/(F*u*mf), nCalc=Math.max(1,Math.ceil(nReq-1e-9));
+
+    var N=isFinite(nIn)&&nIn>0?Math.round(nIn):nCalc;
+
+    var E=F*u*mf*N/A, g2=grid(N,x,y);
+
+    var dens=N*w/A;
+
+    var html='';
+
+    html+='<div class="sh">■ 3. 계산 결과</div><div class="sb">';
+
+    html+='<div class="big"><div><small>실지수 K</small><b>'+f(K,2)+'</b></div><div><small>조명률 U</small><b>'+f(u,3)+'</b></div><div><small>필요 등 개수</small><b>'+nCalc+'<em>개</em></b></div><div><small>평균 조도 (등 '+N+'개)</small><b>'+f(E,0)+'<em>lx</em></b></div></div>';
+
+    html+=C('① 실지수 K = XY ÷ H(X+Y) = '+V(f(x)+'×'+f(y))+' ÷ '+V(f(H)+'×('+f(x)+'+'+f(y)+')')+' = '+S(f(K,2))+' → 조명률 U = '+S(f(u,3))+' <small>(BZ'+bz+', 반사율 '+['80/50/20','70/50/20','70/30/20','50/30/20','50/10/10'][rho]+')</small>', J('na','표 찾기'));
+
+    html+=C('② 필요 등 개수 N = E·A ÷ (F·U·M) = '+V(f(e,0)+'×'+f(A,1))+' ÷ '+V(f(F,0)+'×'+f(u,3)+'×'+f(mf))+' = '+S(f(nReq,2))+' → 올림 '+S(nCalc+'개')+' <small>(배치 '+g2[0]+'×'+g2[1]+')</small>', J('ps','N = '+nCalc));
+
+    var ok=E>=e, over=E>e*1.5;
+
+    var jd=!ok?J('fl','부족 '+f(E/e*100,0)+'%'):(over?J('wn','너무 밝음<br>'+f(E/e,1)+'배'):J('ps','적합 '+f(E/e,2)+'배'));
+
+    html+=C('③ 평균 조도 E = F·U·M·N ÷ A = '+V(f(F,0)+'×'+f(u,3)+'×'+f(mf)+'×'+N)+' ÷ '+V(f(A,1))+' = '+S(f(E,0)+' lx')+' vs 목표 '+V(f(e,0)+' lx')+(over?' <small>목표의 1.5배를 넘습니다. 낮은 W 등이나 등 개수 줄이기를 검토하세요</small>':''), jd);
+
+    html+=C('④ 설치 전력 = '+V(N+'개 × '+f(w,0)+' W')+' = '+S(f(N*w,0)+' W')+' · 조명 밀도 '+S(f(dens,1)+' W/m²'), J('na','참고'));
+
+    var mx=Math.max(e,E)*1.25, W=1000, bx=140, bw=W-bx-40, sc=bw/mx;
+
+    html+='<svg viewBox="0 0 '+W+' 150" aria-label="목표 조도와 계산 조도 비교">';
+
+    html+='<text x="10" y="42" font-size="22" font-weight="700" fill="#333">목표 E</text><rect x="'+bx+'" y="22" width="'+(e*sc)+'" height="30" rx="6" fill="#dbe8f5"/><text x="'+(bx+e*sc+10)+'" y="44" font-size="22" font-weight="800" fill="#1f4e79">'+f(e,0)+' lx</text>';
+
+    html+='<text x="10" y="102" font-size="22" font-weight="700" fill="#333">계산 E</text><rect x="'+bx+'" y="82" width="'+(E*sc)+'" height="30" rx="6" fill="'+(!ok?'#e57373':(over?'#f2c14e':'#1a7f37'))+'"/><text x="'+(bx+E*sc+10)+'" y="104" font-size="22" font-weight="800" fill="#1b2330">'+f(E,0)+' lx · 등 '+N+'개</text>';
+
+    html+='<line x1="'+(bx+e*sc)+'" y1="14" x2="'+(bx+e*sc)+'" y2="130" stroke="#1f4e79" stroke-dasharray="6 5" stroke-width="2"/></svg>';
+
+    html+='<p class="note">광속법 평균값입니다. 실 모양이 길쭉하거나 등 배치가 치우치면 최소 조도(균제도)가 낮아질 수 있어, 계산서에서는 0.25 m 격자 시뮬레이션으로 최소·최대 조도까지 봅니다. 기준 조도는 발주처 설계기준·KS A 3011 원문으로 최종 확인하세요.</p></div>';
+
+    O.innerHTML=html;
+
+  }
+
+  var pre=document.getElementById('pre');if(pre)pre.addEventListener('change',function(){var v=parseFloat(pre.value);if(v>0){document.getElementById('e').value=v;}calc();});
+
+  ['lx','ly','hc','hw','rho','typ','w','eff','flux','mf','e','n'].forEach(function(id){var el=document.getElementById(id);if(el){el.addEventListener('input',calc);el.addEventListener('change',calc);}});
+
+  document.querySelectorAll('#lux-calculator .ap').forEach(function(b){b.addEventListener('click',function(){var v=parseFloat(b.getAttribute('data-e'));var e=document.getElementById('e');if(e&&v>0){e.value=v;var p=document.getElementById('pre');if(p)p.value='0';calc();var t=document.getElementById('lxout');if(t&&t.scrollIntoView)t.scrollIntoView({behavior:'smooth',block:'center'});}});});
+
+  calc();
+
+})();</script>
+
 <div class="pg-bar" id="pg-bar"><button type="button" class="pg-save" id="pg-save">보고서 PDF로 저장</button><span class="pg-hint">A4 한 장, 입력값과 결과 표</span></div><div class="pg-gatebox" id="pg-gatebox"><div class="gate" id="subgate"><div><h2>유튜브 채널을 구독하시면 PDF 보고서가 저장됩니다</h2><ol><li>아래 빨간 단추를 누르면 유튜브 구독 창이 새로 열립니다.</li><li>구독을 마치고 이 창으로 돌아오시면 PDF 저장이 바로 열립니다.</li></ol><p class="note">계산은 구독 없이 무료입니다. 이미 구독 중이시면 같은 단추를 누르고 돌아오시면 됩니다. 한 번 열면 이 브라우저에서는 홈페이지 어디서나 계속 열려 있습니다.</p><p class="ok" role="status">열렸습니다. 구독해 주셔서 고맙습니다.</p></div><a class="subbtn" id="subbtn" href="https://www.youtube.com/channel/UCpRTUvMiZQxXk-7BLJQlUZQ?sub_confirmation=1" target="_blank" rel="noopener"><svg viewBox="0 0 30 21" aria-hidden="true"><rect width="30" height="21" rx="5" fill="#fff"/><path d="M12 6l8 4.5-8 4.5z" fill="#c4161c"/></svg>유튜브 구독하고 PDF 저장</a></div></div><script>(function(){var R=document.getElementById("lxout"),b=document.getElementById('pg-bar'),g=document.getElementById('pg-gatebox');if(R&&R.parentNode){R.parentNode.insertBefore(b,R.nextSibling);b.parentNode.insertBefore(g,b.nextSibling)}})();(function(){
 var K='ecok_sub_ok',KEY="lux",ROOT="ekol",FIT=(KEY==='fuse'||KEY==='string')?1005:960,RID="lxout",CO="☎ 1555-2859 · www.ecokkorea.kr · info@ecokkorea.co.kr",NOTE="참고용 계산, 실제 설계는 현장 조건 확인",ok=false,clicked=0,pending=false;
 function setOk(){try{window.localStorage.setItem(K,'1')}catch(e){}try{document.cookie=K+'=1; max-age=31536000; path=/; SameSite=Lax'}catch(e){}}
