@@ -8,6 +8,10 @@ var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches,IO='Intersectio
 var nc=navigator.connection,save=nc&&(nc.saveData||/2g/.test(nc.effectiveType||'')),small=innerWidth<=860;
 if(!reduce&&!save&&!small&&IO)[].forEach.call(document.querySelectorAll('video.pv'),function(v){
  new IntersectionObserver(function(a){a.forEach(function(x){if(x.isIntersecting){if(!v.getAttribute('src')){v.src=v.dataset.src;v.preload='auto'}var p=v.play();if(p&&p.catch)p.catch(function(){})}else v.pause()})},{threshold:.25}).observe(v)});
+// 나타남(11-11 T1111-AG): 그림·카드에는 쓰지 않고 표에만. 화면에 들어오기 200px 전부터 0.25초
+var rv=document.querySelectorAll('.rv');
+if(reduce||!IO)[].forEach.call(rv,function(e){e.classList.add('in')});
+else{var ro=new IntersectionObserver(function(a){a.forEach(function(x){if(x.isIntersecting){x.target.classList.add('in');ro.unobserve(x.target)}})},{rootMargin:'0px 0px 200px 0px'});[].forEach.call(rv,function(e){ro.observe(e)})}
 // 메뉴 현재 위치 (스크롤 이벤트 없이)
 var ids=['site','design','super','bill','works','call'];
 if(menu&&IO){var links={};ids.forEach(function(i){links[i]=menu.querySelector('a[href="#'+i+'"]')});
