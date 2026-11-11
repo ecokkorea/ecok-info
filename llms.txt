@@ -114,6 +114,10 @@
 - [쏠라프로 3강 기상 자료 고르기, 월평균과 시간별 실측의 그늘 손실 차이](https://ecokkorea.com/lecture/solarpro-03-weather-data.html): 쏠라프로 Location 창에서 월평균 기상 지점과 시간별 실측 CSV(8,760시간)를 고르는 법, 같은 지붕에서 그늘 손실이 0.64 %와 1.21 %로 달라진 결과를 봅니다.
 - [쏠라프로 4강 건물·나무·지평선 넣기, 지평선 방위는 북 0°](https://ecokkorea.com/lecture/solarpro-04-buildings-trees-horizon.html): 쏠라프로에서 그늘을 만드는 건물(꼭짓점 시계 방향), 나무(높이·반지름), 지평선 표를 넣고, 지평선 방위 북 0°와 어레이 방위 정남 0°의 차이, 겹침 경고를 봅니다.
 
+## 실적 사례 상세(창원 1.35 MW·천안 558 kW 공장 지붕 태양광: 개요, 진행 순서, 설비 구성, 준공 사진, 영상, 배운 것)
+- [창원 공장 지붕 태양광 1.35 MW 준공 사례](https://ecokkorea.com/case/changwon-roof.html): 경남 창원 국가산업단지 A 제조공장 지붕에 모듈 2,108장, 인버터 14대로 1,349.12 kWp를 올리고 2026년 7월 상업운전을 시작했습니다. 지붕 보강, 인허가 관문, 공정 순서, 준공 사진과 타임랩스 영상.
+- [천안 공장 지붕 태양광 558 kW 준공 사례](https://ecokkorea.com/case/cheonan-roof.html): 충남 천안 A 공장 지붕 6개 동에 모듈 720 W 775장, 인버터 110 kW 5대로 558 kW를 올리고 한전 전력구입계약(PPA)으로 2026년 3월 상업운전을 시작했습니다. 슬레이트 지붕 보강, 대수선허가, 인허가 관문, 준공 사진과 영상.
+
 ## English pages
 - [Home](https://ecokkorea.com/en/): site feasibility, permitting, EPC electrical design, supervision
 - [Site feasibility and permitting](https://ecokkorea.com/en/permit.html)
