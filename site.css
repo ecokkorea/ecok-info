@@ -309,6 +309,40 @@ iframe.tool{width:100%;border:0;min-height:700px;display:block}
 @media (max-width:760px){.mat.wide{grid-template-columns:1fr}.mat.wide img{border-right:0;border-bottom:1px solid var(--line);height:auto}}
 @media (max-width:640px){.mat .list{columns:1}.mats{grid-template-columns:1fr}.gate{grid-template-columns:1fr}.subbtn{justify-content:center;white-space:normal;font-size:19px}}
 
+/* 실적 쪽 카드·걸러 보기 (11-11) */
+.wsum{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin:26px 0 8px}
+.wsum p{background:var(--mist);border-radius:6px;padding:18px 20px}
+.wsum b{display:block;font-size:clamp(28px,3vw,38px);font-weight:800;color:var(--blue);line-height:1.2}
+.wsum span{font-size:17px;color:var(--slate)}
+.wfil>input{position:absolute;opacity:0;pointer-events:none}
+.wtabs{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0 20px}
+.wtabs label{cursor:pointer;border:2px solid var(--line);border-radius:999px;padding:8px 18px;font-weight:600;font-size:18px;background:#fff;white-space:nowrap}
+.wtabs label b{color:var(--blue);margin-left:2px}
+#wf-all:checked~.wtabs label[for=wf-all],#wf-roof:checked~.wtabs label[for=wf-roof],#wf-land:checked~.wtabs label[for=wf-land],#wf-park:checked~.wtabs label[for=wf-park],#wf-ess:checked~.wtabs label[for=wf-ess],#wf-design:checked~.wtabs label[for=wf-design]{background:var(--blue);border-color:var(--blue);color:#fff}
+#wf-all:checked~.wtabs label[for=wf-all] b,#wf-roof:checked~.wtabs label[for=wf-roof] b,#wf-land:checked~.wtabs label[for=wf-land] b,#wf-park:checked~.wtabs label[for=wf-park] b,#wf-ess:checked~.wtabs label[for=wf-ess] b,#wf-design:checked~.wtabs label[for=wf-design] b{color:#fff}
+.wfil>input:focus-visible~.wtabs{outline:3px solid var(--blue);outline-offset:4px}
+#wf-roof:checked~.wgrid .wc:not(.t-roof),#wf-land:checked~.wgrid .wc:not(.t-land),#wf-park:checked~.wgrid .wc:not(.t-park),#wf-ess:checked~.wgrid .wc:not(.t-ess),#wf-design:checked~.wgrid .wc:not(.t-design){display:none}
+.wempty{display:none;background:var(--mist);border-radius:6px;padding:18px 20px;font-size:18px}
+#wf-land:checked~.e-land,#wf-park:checked~.e-park,#wf-roof:checked~.e-roof,#wf-ess:checked~.e-ess,#wf-design:checked~.e-design{display:block}
+.wgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:20px}
+.wc{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff;display:flex;flex-direction:column}
+.wc>img{width:100%;height:auto;aspect-ratio:4/3;object-fit:cover}
+.wnoph{aspect-ratio:4/3;background:linear-gradient(135deg,#e7edf3,#d5dfe9);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--blue-dark)}
+.wnoph span{font-size:clamp(26px,2.4vw,32px);font-weight:800;text-align:center;padding:0 12px}.wnoph small{font-size:17px;font-weight:600;color:var(--slate)}
+.wb{padding:18px 20px 22px}
+.wt{font-size:16px;font-weight:600;color:var(--blue)}
+.wc h3{font-size:22px;line-height:1.4;margin:4px 0 2px}
+.wcap{font-size:26px;font-weight:800;color:var(--ink);line-height:1.3}
+.wc dl{margin:12px 0;font-size:17px;border-top:1px solid var(--line)}
+.wc dl div{display:flex;gap:14px;padding:6px 0;border-bottom:1px solid var(--line)}
+.wc dt{color:var(--slate);min-width:3.2em}.wc dd{margin:0;font-weight:600;white-space:nowrap}
+.wn{font-size:17px;line-height:1.65;color:var(--slate)}
+.wreg{list-style:none;margin:22px 0 10px;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:900px){.wreg{grid-template-columns:1fr}}
+.wreg li{background:#fff;border:1px solid var(--line);border-radius:6px;padding:14px 18px;display:flex;align-items:baseline;gap:12px;font-size:19px}
+.wreg b{font-size:21px;white-space:nowrap}.wreg span{flex:1}.wreg em{font-style:normal;color:var(--blue);font-weight:800;white-space:nowrap}
+@media(max-width:520px){.wgrid{grid-template-columns:1fr}.wtabs label{font-size:17px;padding:7px 14px}}
+
 .rg-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(20px,3vw,40px);margin-top:32px}
 .rg-card h3{font-size:24px;font-weight:800;padding-bottom:8px;border-bottom:1.5px solid var(--ink)}
 .rg-card{min-width:0}
