@@ -74,6 +74,7 @@
 - [내역서·물량산출](https://ecokkorea.com/quantity.html)
 - [소방·통신 내역서](https://ecokkorea.com/fire-telecom.html)
 - [계산 도구](https://ecokkorea.com/design-tools.html)
+- [태양광 상계거래 계산기](https://ecokkorea.com/tool-net-metering.html): 태양광 kW와 월 사용량으로 상계거래 절감액·회수기간 범위를 무료로 계산(한전 전기요금표 원문 단가, 시간별 자가소비·잉여전력)
 - [보호계전기 정정](https://ecokkorea.com/relay.html)
 - [실적](https://ecokkorea.com/works.html)
 - [문의](https://ecokkorea.com/contact.html)
