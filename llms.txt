@@ -104,6 +104,14 @@
 - [Projects](https://ecokkorea.com/en/works.html)
 - [Company facts](https://ecokkorea.com/en/company.html)
 - [Contact](https://ecokkorea.com/en/contact.html)
+- [Solar permitting in Korea](https://ecokkorea.com/en/solar-permitting.html): generation license, construction plan notification, pre-use inspection with real dates
+- [Structural review for factory rooftop solar](https://ecokkorea.com/en/solar-structure-review.html): five loads, 7.5 kN anchor pull out, major repair permit
+- [Agrivoltaics in Korea](https://ecokkorea.com/en/agrivoltaic.html): act effective 2026-12-17, draft criteria, 986.40 kWp design yield
+- [PVsyst simulation at the design stage](https://ecokkorea.com/en/pvsyst.html): inputs, string sizing check, about 550 kWp factory roof case
+- [Industrial ESS design and construction](https://ecokkorea.com/en/ess-industrial.html): peak shaving ESS for factories, 15 minute data to EMS
+- [PV and ESS economics](https://ecokkorea.com/en/ess-economics.html): SAM, REopt and HOMER Grid cross-checked
+- [Lowering a factory demand charge](https://ecokkorea.com/en/peak-charge.html): KEPCO billing demand, five ways to lower it
+- [Progress and change order BOQ](https://ecokkorea.com/en/estimate.html): BOQ preparation for contractors and design offices
 
 ## English insights (engineering notes from Korean projects)
 - [All insights](https://ecokkorea.com/en/insights/)
