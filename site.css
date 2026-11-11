@@ -25,6 +25,7 @@ h1,h2,h3,p{margin:0}
 .lang a{text-decoration:none;padding:6px 4px;color:var(--slate)}.lang a:hover{color:var(--blue)}
 .lang b{color:var(--blue);font-weight:800;padding:6px 4px;border-bottom:2px solid var(--blue)}
 body.en{word-break:normal;overflow-wrap:break-word}
+@media (min-width:1081px){body.en .menu{gap:clamp(12px,1.15vw,18px)}}@media (min-width:1081px) and (max-width:1199px){body.en .menu{gap:10px;font-size:15.5px}}   /* 11-11 T1111-91 영문 메뉴 Lectures 더해 머리 넘침 막음 */
 body.en .hx h1{font-size:clamp(40px,4.2vw,68px)}
 body.en .s-end .phone{white-space:nowrap;font-size:clamp(40px,8vw,140px)}
 body.en .s-say h2,body.en .s-sup h2,body.en .s-bill h2{font-size:clamp(32px,3.2vw,54px)}
