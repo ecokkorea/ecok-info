@@ -146,6 +146,11 @@
 - [PVsyst vs Solar Pro cross-check on a 619 kWp roof](https://ecokkorea.com/en/insights/pvsyst-solar-pro-cross-check-619-kwp-roof.html): same inputs, 2.2% unshaded, shading 1.22% vs 1.46%
 - [Agrivoltaic structure design basics](https://ecokkorea.com/en/insights/agrivoltaic-structure-design-basics.html): 4 m clearance, KDS loads, 3D column check
 - [Electrical BOQ and quantity take-off workflow](https://ecokkorea.com/en/insights/electrical-boq-quantity-take-off.html): conductor counts, conduit sizes, Korean public BOQ format
+- [Korea industrial electricity tariff 2026: rates, demand charges and a worked bill](https://ecokkorea.com/en/insights/korea-industrial-electricity-tariff-2026.html): KEPCO industrial (A)/(B) rates in KRW by option, season and time band, billing demand rule, one winter bill worked line by line
+- [Solar permitting in Korea: the seven steps, statutory periods and a real timeline](https://ecokkorea.com/en/insights/korea-solar-permitting-steps.html): license 60 days, construction plan notification before work, pre use inspection 7 days, dates from a 1.35 MW roof
+- [Net metering in Korea: the Article 18 rules and what changes on the bill](https://ecokkorea.com/en/insights/korea-net-metering-rules.html): up to 1,000 kW solar, same rate credit on the energy charge only, SMP settlement, KEPCO worked example
+- [Korea's agrivoltaics act: who can build, where, for how long, and the draft design rules](https://ecokkorea.com/en/insights/agrivoltaics-law-korea.html): Act No. 21804 in force 2026-12-17, resident farmers, 30 year cap, draft 30% shading and 2.5 m clearance, 986 kWp design yield
+- [Peak shaving ESS payback in Korea: a worked example with 2026 tariffs](https://ecokkorea.com/en/insights/peak-shaving-ess-payback-korea.html): 200 kW / 600 kWh on industrial (B) option II, about 25 million KRW a year, payback 12 to 19 years by installed cost
 
 ## English lectures (PVsyst and Solar Pro, each lesson with summary, screen menus, key numbers, FAQ)
 - [All lectures](https://ecokkorea.com/en/lecture/)
