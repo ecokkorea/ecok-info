@@ -76,6 +76,7 @@
 - [계산 도구](https://ecokkorea.com/design-tools.html)
 - [태양광 상계거래 계산기](https://ecokkorea.com/tool-net-metering.html): 태양광 kW와 월 사용량으로 상계거래 절감액·회수기간 범위를 무료로 계산(한전 전기요금표 원문 단가, 시간별 자가소비·잉여전력)
 - [공장 ESS 피크제어 회수기간 계산기](https://ecokkorea.com/tool-ess-peak.html): 계약전력·최대수요·월 사용량·산업용(을) 선택Ⅰ·Ⅱ·Ⅲ로 ESS 용량별 기본요금 절감, 경부하 충전·최대부하 방전 차익, 20년 회수기간 범위를 무료로 계산(약관 제68조 요금적용전력, 사내 ESS 분석과 같은 규칙 운전)
+- [태양광 청소 효과 계산기](https://ecokkorea.com/tool-cleaning-loss.html): 설치 kW·오염 손실 %·1kW당 연 발전량·단가로 오염 때문에 잃는 전기와 돈, 청소비 회수 개월, 손익분기 오염 손실 %를 무료로 계산(오염 손실 범위 IEA PVPS T13-21:2022)
 - [보호계전기 정정](https://ecokkorea.com/relay.html)
 - [실적](https://ecokkorea.com/works.html)
 - [문의](https://ecokkorea.com/contact.html)

@@ -1,0 +1,268 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+<style>@font-face{font-family:Paperlogy;src:url(fonts/Paperlogy-4Regular.ttf);font-weight:400}@font-face{font-family:Paperlogy;src:url(fonts/Paperlogy-6SemiBold.ttf);font-weight:600}@font-face{font-family:Paperlogy;src:url(fonts/Paperlogy-8ExtraBold.ttf);font-weight:800}
+html,body{margin:0;background:#fff;overflow-x:hidden}body{font-family:Paperlogy,'Malgun Gothic',sans-serif;word-break:keep-all;color:#16212c}img{max-width:100%;height:auto}@media (max-width:600px){table{display:block;overflow-x:auto}}</style><style>/* 태양광 청소 효과 계산기: 스타일은 raw.html 안 <style>에 있음 */
+</style><style>:root{--ink:#16212c;--slate:#4a5763;--line:#d5dce2;--mist:#eef2f5;--blue:#1d4f91;--blue-dark:#163d70}
+.gate{margin-top:0;border:1.5px solid var(--ink);background:#fff;display:grid;grid-template-columns:1fr auto;gap:28px;align-items:center;padding:clamp(22px,3vw,36px)}
+.gate h2{font-size:clamp(24px,2.4vw,32px);font-weight:800;letter-spacing:-.02em;line-height:1.35}
+.gate ol{margin:14px 0 0;padding-left:1.4em;color:var(--slate)}.gate ol li{margin:4px 0}
+.gate .note{margin-top:12px;font-size:16px;color:var(--slate)}
+.subbtn{display:inline-flex;align-items:center;gap:12px;padding:18px 30px;border-radius:10px;background:#c4161c;color:#fff;font-weight:800;font-size:21px;text-decoration:none;white-space:nowrap}
+.subbtn:hover{background:#9f1015}.subbtn svg{width:30px;height:21px;flex:none}
+.gate .ok{display:none;font-weight:800;color:#1b6b3a;font-size:20px}
+.gate.done .ok{display:block}.gate.done .subbtn{background:#fff;color:#c4161c;border:2px solid #c4161c;padding:14px 24px;font-size:18px}
+
+.pg-bar{margin:22px 0 0;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.pg-save{font:800 19px Paperlogy,'Malgun Gothic',sans-serif;padding:15px 28px;border:0;border-radius:10px;background:#1d4f91;color:#fff;cursor:pointer}
+.pg-save:hover{background:#163d70}.pg-hint{font-size:15px;color:#4a5763}
+.pg-gatebox{display:none;margin-top:18px}.pg-gatebox.show{display:block}
+.pg-gatebox .gate{grid-template-columns:1fr}.pg-gatebox .subbtn{justify-self:start}
+#pg-sheet{display:none}
+@media print{
+ @page{size:A4;margin:10mm}
+ html,body{background:#fff!important;overflow:visible!important}
+ body>*:not(#pg-sheet){display:none!important}
+ #pg-sheet{display:block!important;width:190mm;color:#16212c;font-family:Paperlogy,'Malgun Gothic',sans-serif;word-break:keep-all;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+#pg-sheet.pg-fr{display:block}
+#pg-sheet.fuse .pgw>div,#pg-sheet.string .pgw>div{column-count:2;column-gap:14px}
+#pg-sheet.string .pgw .sec{break-inside:avoid}
+#pg-sheet.string .pgw .sec:has(table){column-span:all}
+#pg-sheet.fuse .pgw .sh,#pg-sheet.fuse .pgw .chk{break-inside:avoid}
+#pg-sheet *{box-sizing:border-box}
+#pg-sheet .pg-hd{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #1d4f91;padding-bottom:6px}
+#pg-sheet .pg-hd img{height:26px;width:auto}#pg-sheet .pg-dt{font-size:12px;color:#4a5763}
+#pg-sheet .pg-t{font-size:20px;font-weight:800;margin:10px 0 2px;line-height:1.3}
+#pg-sheet .pg-s{font-size:12px;color:#4a5763;margin:0 0 6px}
+#pg-sheet h2{font-size:14px;font-weight:800;margin:10px 0 4px;color:#1d4f91}
+#pg-sheet table.pg-in{width:100%;border-collapse:collapse;table-layout:fixed;font-size:11.5px}
+#pg-sheet table.pg-in th,#pg-sheet table.pg-in td{border-bottom:1px solid #d5dce2;padding:3px 6px;line-height:1.35;vertical-align:top;word-break:keep-all;overflow-wrap:break-word}
+#pg-sheet table.pg-in th{text-align:left;font-weight:600;color:#4a5763;background:#f4f6f8;width:27%}
+#pg-sheet table.pg-in td{font-weight:800;width:23%}
+#pg-sheet .pgw{max-width:none;margin:0;padding:0;color:#16212c}
+#pg-sheet .pgw .sh{margin-top:6px}
+#pg-sheet .pg-ft{margin-top:10px;border-top:1px solid #d5dce2;padding-top:6px;font-size:12px;display:flex;justify-content:space-between;gap:12px}
+#pg-sheet .pg-ft b{font-weight:800}
+
+#pg-sheet.fuse .pgw *,#pg-sheet.string .pgw *{font-size:10.5px!important;line-height:1.45!important}
+#pg-sheet.fuse .pgw .sh,#pg-sheet.string .pgw .sec h3,#pg-sheet.string .pgw .ekmppt h3{font-size:12px!important}
+#pg-sheet.fuse .pgw .sh{padding:5px 10px!important;margin-top:8px!important;break-after:avoid}
+#pg-sheet.fuse .pgw .sb{padding:5px 8px!important}
+#pg-sheet.fuse .pgw .chk{margin-bottom:4px!important;grid-template-columns:1fr 66px!important}
+#pg-sheet.fuse .pgw .chk .f{padding:4px 8px!important}
+#pg-sheet.fuse .pgw .chk .f .v,#pg-sheet.fuse .pgw .chk .f .s{padding:0 4px!important}
+#pg-sheet.string .pgw .sec{margin-top:8px!important}
+#pg-sheet.string .pgw .calcline{padding:3px 6px!important;margin-bottom:3px!important;gap:4px!important}
+#pg-sheet.string .pgw .verdict{padding:5px 8px!important;margin-top:6px!important}
+</style></head><body><!-- 계산 도구 > 태양광 청소 효과 계산기 /tool-cleaning-loss.html (케이계정 2026-11-11, apply_queue 제안 1)
+     오염 손실 범위: IEA PVPS Task 13 보고서 IEA-PVPS T13-21:2022 'Soiling Losses: Impact on the Performance of Photovoltaic Power Plants'(2023년 1월 발행)
+     1kW당 연 발전량: 인사이트 #53(회사 PVsyst 8.1.7 결과 8건, 1,169~1,367kWh/kWp) -->
+<style>
+.ekcl{max-width:1200px;margin:0 auto;padding:60px 20px 70px;color:#1a1e24;box-sizing:border-box;word-break:keep-all;overflow-wrap:break-word;background:#fff;font-size:17px;line-height:1.7}
+.ekcl *{box-sizing:border-box}
+.ekcl .eb{font-size:13px;font-weight:800;letter-spacing:2px;color:#1a7f37}
+.ekcl h1{font-size:38px;margin:10px 0 16px;font-weight:800;line-height:1.3}
+.ekcl .lead{list-style:none;padding:0;margin:0 0 26px;font-size:18px;line-height:1.8}
+.ekcl .lead li{padding-left:22px;position:relative}.ekcl .lead li:before{content:"■";position:absolute;left:0;color:#1a7f37;font-size:12px;top:2px}
+.ekcl .sheet{border:2px solid #1b2330;border-radius:12px;padding:22px 24px;background:#fff}
+.ekcl .sheet>h2{font-size:24px;margin:0 0 4px}
+.ekcl .ref{font-size:14.5px;color:#1f4e79;margin:0 0 14px;line-height:1.6}
+.ekcl .sh{background:#1f4e79;color:#fff;font-weight:800;font-size:17px;padding:10px 14px;border-radius:8px 8px 0 0;margin-top:18px}
+.ekcl .sb{border:1px solid #dfe3e8;border-top:0;border-radius:0 0 8px 8px;padding:12px 14px}
+.ekcl .inp{display:grid;grid-template-columns:1fr 1fr;gap:4px 24px}
+.ekcl .row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px dashed #edf0f3}
+.ekcl .row label{font-size:17px;font-weight:700}
+.ekcl .row label small{display:block;font-size:13.5px;color:#555;font-weight:400}
+.ekcl .row input,.ekcl .row select{padding:9px 10px;border:1px solid #c9ced6;border-radius:6px;font-size:18px;font-family:inherit;background:#fffbe6;color:#1a1e24}
+.ekcl .row input{width:160px;text-align:right}
+.ekcl .row select{width:330px;max-width:100%}
+.ekcl .row.off{opacity:.45}
+.ekcl .m12{display:grid;grid-template-columns:repeat(6,1fr);gap:6px 10px;margin:8px 0 4px}
+.ekcl .m12 label{font-size:14px;font-weight:700;display:block}
+.ekcl .m12 input{width:100%;padding:6px 8px;border:1px solid #c9ced6;border-radius:6px;font-size:16px;text-align:right;background:#fffbe6;font-family:inherit}
+.ekcl .big{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0 12px}
+.ekcl .big div{background:#f6f8fb;border-radius:10px;padding:16px 12px;text-align:center;min-width:0}
+.ekcl .big div.main{background:#1f4e79}
+.ekcl .big small{display:block;font-size:14px;color:#555;margin-bottom:4px}
+.ekcl .big div.main small{color:#dbe8f5}
+.ekcl .big b{font-size:30px;color:#1f4e79;font-variant-numeric:tabular-nums;line-height:1.2}
+.ekcl .big div.main b{color:#fff}
+.ekcl .big b em{font-style:normal;font-size:16px;margin-left:3px;opacity:.8}
+.ekcl table{width:100%;border-collapse:collapse;font-size:15.5px;margin:4px 0 6px}
+.ekcl th,.ekcl td{padding:8px 8px;border-bottom:1px solid #e3e6ea;text-align:left;vertical-align:top;line-height:1.5}
+.ekcl th{background:#f4f6f9;font-size:14px;color:#3a4048}
+.ekcl td.n,.ekcl th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ekcl td.f{color:#3a4048;font-size:15px}
+.ekcl tr.sum td{font-weight:800;border-top:2px solid #1b2330;background:#fafbfc}
+.ekcl tr.tot td{font-weight:800;font-size:18px;color:#1f4e79;border-top:2px solid #1f4e79;background:#eef4fb}
+.ekcl .twrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ekcl .svg{width:100%;height:auto;display:block;margin:6px 0 2px}
+.ekcl .lg{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:14.5px;color:#3a4048;margin:0 0 8px}
+.ekcl .lg i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.ekcl .two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.ekcl .tip{border-left:5px solid #1f4e79;background:#eef4fb;padding:12px 14px;border-radius:0 8px 8px 0;margin:12px 0 0;font-size:16px;line-height:1.75}
+.ekcl .alert{border-left:5px solid #c62828;background:#fde8e8;padding:12px 14px;border-radius:0 8px 8px 0;margin:12px 0 0;font-size:16px;line-height:1.75}
+.ekcl .under{list-style:none;margin:18px 0 0;padding:14px 16px;border:1px solid #dfe3e8;border-radius:10px;background:#fafbfc;font-size:15.5px;line-height:1.85}
+.ekcl .under li{padding-left:16px;position:relative}.ekcl .under li:before{content:"-";position:absolute;left:0}
+.ekcl .under a{color:#1f4e79;font-weight:800}
+.ekcl h2.h{font-size:26px;margin:44px 0 14px}
+.ekcl details{border:1px solid #e3e6ea;border-radius:10px;padding:14px 18px;margin:0 0 10px;background:#fff}
+.ekcl summary{font-weight:700;cursor:pointer;font-size:17.5px}
+.ekcl details p{font-size:16px;line-height:1.8;color:#3a4048;margin:10px 0 0}
+.ekcl .law{border:1px solid #dfe3e8;background:#fafbfc;border-radius:10px;padding:16px 20px;margin:28px 0 0;font-size:15px;line-height:1.8;color:#3a4048}
+.ekcl .law b{color:#1a1e24}
+.ekcl .law ul{margin:6px 0 0;padding-left:18px}
+.ekcl .btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin:30px 0 0}
+.ekcl .btns a{display:inline-block;font-weight:800;font-size:20px;padding:16px 30px;border-radius:12px;text-decoration:none}
+.ekcl .btns a.call{background:#ff7a00;color:#fff!important}
+.ekcl .btns a.q{background:#fff;color:#1f4e79!important;border:2px solid #1f4e79}
+.ekcl .contact{margin:22px 0 0;font-size:19px;font-weight:800;color:#1b2330;text-align:center}
+@media(max-width:860px){.ekcl .twrap table{min-width:640px}.ekcl .twrap table.mt{min-width:760px}.ekcl{padding:40px 14px 50px}.ekcl h1{font-size:28px}.ekcl .lead{font-size:16px}.ekcl .inp{grid-template-columns:1fr}.ekcl .big{grid-template-columns:1fr 1fr}.ekcl .big b{font-size:24px}.ekcl .sheet{padding:16px 12px}.ekcl .row{flex-direction:column;align-items:stretch;gap:6px}.ekcl .row input,.ekcl .row select{width:100%;font-size:17px}.ekcl .m12{grid-template-columns:repeat(3,1fr)}.ekcl .two{grid-template-columns:1fr}.ekcl table{font-size:14px}.ekcl th,.ekcl td{padding:7px 5px}.ekcl .btns a{display:block;width:100%;text-align:center;font-size:18px}.ekcl .contact{font-size:16px}}
+@media(max-width:480px){.ekcl .sheet{padding:14px 8px}.ekcl .big{grid-template-columns:1fr}.ekcl table{font-size:13px}.ekcl th,.ekcl td{padding:6px 4px}.ekcl th{font-size:12.5px}.ekcl .m12{grid-template-columns:repeat(2,1fr)}}
+</style>
+<div class="ekcl" id="cleaning-loss-calculator">
+  <div class="eb">PV SOILING LOSS · CLEANING PAYBACK</div>
+  <h1>태양광 청소 효과 계산기 (오염 손실·청소비 회수)</h1>
+  <ul class="lead">
+    <li>설치 용량, 오염으로 줄어든 발전량(%), 1kW당 연 발전량, 판매(또는 자가소비) 단가를 넣으면 <b>1년에 잃는 전기와 돈</b>을 보여 드립니다.</li>
+    <li>청소비를 넣으면 <b>청소비가 몇 달 만에 돌아오는지</b>, 청소가 이득이 되는 <b>손익분기 오염 손실 %</b>까지 계산합니다.</li>
+    <li>회원가입 없이 무료입니다. 숫자는 이 화면 안에서만 계산되고 어디에도 보내지 않습니다.</li>
+  </ul>
+
+  <div class="sheet">
+    <h2>청소 효과 계산표</h2>
+    <p class="ref">※ 노란 칸만 입력합니다 · 오염 손실 %는 청소 직전 발전량이 청소 직후보다 얼마나 낮았는지(같은 날씨 비교) 또는 작년 같은 달 대비로 정합니다</p>
+
+    <div class="sh">■ 1. 입력</div>
+    <div class="sb"><div class="inp">
+      <div class="row"><label>① 설치 용량 [kW]<small>모듈 합계(DC, kWp)</small></label><input type="number" id="cl_kw" value="100" step="1" min="0" inputmode="decimal"></div>
+      <div class="row"><label>② 오염 손실 [%]<small>오염으로 줄어든 연 발전량 비율. 세계 평균 3~5%(IEA PVPS, 아래 각주)</small></label><input type="number" id="cl_loss" value="4" step="0.5" min="0" max="50" inputmode="decimal"></div>
+      <div class="row"><label>③ 1kW당 연 발전량 [kWh/kW·년]<small>회사 PVsyst 8곳 결과 1,169~1,367(인사이트 #53). 지붕 1,250 안팎, 남향 지상 1,300~1,370</small></label><input type="number" id="cl_yield" value="1300" step="10" min="500" max="2000" inputmode="numeric"></div>
+      <div class="row"><label>④ 판매·자가소비 단가 [원/kWh]<small>SMP+REC 정산 단가 또는 대신 안 산 전기 단가. 처음 값은 예시 입력값이니 정산서 단가로 바꾸세요</small></label><input type="number" id="cl_price" value="150" step="1" min="0" inputmode="numeric"></div>
+      <div class="row"><label>⑤ 청소비 1회 [만원]<small>받은 견적(부가세 포함). 처음 값은 예시 입력값입니다</small></label><input type="number" id="cl_cost" value="50" step="1" min="0" inputmode="numeric"></div>
+      <div class="row"><label>⑥ 1년 청소 횟수 [회]<small>청소할 때마다 오염 손실을 모두 되찾는다고 봅니다</small></label><input type="number" id="cl_n" value="1" step="1" min="1" max="12" inputmode="numeric"></div>
+    </div></div>
+
+    <div id="cl_out"></div>
+
+    <ul class="under">
+      <li>계산식: 연 손실 전력량 = ① × ③ × ② ÷ 100, 연 손실액 = 연 손실 전력량 × ④, 청소비 회수 개월 = (⑤ × ⑥) ÷ (연 손실액 ÷ 12), 손익분기 오염 손실 % = (⑤ × ⑥) ÷ (① × ③ × ④) × 100.</li>
+      <li>오염은 청소 뒤 다시 쌓이므로 실제 연 손실은 청소 시기와 비에 따라 달라집니다. 청소 전후 발전량을 같은 날씨로 비교해 ②를 고치면 정확해집니다.</li>
+      <li>한 스트링이나 인버터 하나만 낮으면 오염보다 퓨즈·커넥터 고장일 수 있습니다. → <a href="https://ecokkorea.com/cleaning.html">패널 청소·유지관리 정리</a> · <a href="https://www.ecokkorea.kr/36">태양광 청소·유지관리</a></li>
+    </ul>
+  </div>
+
+  <h2 class="h">자주 묻는 질문</h2>
+  <details><summary>태양광 패널 오염으로 발전량이 얼마나 줄어드나요?</summary><p>국제에너지기구 태양광 협력 프로그램(IEA PVPS) Task 13 보고서(IEA-PVPS T13-21:2022, 2023년 1월 발행)는 오염이 전 세계 태양광 연 발전량을 3~5% 줄이고, 경제 손실은 연 30억~50억 유로 규모라고 추정했습니다. 먼지·새똥·꽃가루·황사의 양과 비가 오는 횟수에 따라 현장마다 차이가 크므로, 내 발전소 값은 청소 전후 발전량을 비교해 정하는 것이 가장 정확합니다.</p></details>
+  <details><summary>청소는 몇 번 하는 게 좋나요?</summary><p>청소비가 오염으로 잃는 돈보다 적을 때만 이득입니다. 이 계산기의 '손익분기 오염 손실 %'보다 실제 손실이 크면 청소할 만하고, 작으면 비를 기다리는 편이 낫습니다. 횟수(⑥)를 늘리면 청소비가 늘어나므로, 손실이 큰 철(예: 꽃가루·황사가 많고 비가 적은 때)에 맞춰 하는 것이 효율적입니다.</p></details>
+  <details><summary>단가에는 무엇을 넣나요?</summary><p>전기를 팔면 정산서의 SMP와 REC를 합친 1kWh당 금액을, 자가소비(내가 쓰는 전기 대신)라면 대신 안 산 전기의 1kWh당 전력량요금을 넣습니다. 상계거래라면 상계로 줄어든 전기요금 단가를 넣습니다.</p></details>
+  <details><summary>1kW당 연 발전량은 어떻게 정하나요?</summary><p>발전소 모니터링의 작년 1년 발전량을 설치 용량(kW)으로 나누면 됩니다. 자료가 없으면 회사가 2026년에 PVsyst로 계산한 8곳의 결과(지붕형 1,169~1,322, 지상형 1,255~1,367kWh/kWp)를 참고하세요.</p></details>
+  <details><summary>직접 청소해도 되나요?</summary><p>해가 떠 있으면 인버터를 꺼도 직류 쪽에는 전압이 남아 있습니다. 깨진 모듈이나 벗겨진 배선은 만지지 말고, 고압 세척이나 거친 솔은 코팅과 프레임 실링을 상하게 할 수 있어 쓰지 않습니다. 지붕형은 추락 방지 조치를 갖춘 인력이 작업해야 합니다.</p></details>
+
+  <div class="law"><b>각주 (원문 확인, 2026-11-11)</b>
+    <ul>
+      <li>오염 손실 범위: IEA PVPS Task 13, 'Soiling Losses: Impact on the Performance of Photovoltaic Power Plants'(IEA-PVPS T13-21:2022, 2023년 1월 발행) 핵심 요약 "estimated to cause a loss of annual PV energy production of 3-5%", 경제 손실 "on the order of 3-5 billion euros".</li>
+      <li>1kW당 연 발전량: 주식회사 에코케이코리아 PVsyst 8.1.7 시뮬레이션 8건(기상청 관측소 대표연 또는 PVGIS 대표연), 인사이트 #53에 표로 정리.</li>
+      <li>우리나라 지역별 오염 손실 실측 통계는 찾지 못했습니다(미확인). 그래서 ②는 사용자 입력으로 두고, 세계 평균 범위만 참고로 적었습니다.</li>
+    </ul>
+    넣지 않은 것: 청소 뒤 오염이 다시 쌓이는 속도(시간에 따른 손실 변화), 청소로 되찾지 못하는 손실(얼룩·코팅 열화), 단가 변동, 부가가치세.
+  </div>
+
+  <div class="btns"><a class="call" href="tel:15552859">패널 청소·점검 상담 ☎ 1555-2859</a><a class="q" href="https://www.ecokkorea.kr/22">견적문의</a></div>
+  <p class="contact">☎ 1555-2859 · www.ecokkorea.kr · info@ecokkorea.co.kr</p>
+</div>
+<script>
+(function(){
+  var $=function(i){return document.getElementById(i)};
+  function num(i){var v=parseFloat($(i).value);return isFinite(v)?v:0}
+  function f0(x){return Math.round(x).toLocaleString('ko-KR')}
+  function f1(x){return (Math.round(x*10)/10).toLocaleString('ko-KR',{minimumFractionDigits:1,maximumFractionDigits:1})}
+  function man(w){return (Math.round(w/1000)/10).toLocaleString('ko-KR',{minimumFractionDigits:1,maximumFractionDigits:1})}
+  function calc(kw,loss,yld,price,costMan,n){
+    var gen=kw*yld, lk=gen*loss/100, lw=lk*price, cost=costMan*10000*n;
+    var months=lw>0?cost/(lw/12):Infinity;
+    var be=(gen*price)>0?cost/(gen*price)*100:Infinity;
+    return {gen:gen,lk:lk,lw:lw,cost:cost,months:months,be:be,net:lw-cost};
+  }
+  window.ekclCalc=calc;
+  function run(){
+    var kw=num('cl_kw'),loss=num('cl_loss'),yld=num('cl_yield'),price=num('cl_price'),cm=num('cl_cost'),n=Math.max(1,Math.round(num('cl_n')));
+    var r=calc(kw,loss,yld,price,cm,n);
+    var mtxt=isFinite(r.months)?f1(r.months)+'<em>개월</em>':'회수 안 됨';
+    var h='<div class="big">'
+      +'<div><small>연 발전량(오염 없을 때)</small><b>'+f0(r.gen)+'<em>kWh</em></b></div>'
+      +'<div><small>오염으로 잃는 전기(연)</small><b>'+f0(r.lk)+'<em>kWh</em></b></div>'
+      +'<div class="main"><small>오염으로 잃는 돈(연)</small><b>'+man(r.lw)+'<em>만원</em></b></div>'
+      +'<div><small>청소비 회수</small><b>'+mtxt+'</b></div></div>';
+    var ok=r.net>=0;
+    h+='<div class="'+(ok?'tip':'alert')+'">연 청소비 '+man(r.cost)+'만원('+n+'회) 대비 되찾는 돈 '+man(r.lw)+'만원 → '+(ok?'<b>청소가 이득입니다</b>(연 '+man(r.net)+'만원 남음)':'<b>청소비가 더 큽니다</b>(연 '+man(-r.net)+'만원 모자람). 횟수를 줄이거나 손실이 큰 철에만 하세요')+'. 이 설비의 <b>손익분기 오염 손실은 '+(isFinite(r.be)?f1(r.be)+'%':'계산 불가')+'</b>입니다(이보다 손실이 크면 청소가 이득).</div>';
+    h+='<div class="sh">■ 2. 오염 손실 %별 한눈에 보기 (지금 입력한 ①·③·④·⑤·⑥ 기준)</div><div class="sb"><div class="twrap"><table><thead><tr><th>오염 손실</th><th class="n">잃는 전기(연)</th><th class="n">잃는 돈(연)</th><th class="n">청소비 회수</th><th>판단</th></tr></thead><tbody>';
+    [1,2,3,4,5,7,10].forEach(function(p){var q=calc(kw,p,yld,price,cm,n);h+='<tr'+(p===loss?' class="tot"':'')+'><td>'+p+'%</td><td class="n">'+f0(q.lk)+' kWh</td><td class="n">'+man(q.lw)+' 만원</td><td class="n">'+(isFinite(q.months)?f1(q.months)+' 개월':'회수 안 됨')+'</td><td>'+(q.net>=0?'청소 이득':'청소비가 큼')+'</td></tr>'});
+    h+='</tbody></table></div></div>';
+    $('cl_out').innerHTML=h;
+  }
+  ['cl_kw','cl_loss','cl_yield','cl_price','cl_cost','cl_n'].forEach(function(i){$(i).addEventListener('input',run)});
+  run();
+})();
+</script>
+
+<div class="pg-bar" id="pg-bar"><button type="button" class="pg-save" id="pg-save">보고서 PDF로 저장</button><span class="pg-hint">A4 한 장, 입력값과 결과 표</span></div><div class="pg-gatebox" id="pg-gatebox"><div class="gate" id="subgate"><div><h2>유튜브 채널을 구독하시면 PDF 보고서가 저장됩니다</h2><ol><li>아래 빨간 단추를 누르면 유튜브 구독 창이 새로 열립니다.</li><li>구독을 마치고 이 창으로 돌아오시면 PDF 저장이 바로 열립니다.</li></ol><p class="note">계산은 구독 없이 무료입니다. 이미 구독 중이시면 같은 단추를 누르고 돌아오시면 됩니다. 한 번 열면 이 브라우저에서는 홈페이지 어디서나 계속 열려 있습니다.</p><p class="ok" role="status">열렸습니다. 구독해 주셔서 고맙습니다.</p></div><a class="subbtn" id="subbtn" href="https://www.youtube.com/channel/UCpRTUvMiZQxXk-7BLJQlUZQ?sub_confirmation=1" target="_blank" rel="noopener"><svg viewBox="0 0 30 21" aria-hidden="true"><rect width="30" height="21" rx="5" fill="#fff"/><path d="M12 6l8 4.5-8 4.5z" fill="#c4161c"/></svg>유튜브 구독하고 PDF 저장</a></div></div><script>(function(){var R=document.getElementById("cl_out"),b=document.getElementById('pg-bar'),g=document.getElementById('pg-gatebox');if(R&&R.parentNode){R.parentNode.insertBefore(b,R.nextSibling);b.parentNode.insertBefore(g,b.nextSibling)}})();(function(){
+var K='ecok_sub_ok',KEY="cleaning-loss",ROOT="ekcl",FIT=(KEY==='fuse'||KEY==='string')?1005:960,RID="cl_out",CO="☎ 1555-2859 · www.ecokkorea.kr · info@ecokkorea.co.kr",NOTE="참고용 계산, 실제 설계는 현장 조건 확인",ok=false,clicked=0,pending=false;
+function setOk(){try{window.localStorage.setItem(K,'1')}catch(e){}try{document.cookie=K+'=1; max-age=31536000; path=/; SameSite=Lax'}catch(e){}}
+function getOk(){var v=false;try{v=window.localStorage.getItem(K)==='1'}catch(e){}
+ if(!v){try{v=/(?:^|; )ecok_sub_ok=1/.test(document.cookie)}catch(e){}}
+ if(v)setOk();return v}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function rows(){var out=[];document.querySelectorAll('.sheet .row').forEach(function(r){
+ var el=r.querySelector('input,select,output');if(!el)return;
+ var lb=r.querySelector('label');if(!lb)return;var c=lb.cloneNode(true);
+ c.querySelectorAll('small').forEach(function(s){var t=s.textContent.trim();if(t.length<=6)s.replaceWith(document.createTextNode(' ('+t+')'));else s.remove()});
+ var name=c.textContent.replace(/\s+/g,' ').trim(),v;
+ if(el.type==='checkbox')v=el.checked?'예':'아니오';
+ else if(el.tagName==='SELECT')v=el.options[el.selectedIndex]?el.options[el.selectedIndex].text:'';
+ else if(el.tagName==='OUTPUT')v=el.textContent;
+ else v=el.value||'자동';
+ out.push([name,String(v).replace(/\s+/g,' ').trim()])});return out}
+function sheetHtml(){
+ var R=document.getElementById(RID);if(!R)return null;
+ var cl=R.cloneNode(true);cl.removeAttribute('id');cl.querySelectorAll('[id]').forEach(function(n){n.removeAttribute('id')});
+ if(KEY==='string')cl.querySelectorAll('table').forEach(function(t){if(t.rows[0]&&t.rows[0].cells.length>10)t.remove()});
+ var rs=rows(),h='';
+ for(var i=0;i<rs.length;i+=2){var a=rs[i],b=rs[i+1];
+  h+='<tr><th>'+esc(a[0])+'</th><td>'+esc(a[1])+'</td>'+(b?'<th>'+esc(b[0])+'</th><td>'+esc(b[1])+'</td>':'<th></th><td></td>')+'</tr>'}
+ var h1=document.querySelector('h1'),title=h1?h1.textContent.trim():document.title;
+ var d=new Date(),ds=d.getFullYear()+'.'+(d.getMonth()+1)+'.'+d.getDate();
+ var w=document.createElement('div');w.className='pgw '+ROOT;w.appendChild(cl);
+ var extra='';
+ if(KEY==='fire'){var t1=document.getElementById('ft1'),t2=document.getElementById('ft2');
+  if(t1&&t2){var nt=t1.closest('.tw').previousElementSibling,x=document.createElement('div');x.className='pgw '+ROOT;
+   if(nt)x.appendChild(nt.cloneNode(true));[t1,t2].forEach(function(t){var c=t.closest('.tw').cloneNode(true);c.querySelectorAll('[id]').forEach(function(n){n.removeAttribute('id')});x.appendChild(c)});
+   extra='<h2>감지면적 표 (NFTC 203 원문)</h2>'+x.outerHTML}}
+ return '<div id="pg-sheet" class="pg-fr '+KEY+'"><div class="pg-hd"><img src="img/logo.png" alt="에코케이코리아"><span class="pg-dt">계산일 '+ds+'</span></div>'
+  +'<div class="pg-t">'+esc(title)+'</div><p class="pg-s">입력값과 계산 결과</p>'
+  +'<h2>입력값</h2><table class="pg-in"><tbody>'+h+'</tbody></table><h2>계산 결과</h2>'+w.outerHTML+extra
+  +'<div class="pg-ft"><b>'+esc(CO)+'</b><span>'+esc(NOTE)+'</span></div></div>'}
+function frameHtml(){var s=sheetHtml();if(!s)return null;
+ var bs=document.createElement('base');bs.href=document.baseURI;var heads='';document.querySelectorAll('head style').forEach(function(x){heads+=x.outerHTML});
+ return '<!doctype html><html lang="ko"><head><meta charset="utf-8">'+bs.outerHTML+heads+'<style>html,body{margin:0;background:#fff}</style></head><body>'+s+'</body></html>'}
+function doSave(){var html=frameHtml();if(!html)return;
+ var old=document.getElementById('pg-frame');if(old)old.remove();
+ var f=document.createElement('iframe');f.id='pg-frame';f.setAttribute('aria-hidden','true');
+ f.style.cssText='position:absolute;left:-9999px;top:0;width:190mm;height:1400px;border:0;visibility:hidden';
+ f.onload=function(){var w=f.contentWindow,doc=f.contentDocument,s=doc.getElementById('pg-sheet');if(!s)return;
+  var go=function(){var hh=s.scrollHeight;s.style.zoom=Math.min(1,FIT/hh).toFixed(3);
+   setTimeout(function(){try{w.focus();w.print()}catch(e){try{window.print()}catch(e2){}}},120)};
+  (doc.fonts&&doc.fonts.ready?doc.fonts.ready:Promise.resolve()).then(function(){setTimeout(go,150)},go)};
+ document.body.appendChild(f);f.srcdoc=html}
+window.__pgFrameHtml=frameHtml;
+var box=document.getElementById('pg-gatebox'),btn=document.getElementById('pg-save');
+function openGate(){ok=true;setOk();var g=box.querySelector('.gate');g.classList.add('done');
+ if(pending){pending=false;doSave()}}
+ok=getOk();
+btn.addEventListener('click',function(){
+ if(ok){doSave();return}
+ pending=true;box.classList.add('show');try{box.scrollIntoView({block:'nearest'})}catch(e){}});
+document.getElementById('subbtn').addEventListener('click',function(){clicked=Date.now()});
+function back(){if(clicked&&!ok&&Date.now()-clicked>2500)openGate()}
+addEventListener('focus',back);document.addEventListener('visibilitychange',function(){if(!document.hidden)back()});
+window.__pgUnlock=openGate;
+})();</script><script>(function(){function s(){parent.postMessage({h:document.documentElement.scrollHeight},'*')}addEventListener('load',s);new ResizeObserver(s).observe(document.body);setTimeout(s,800)})()</script></body></html>
