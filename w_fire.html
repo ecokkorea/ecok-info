@@ -2851,10 +2851,10 @@ function rows(){var out=[];document.querySelectorAll('.sheet .row').forEach(func
  var lb=r.querySelector('label');if(!lb)return;var c=lb.cloneNode(true);
  c.querySelectorAll('small').forEach(function(s){var t=s.textContent.trim();if(t.length<=6)s.replaceWith(document.createTextNode(' ('+t+')'));else s.remove()});
  var name=c.textContent.replace(/\s+/g,' ').trim(),v;
- if(el.type==='checkbox')v=el.checked?'예':'아니오';
+ if(el.type==='checkbox')v=el.checked?"예":"아니오";
  else if(el.tagName==='SELECT')v=el.options[el.selectedIndex]?el.options[el.selectedIndex].text:'';
  else if(el.tagName==='OUTPUT')v=el.textContent;
- else v=el.value||'자동';
+ else v=el.value||"자동";
  out.push([name,String(v).replace(/\s+/g,' ').trim()])});return out}
 function sheetHtml(){
  var R=document.getElementById(RID);if(!R)return null;
@@ -2870,14 +2870,14 @@ function sheetHtml(){
  if(KEY==='fire'){var t1=document.getElementById('ft1'),t2=document.getElementById('ft2');
   if(t1&&t2){var nt=t1.closest('.tw').previousElementSibling,x=document.createElement('div');x.className='pgw '+ROOT;
    if(nt)x.appendChild(nt.cloneNode(true));[t1,t2].forEach(function(t){var c=t.closest('.tw').cloneNode(true);c.querySelectorAll('[id]').forEach(function(n){n.removeAttribute('id')});x.appendChild(c)});
-   extra='<h2>감지면적 표 (NFTC 203 원문)</h2>'+x.outerHTML}}
- return '<div id="pg-sheet" class="pg-fr '+KEY+'"><div class="pg-hd"><img src="img/logo.png" alt="에코케이코리아"><span class="pg-dt">계산일 '+ds+'</span></div>'
-  +'<div class="pg-t">'+esc(title)+'</div><p class="pg-s">입력값과 계산 결과</p>'
-  +'<h2>입력값</h2><table class="pg-in"><tbody>'+h+'</tbody></table><h2>계산 결과</h2>'+w.outerHTML+extra
+   extra='<h2>'+"감지면적 표 (NFTC 203 원문)"+'</h2>'+x.outerHTML}}
+ return '<div id="pg-sheet" class="pg-fr '+KEY+'"><div class="pg-hd"><img src="img/logo.png" alt="'+"에코케이코리아"+'"><span class="pg-dt">'+"계산일 "+ds+'</span></div>'
+  +'<div class="pg-t">'+esc(title)+'</div><p class="pg-s">'+"입력값과 계산 결과"+'</p>'
+  +'<h2>'+"입력값"+'</h2><table class="pg-in"><tbody>'+h+'</tbody></table><h2>'+"계산 결과"+'</h2>'+w.outerHTML+extra
   +'<div class="pg-ft"><b>'+esc(CO)+'</b><span>'+esc(NOTE)+'</span></div></div>'}
 function frameHtml(){var s=sheetHtml();if(!s)return null;
  var bs=document.createElement('base');bs.href=document.baseURI;var heads='';document.querySelectorAll('head style').forEach(function(x){heads+=x.outerHTML});
- return '<!doctype html><html lang="ko"><head><meta charset="utf-8">'+bs.outerHTML+heads+'<style>html,body{margin:0;background:#fff}</style></head><body>'+s+'</body></html>'}
+ return '<!doctype html><html lang="'+"ko"+'"><head><meta charset="utf-8">'+bs.outerHTML+heads+'<style>html,body{margin:0;background:#fff}</style></head><body>'+s+'</body></html>'}
 function doSave(){var html=frameHtml();if(!html)return;
  var old=document.getElementById('pg-frame');if(old)old.remove();
  var f=document.createElement('iframe');f.id='pg-frame';f.setAttribute('aria-hidden','true');

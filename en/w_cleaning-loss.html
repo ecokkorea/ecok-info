@@ -1,0 +1,267 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+<style>@font-face{font-family:Paperlogy;src:url(../fonts/Paperlogy-4Regular.ttf);font-weight:400}@font-face{font-family:Paperlogy;src:url(../fonts/Paperlogy-6SemiBold.ttf);font-weight:600}@font-face{font-family:Paperlogy;src:url(../fonts/Paperlogy-8ExtraBold.ttf);font-weight:800}
+html,body{margin:0;background:#fff;overflow-x:hidden}body{font-family:Paperlogy,'Malgun Gothic',sans-serif;word-break:keep-all;color:#16212c}img{max-width:100%;height:auto}@media (max-width:600px){table{display:block;overflow-x:auto}}</style><style>
+.krn{border-left:5px solid #c62828;background:#fff4f4;padding:10px 14px;border-radius:0 8px 8px 0;margin:10px 0 0;font-size:15.5px;line-height:1.6;color:#3a4048;word-break:normal}</style><style>:root{--ink:#16212c;--slate:#4a5763;--line:#d5dce2;--mist:#eef2f5;--blue:#1d4f91;--blue-dark:#163d70}
+.gate{margin-top:0;border:1.5px solid var(--ink);background:#fff;display:grid;grid-template-columns:1fr auto;gap:28px;align-items:center;padding:clamp(22px,3vw,36px)}
+.gate h2{font-size:clamp(24px,2.4vw,32px);font-weight:800;letter-spacing:-.02em;line-height:1.35}
+.gate ol{margin:14px 0 0;padding-left:1.4em;color:var(--slate)}.gate ol li{margin:4px 0}
+.gate .note{margin-top:12px;font-size:16px;color:var(--slate)}
+.subbtn{display:inline-flex;align-items:center;gap:12px;padding:18px 30px;border-radius:10px;background:#c4161c;color:#fff;font-weight:800;font-size:21px;text-decoration:none;white-space:nowrap}
+.subbtn:hover{background:#9f1015}.subbtn svg{width:30px;height:21px;flex:none}
+.gate .ok{display:none;font-weight:800;color:#1b6b3a;font-size:20px}
+.gate.done .ok{display:block}.gate.done .subbtn{background:#fff;color:#c4161c;border:2px solid #c4161c;padding:14px 24px;font-size:18px}
+
+.pg-bar{margin:22px 0 0;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.pg-save{font:800 19px Paperlogy,'Malgun Gothic',sans-serif;padding:15px 28px;border:0;border-radius:10px;background:#1d4f91;color:#fff;cursor:pointer}
+.pg-save:hover{background:#163d70}.pg-hint{font-size:15px;color:#4a5763}
+.pg-gatebox{display:none;margin-top:18px}.pg-gatebox.show{display:block}
+.pg-gatebox .gate{grid-template-columns:1fr}.pg-gatebox .subbtn{justify-self:start}
+#pg-sheet{display:none}
+@media print{
+ @page{size:A4;margin:10mm}
+ html,body{background:#fff!important;overflow:visible!important}
+ body>*:not(#pg-sheet){display:none!important}
+ #pg-sheet{display:block!important;width:190mm;color:#16212c;font-family:Paperlogy,'Malgun Gothic',sans-serif;word-break:keep-all;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+#pg-sheet.pg-fr{display:block}
+#pg-sheet.fuse .pgw>div,#pg-sheet.string .pgw>div{column-count:2;column-gap:14px}
+#pg-sheet.string .pgw .sec{break-inside:avoid}
+#pg-sheet.string .pgw .sec:has(table){column-span:all}
+#pg-sheet.fuse .pgw .sh,#pg-sheet.fuse .pgw .chk{break-inside:avoid}
+#pg-sheet *{box-sizing:border-box}
+#pg-sheet .pg-hd{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #1d4f91;padding-bottom:6px}
+#pg-sheet .pg-hd img{height:26px;width:auto}#pg-sheet .pg-dt{font-size:12px;color:#4a5763}
+#pg-sheet .pg-t{font-size:20px;font-weight:800;margin:10px 0 2px;line-height:1.3}
+#pg-sheet .pg-s{font-size:12px;color:#4a5763;margin:0 0 6px}
+#pg-sheet h2{font-size:14px;font-weight:800;margin:10px 0 4px;color:#1d4f91}
+#pg-sheet table.pg-in{width:100%;border-collapse:collapse;table-layout:fixed;font-size:11.5px}
+#pg-sheet table.pg-in th,#pg-sheet table.pg-in td{border-bottom:1px solid #d5dce2;padding:3px 6px;line-height:1.35;vertical-align:top;word-break:keep-all;overflow-wrap:break-word}
+#pg-sheet table.pg-in th{text-align:left;font-weight:600;color:#4a5763;background:#f4f6f8;width:27%}
+#pg-sheet table.pg-in td{font-weight:800;width:23%}
+#pg-sheet .pgw{max-width:none;margin:0;padding:0;color:#16212c}
+#pg-sheet .pgw .sh{margin-top:6px}
+#pg-sheet .pg-ft{margin-top:10px;border-top:1px solid #d5dce2;padding-top:6px;font-size:12px;display:flex;justify-content:space-between;gap:12px}
+#pg-sheet .pg-ft b{font-weight:800}
+
+#pg-sheet.fuse .pgw *,#pg-sheet.string .pgw *{font-size:10.5px!important;line-height:1.45!important}
+#pg-sheet.fuse .pgw .sh,#pg-sheet.string .pgw .sec h3,#pg-sheet.string .pgw .ekmppt h3{font-size:12px!important}
+#pg-sheet.fuse .pgw .sh{padding:5px 10px!important;margin-top:8px!important;break-after:avoid}
+#pg-sheet.fuse .pgw .sb{padding:5px 8px!important}
+#pg-sheet.fuse .pgw .chk{margin-bottom:4px!important;grid-template-columns:1fr 66px!important}
+#pg-sheet.fuse .pgw .chk .f{padding:4px 8px!important}
+#pg-sheet.fuse .pgw .chk .f .v,#pg-sheet.fuse .pgw .chk .f .s{padding:0 4px!important}
+#pg-sheet.string .pgw .sec{margin-top:8px!important}
+#pg-sheet.string .pgw .calcline{padding:3px 6px!important;margin-bottom:3px!important;gap:4px!important}
+#pg-sheet.string .pgw .verdict{padding:5px 8px!important;margin-top:6px!important}
+</style></head><body><!-- Tools > Solar panel cleaning payback calculator /en/tool-cleaning-loss.html. English screen of tool-cleaning-loss (same formulas). Built by en_tools.py from src/tools/cleaning-loss.raw.html -->
+<style>
+.ekcl{max-width:1200px;margin:0 auto;padding:60px 20px 70px;color:#1a1e24;box-sizing:border-box;word-break:keep-all;overflow-wrap:break-word;background:#fff;font-size:17px;line-height:1.7}
+.ekcl *{box-sizing:border-box}
+.ekcl .eb{font-size:13px;font-weight:800;letter-spacing:2px;color:#1a7f37}
+.ekcl h1{font-size:38px;margin:10px 0 16px;font-weight:800;line-height:1.3}
+.ekcl .lead{list-style:none;padding:0;margin:0 0 26px;font-size:18px;line-height:1.8}
+.ekcl .lead li{padding-left:22px;position:relative}.ekcl .lead li:before{content:"■";position:absolute;left:0;color:#1a7f37;font-size:12px;top:2px}
+.ekcl .sheet{border:2px solid #1b2330;border-radius:12px;padding:22px 24px;background:#fff}
+.ekcl .sheet>h2{font-size:24px;margin:0 0 4px}
+.ekcl .ref{font-size:14.5px;color:#1f4e79;margin:0 0 14px;line-height:1.6}
+.ekcl .sh{background:#1f4e79;color:#fff;font-weight:800;font-size:17px;padding:10px 14px;border-radius:8px 8px 0 0;margin-top:18px}
+.ekcl .sb{border:1px solid #dfe3e8;border-top:0;border-radius:0 0 8px 8px;padding:12px 14px}
+.ekcl .inp{display:grid;grid-template-columns:1fr 1fr;gap:4px 24px}
+.ekcl .row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px dashed #edf0f3}
+.ekcl .row label{font-size:17px;font-weight:700}
+.ekcl .row label small{display:block;font-size:13.5px;color:#555;font-weight:400}
+.ekcl .row input,.ekcl .row select{padding:9px 10px;border:1px solid #c9ced6;border-radius:6px;font-size:18px;font-family:inherit;background:#fffbe6;color:#1a1e24}
+.ekcl .row input{width:160px;text-align:right}
+.ekcl .row select{width:330px;max-width:100%}
+.ekcl .row.off{opacity:.45}
+.ekcl .m12{display:grid;grid-template-columns:repeat(6,1fr);gap:6px 10px;margin:8px 0 4px}
+.ekcl .m12 label{font-size:14px;font-weight:700;display:block}
+.ekcl .m12 input{width:100%;padding:6px 8px;border:1px solid #c9ced6;border-radius:6px;font-size:16px;text-align:right;background:#fffbe6;font-family:inherit}
+.ekcl .big{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0 12px}
+.ekcl .big div{background:#f6f8fb;border-radius:10px;padding:16px 12px;text-align:center;min-width:0}
+.ekcl .big div.main{background:#1f4e79}
+.ekcl .big small{display:block;font-size:14px;color:#555;margin-bottom:4px}
+.ekcl .big div.main small{color:#dbe8f5}
+.ekcl .big b{font-size:30px;color:#1f4e79;font-variant-numeric:tabular-nums;line-height:1.2}
+.ekcl .big div.main b{color:#fff}
+.ekcl .big b em{font-style:normal;font-size:16px;margin-left:3px;opacity:.8}
+.ekcl table{width:100%;border-collapse:collapse;font-size:15.5px;margin:4px 0 6px}
+.ekcl th,.ekcl td{padding:8px 8px;border-bottom:1px solid #e3e6ea;text-align:left;vertical-align:top;line-height:1.5}
+.ekcl th{background:#f4f6f9;font-size:14px;color:#3a4048}
+.ekcl td.n,.ekcl th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ekcl td.f{color:#3a4048;font-size:15px}
+.ekcl tr.sum td{font-weight:800;border-top:2px solid #1b2330;background:#fafbfc}
+.ekcl tr.tot td{font-weight:800;font-size:18px;color:#1f4e79;border-top:2px solid #1f4e79;background:#eef4fb}
+.ekcl .twrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ekcl .svg{width:100%;height:auto;display:block;margin:6px 0 2px}
+.ekcl .lg{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:14.5px;color:#3a4048;margin:0 0 8px}
+.ekcl .lg i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.ekcl .two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.ekcl .tip{border-left:5px solid #1f4e79;background:#eef4fb;padding:12px 14px;border-radius:0 8px 8px 0;margin:12px 0 0;font-size:16px;line-height:1.75}
+.ekcl .alert{border-left:5px solid #c62828;background:#fde8e8;padding:12px 14px;border-radius:0 8px 8px 0;margin:12px 0 0;font-size:16px;line-height:1.75}
+.ekcl .under{list-style:none;margin:18px 0 0;padding:14px 16px;border:1px solid #dfe3e8;border-radius:10px;background:#fafbfc;font-size:15.5px;line-height:1.85}
+.ekcl .under li{padding-left:16px;position:relative}.ekcl .under li:before{content:"-";position:absolute;left:0}
+.ekcl .under a{color:#1f4e79;font-weight:800}
+.ekcl h2.h{font-size:26px;margin:44px 0 14px}
+.ekcl details{border:1px solid #e3e6ea;border-radius:10px;padding:14px 18px;margin:0 0 10px;background:#fff}
+.ekcl summary{font-weight:700;cursor:pointer;font-size:17.5px}
+.ekcl details p{font-size:16px;line-height:1.8;color:#3a4048;margin:10px 0 0}
+.ekcl .law{border:1px solid #dfe3e8;background:#fafbfc;border-radius:10px;padding:16px 20px;margin:28px 0 0;font-size:15px;line-height:1.8;color:#3a4048}
+.ekcl .law b{color:#1a1e24}
+.ekcl .law ul{margin:6px 0 0;padding-left:18px}
+.ekcl .btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin:30px 0 0}
+.ekcl .btns a{display:inline-block;font-weight:800;font-size:20px;padding:16px 30px;border-radius:12px;text-decoration:none}
+.ekcl .btns a.call{background:#ff7a00;color:#fff!important}
+.ekcl .btns a.q{background:#fff;color:#1f4e79!important;border:2px solid #1f4e79}
+.ekcl .contact{margin:22px 0 0;font-size:19px;font-weight:800;color:#1b2330;text-align:center}
+@media(max-width:860px){.ekcl .twrap table{min-width:640px}.ekcl .twrap table.mt{min-width:760px}.ekcl{padding:40px 14px 50px}.ekcl h1{font-size:28px}.ekcl .lead{font-size:16px}.ekcl .inp{grid-template-columns:1fr}.ekcl .big{grid-template-columns:1fr 1fr}.ekcl .big b{font-size:24px}.ekcl .sheet{padding:16px 12px}.ekcl .row{flex-direction:column;align-items:stretch;gap:6px}.ekcl .row input,.ekcl .row select{width:100%;font-size:17px}.ekcl .m12{grid-template-columns:repeat(3,1fr)}.ekcl .two{grid-template-columns:1fr}.ekcl table{font-size:14px}.ekcl th,.ekcl td{padding:7px 5px}.ekcl .btns a{display:block;width:100%;text-align:center;font-size:18px}.ekcl .contact{font-size:16px}}
+@media(max-width:480px){.ekcl .sheet{padding:14px 8px}.ekcl .big{grid-template-columns:1fr}.ekcl table{font-size:13px}.ekcl th,.ekcl td{padding:6px 4px}.ekcl th{font-size:12.5px}.ekcl .m12{grid-template-columns:repeat(2,1fr)}}
+</style>
+<div class="ekcl" id="cleaning-loss-calculator">
+  <div class="eb">PV SOILING LOSS · CLEANING PAYBACK</div>
+  <p class="krn">Korea based: the default yield values come from PVsyst results at Korean sites and amounts are in Korean won (KRW). The formulas apply anywhere if you enter your own rate and yield.</p>
+  <h1>Solar Panel Cleaning Payback Calculator (soiling loss and cleaning cost)</h1>
+  <ul class="lead">
+    <li>Enter the installed capacity, the soiling loss (%), the specific yield per kW and your sale (or self consumption) rate to see the <b>electricity and money lost each year</b>.</li>
+    <li>Add the cleaning cost to see <b>how many months it takes to recover</b> and the <b>break even soiling loss %</b> above which cleaning pays.</li>
+    <li>Free, no sign up. Everything is calculated in this page and nothing is sent anywhere.</li>
+  </ul>
+
+  <div class="sheet">
+    <h2>Cleaning payback sheet</h2>
+    <p class="ref">※ Fill in the yellow boxes only. Set the soiling loss % from how much lower the output was just before cleaning than just after (same weather), or against the same month last year.</p>
+
+    <div class="sh">■ 1. Inputs</div>
+    <div class="sb"><div class="inp">
+      <div class="row"><label>① Installed capacity [kW]<small>Module total (DC, kWp)</small></label><input type="number" id="cl_kw" value="100" step="1" min="0" inputmode="decimal"></div>
+      <div class="row"><label>② Soiling loss [%]<small>Share of yearly output lost to soiling. World average 3 to 5% (IEA PVPS, see notes)</small></label><input type="number" id="cl_loss" value="4" step="0.5" min="0" max="50" inputmode="decimal"></div>
+      <div class="row"><label>③ Specific yield [kWh/kW per year]<small>Our PVsyst results at 8 Korean sites: 1,169 to 1,367. Roofs about 1,250, south facing ground mounted 1,300 to 1,370</small></label><input type="number" id="cl_yield" value="1300" step="10" min="500" max="2000" inputmode="numeric"></div>
+      <div class="row"><label>④ Sale or self consumption rate [KRW/kWh]<small>SMP plus REC settlement rate, or the rate of the electricity you avoid buying. The initial value is an example, use your settlement statement</small></label><input type="number" id="cl_price" value="150" step="1" min="0" inputmode="numeric"></div>
+      <div class="row"><label>⑤ Cleaning cost per visit [KRW]<small>Your quote (VAT included). The initial value is an example</small></label><input type="number" id="cl_cost" value="500000" step="10000" min="0" inputmode="numeric"></div>
+      <div class="row"><label>⑥ Cleanings per year<small>Each cleaning is assumed to recover the full soiling loss</small></label><input type="number" id="cl_n" value="1" step="1" min="1" max="12" inputmode="numeric"></div>
+    </div></div>
+
+    <div id="cl_out"></div>
+
+    <ul class="under">
+      <li>Formulas: yearly energy lost = ① × ③ × ② ÷ 100, yearly money lost = energy lost × ④, months to recover the cleaning cost = (⑤ × ⑥) ÷ (money lost ÷ 12), break even soiling loss % = (⑤ × ⑥) ÷ (① × ③ × ④) × 100.</li>
+      <li>Soiling builds up again after cleaning, so the real yearly loss depends on when you clean and on rain. Comparing output before and after cleaning in the same weather and correcting ② makes it accurate.</li>
+      <li>If only one string or one inverter is low, the cause may be a fuse or connector fault rather than soiling. → <a href="contact.html" target="_top">Ask us about cleaning and maintenance</a></li>
+    </ul>
+  </div>
+
+  <h2 class="h">Frequently asked questions</h2>
+  <details><summary>How much output do dirty solar panels lose?</summary><p>The IEA PVPS Task 13 report (IEA-PVPS T13-21:2022, published January 2023) estimates that soiling cuts yearly solar output worldwide by 3 to 5%, with economic losses on the order of 3 to 5 billion euros a year. Dust, bird droppings, pollen and yellow dust, and how often it rains, vary a lot from site to site, so the most accurate value for your plant comes from comparing output before and after cleaning.</p></details>
+  <details><summary>How often should panels be cleaned?</summary><p>Only when the cleaning cost is less than the money lost to soiling. If the real loss is above the break even soiling loss % from this calculator, cleaning is worth it; if below, waiting for rain is better. More cleanings (⑥) mean more cost, so timing them for the dirtiest season (for example heavy pollen or yellow dust with little rain) is most efficient.</p></details>
+  <details><summary>What rate should I enter?</summary><p>If you sell the power, enter the SMP plus REC amount per kWh from your settlement statement. For self consumption, enter the energy rate per kWh of the electricity you avoid buying. Under net metering, enter the rate by which netting lowers your bill.</p></details>
+  <details><summary>How do I find the specific yield per kW?</summary><p>Divide last year's output from your monitoring system by the installed capacity (kW). Without data, refer to our 2026 PVsyst results at 8 Korean sites (roofs 1,169 to 1,322, ground mounted 1,255 to 1,367 kWh/kWp).</p></details>
+  <details><summary>Can I clean the panels myself?</summary><p>While the sun is up the DC side stays live even with the inverter off. Do not touch broken modules or exposed wiring, and avoid pressure washers and stiff brushes, which can damage the coating and frame seals. Rooftop work needs fall protection and trained people.</p></details>
+
+  <div class="law"><b>Notes (sources checked 2026-11-11)</b>
+    <ul>
+      <li>Soiling loss range: IEA PVPS Task 13, "Soiling Losses: Impact on the Performance of Photovoltaic Power Plants" (IEA-PVPS T13-21:2022, published January 2023), key summary "estimated to cause a loss of annual PV energy production of 3-5%", economic loss "on the order of 3-5 billion euros".</li>
+      <li>Specific yield: 8 PVsyst 8.1.7 simulations by ECO K KOREA (KMA station typical year or PVGIS typical year), tabulated in our Korean insight #53.</li>
+      <li>No measured regional soiling statistics for Korea were found (unconfirmed), so ② is a user input and only the world average range is given for reference.</li>
+    </ul>
+    Not included: how fast soiling builds up again after cleaning (loss changing over time), losses cleaning cannot recover (staining, coating degradation), rate changes, VAT.
+  </div>
+
+  <div class="btns"><a class="call" href="tel:+8215552859">Call +82 1555-2859</a><a class="q" href="contact.html" target="_top">Email us</a></div>
+  <p class="contact">☎ +82 1555-2859 · www.ecokkorea.kr · info@ecokkorea.co.kr</p>
+</div>
+<script>
+(function(){var MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var $=function(i){return document.getElementById(i)};
+  function num(i){var v=parseFloat($(i).value);return isFinite(v)?v:0}
+  function f0(x){return Math.round(x).toLocaleString('en-US')}
+  function f1(x){return (Math.round(x*10)/10).toLocaleString('en-US',{minimumFractionDigits:1,maximumFractionDigits:1})}
+  function man(w){return Math.round(w).toLocaleString('en-US')}
+  function calc(kw,loss,yld,price,costMan,n){
+    var gen=kw*yld, lk=gen*loss/100, lw=lk*price, cost=costMan*10000*n;
+    var months=lw>0?cost/(lw/12):Infinity;
+    var be=(gen*price)>0?cost/(gen*price)*100:Infinity;
+    return {gen:gen,lk:lk,lw:lw,cost:cost,months:months,be:be,net:lw-cost};
+  }
+  window.ekclCalc=calc;
+  function run(){
+    var kw=num('cl_kw'),loss=num('cl_loss'),yld=num('cl_yield'),price=num('cl_price'),cm=num('cl_cost')/10000,n=Math.max(1,Math.round(num('cl_n')));
+    var r=calc(kw,loss,yld,price,cm,n);
+    var mtxt=isFinite(r.months)?f1(r.months)+'<em>months</em>':'never';
+    var h='<div class="big">'
+      +'<div><small>Yearly output (no soiling)</small><b>'+f0(r.gen)+'<em>kWh</em></b></div>'
+      +'<div><small>Energy lost to soiling (year)</small><b>'+f0(r.lk)+'<em>kWh</em></b></div>'
+      +'<div class="main"><small>Money lost to soiling (year)</small><b>'+man(r.lw)+'<em>KRW</em></b></div>'
+      +'<div><small>Cleaning cost recovered in</small><b>'+mtxt+'</b></div></div>';
+    var ok=r.net>=0;
+    h+='<div class="'+(ok?'tip':'alert')+'">Yearly cleaning cost '+man(r.cost)+' KRW ('+n+' visits) against '+man(r.lw)+' KRW recovered → '+(ok?'<b>cleaning pays</b> ('+man(r.net)+' KRW a year ahead)':'<b>cleaning costs more</b> ('+man(-r.net)+' KRW a year short). Clean less often or only in the dirtiest season')+'. The <b>break even soiling loss for this plant is '+(isFinite(r.be)?f1(r.be)+'%':'not available')+'</b> (cleaning pays when the loss is higher).</div>';
+    h+='<div class="sh">■ 2. At a glance by soiling loss % (with the current ①, ③, ④, ⑤, ⑥)</div><div class="sb"><div class="twrap"><table><thead><tr><th>Soiling loss</th><th class="n">Energy lost (year)</th><th class="n">Money lost (year)</th><th class="n">Cost recovered in</th><th>Verdict</th></tr></thead><tbody>';
+    [1,2,3,4,5,7,10].forEach(function(p){var q=calc(kw,p,yld,price,cm,n);h+='<tr'+(p===loss?' class="tot"':'')+'><td>'+p+'%</td><td class="n">'+f0(q.lk)+' kWh</td><td class="n">'+man(q.lw)+' KRW</td><td class="n">'+(isFinite(q.months)?f1(q.months)+' months':'never')+'</td><td>'+(q.net>=0?'cleaning pays':'cost too high')+'</td></tr>'});
+    h+='</tbody></table></div></div>';
+    $('cl_out').innerHTML=h;
+  }
+  ['cl_kw','cl_loss','cl_yield','cl_price','cl_cost','cl_n'].forEach(function(i){$(i).addEventListener('input',run)});
+  run();
+})();
+</script>
+
+<div class="pg-bar" id="pg-bar"><button type="button" class="pg-save" id="pg-save">Save as PDF report</button><span class="pg-hint">One A4 page with the inputs and results</span></div><div class="pg-gatebox" id="pg-gatebox"><div class="gate" id="subgate"><div><h2>Subscribe to our YouTube channel to save the PDF report</h2><ol><li>The red button opens the YouTube subscribe window in a new tab.</li><li>Come back to this tab after subscribing and the PDF save dialog opens.</li></ol><p class="note">The calculator is free without subscribing. If you already subscribe, press the button and come back. Once unlocked, it stays open anywhere on this site in this browser.</p><p class="ok" role="status">Unlocked. Thank you for subscribing.</p></div><a class="subbtn" id="subbtn" href="https://www.youtube.com/channel/UCpRTUvMiZQxXk-7BLJQlUZQ?sub_confirmation=1" target="_blank" rel="noopener"><svg viewBox="0 0 30 21" aria-hidden="true"><rect width="30" height="21" rx="5" fill="#fff"/><path d="M12 6l8 4.5-8 4.5z" fill="#c4161c"/></svg>Subscribe on YouTube and save the PDF</a></div></div><script>(function(){var R=document.getElementById("cl_out"),b=document.getElementById('pg-bar'),g=document.getElementById('pg-gatebox');if(R&&R.parentNode){R.parentNode.insertBefore(b,R.nextSibling);b.parentNode.insertBefore(g,b.nextSibling)}})();(function(){
+var K='ecok_sub_ok',KEY="cleaning-loss",ROOT="ekcl",FIT=(KEY==='fuse'||KEY==='string')?1005:960,RID="cl_out",CO="☎ +82 1555-2859 · www.ecokkorea.kr · info@ecokkorea.co.kr",NOTE="For reference only. Actual design needs site conditions checked.",ok=false,clicked=0,pending=false;
+function setOk(){try{window.localStorage.setItem(K,'1')}catch(e){}try{document.cookie=K+'=1; max-age=31536000; path=/; SameSite=Lax'}catch(e){}}
+function getOk(){var v=false;try{v=window.localStorage.getItem(K)==='1'}catch(e){}
+ if(!v){try{v=/(?:^|; )ecok_sub_ok=1/.test(document.cookie)}catch(e){}}
+ if(v)setOk();return v}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function rows(){var out=[];document.querySelectorAll('.sheet .row').forEach(function(r){
+ var el=r.querySelector('input,select,output');if(!el)return;
+ var lb=r.querySelector('label');if(!lb)return;var c=lb.cloneNode(true);
+ c.querySelectorAll('small').forEach(function(s){var t=s.textContent.trim();if(t.length<=6)s.replaceWith(document.createTextNode(' ('+t+')'));else s.remove()});
+ var name=c.textContent.replace(/\s+/g,' ').trim(),v;
+ if(el.type==='checkbox')v=el.checked?"Yes":"No";
+ else if(el.tagName==='SELECT')v=el.options[el.selectedIndex]?el.options[el.selectedIndex].text:'';
+ else if(el.tagName==='OUTPUT')v=el.textContent;
+ else v=el.value||"auto";
+ out.push([name,String(v).replace(/\s+/g,' ').trim()])});return out}
+function sheetHtml(){
+ var R=document.getElementById(RID);if(!R)return null;
+ var cl=R.cloneNode(true);cl.removeAttribute('id');cl.querySelectorAll('[id]').forEach(function(n){n.removeAttribute('id')});
+ if(KEY==='string')cl.querySelectorAll('table').forEach(function(t){if(t.rows[0]&&t.rows[0].cells.length>10)t.remove()});
+ var rs=rows(),h='';
+ for(var i=0;i<rs.length;i+=2){var a=rs[i],b=rs[i+1];
+  h+='<tr><th>'+esc(a[0])+'</th><td>'+esc(a[1])+'</td>'+(b?'<th>'+esc(b[0])+'</th><td>'+esc(b[1])+'</td>':'<th></th><td></td>')+'</tr>'}
+ var h1=document.querySelector('h1'),title=h1?h1.textContent.trim():document.title;
+ var d=new Date(),ds=d.getFullYear()+'.'+(d.getMonth()+1)+'.'+d.getDate();
+ var w=document.createElement('div');w.className='pgw '+ROOT;w.appendChild(cl);
+ var extra='';
+ if(KEY==='fire'){var t1=document.getElementById('ft1'),t2=document.getElementById('ft2');
+  if(t1&&t2){var nt=t1.closest('.tw').previousElementSibling,x=document.createElement('div');x.className='pgw '+ROOT;
+   if(nt)x.appendChild(nt.cloneNode(true));[t1,t2].forEach(function(t){var c=t.closest('.tw').cloneNode(true);c.querySelectorAll('[id]').forEach(function(n){n.removeAttribute('id')});x.appendChild(c)});
+   extra='<h2>'+"Detection area table (NFTC 203)"+'</h2>'+x.outerHTML}}
+ return '<div id="pg-sheet" class="pg-fr '+KEY+'"><div class="pg-hd"><img src="../img/logo.png" alt="'+"ECO K KOREA"+'"><span class="pg-dt">'+"Calculated "+ds+'</span></div>'
+  +'<div class="pg-t">'+esc(title)+'</div><p class="pg-s">'+"Inputs and results"+'</p>'
+  +'<h2>'+"Inputs"+'</h2><table class="pg-in"><tbody>'+h+'</tbody></table><h2>'+"Results"+'</h2>'+w.outerHTML+extra
+  +'<div class="pg-ft"><b>'+esc(CO)+'</b><span>'+esc(NOTE)+'</span></div></div>'}
+function frameHtml(){var s=sheetHtml();if(!s)return null;
+ var bs=document.createElement('base');bs.href=document.baseURI;var heads='';document.querySelectorAll('head style').forEach(function(x){heads+=x.outerHTML});
+ return '<!doctype html><html lang="'+"en"+'"><head><meta charset="utf-8">'+bs.outerHTML+heads+'<style>html,body{margin:0;background:#fff}</style></head><body>'+s+'</body></html>'}
+function doSave(){var html=frameHtml();if(!html)return;
+ var old=document.getElementById('pg-frame');if(old)old.remove();
+ var f=document.createElement('iframe');f.id='pg-frame';f.setAttribute('aria-hidden','true');
+ f.style.cssText='position:absolute;left:-9999px;top:0;width:190mm;height:1400px;border:0;visibility:hidden';
+ f.onload=function(){var w=f.contentWindow,doc=f.contentDocument,s=doc.getElementById('pg-sheet');if(!s)return;
+  var go=function(){var hh=s.scrollHeight;s.style.zoom=Math.min(1,FIT/hh).toFixed(3);
+   setTimeout(function(){try{w.focus();w.print()}catch(e){try{window.print()}catch(e2){}}},120)};
+  (doc.fonts&&doc.fonts.ready?doc.fonts.ready:Promise.resolve()).then(function(){setTimeout(go,150)},go)};
+ document.body.appendChild(f);f.srcdoc=html}
+window.__pgFrameHtml=frameHtml;
+var box=document.getElementById('pg-gatebox'),btn=document.getElementById('pg-save');
+function openGate(){ok=true;setOk();var g=box.querySelector('.gate');g.classList.add('done');
+ if(pending){pending=false;doSave()}}
+ok=getOk();
+btn.addEventListener('click',function(){
+ if(ok){doSave();return}
+ pending=true;box.classList.add('show');try{box.scrollIntoView({block:'nearest'})}catch(e){}});
+document.getElementById('subbtn').addEventListener('click',function(){clicked=Date.now()});
+function back(){if(clicked&&!ok&&Date.now()-clicked>2500)openGate()}
+addEventListener('focus',back);document.addEventListener('visibilitychange',function(){if(!document.hidden)back()});
+window.__pgUnlock=openGate;
+})();</script><script>(function(){function s(){parent.postMessage({h:document.documentElement.scrollHeight},'*')}addEventListener('load',s);new ResizeObserver(s).observe(document.body);setTimeout(s,800)})()</script></body></html>
