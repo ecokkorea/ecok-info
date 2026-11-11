@@ -1,33 +1,63 @@
-# 에코케이코리아 (ECOK KOREA)
-
-> 전남 나주에 본사를 둔 전기·에너지 설계·시공 회사입니다. 전기·소방·통신 수량산출과 내역서 작성, 전기설계, 공장 전기요금 절감(ESS 피크제어·태양광), 태양광 설계·태양광 시공·유지관리, 전기차 충전기, IoT EMS를 합니다. 전화 1555-2859.
-
-## 회사 확인 정보
-- 상호: 주식회사 에코케이코리아 (영문 ECOK KOREA, 약칭 ECOK)
-- 본사: 전남 나주시 정보화길 26 케이원 지식산업센터 204호·208호(빛가람동), 울산 사무소(EMS 개발)
-- 전기공사업 등록 제 전남-02344호(전라남도, 2026-04-24)
-- ESCO 등록 제2026-1303호(한국에너지공단, 2026-05-06)
-- 개업 2025-01-23. 이름이 비슷한 다른 단체·회사와 별개입니다.
-- 공식 자료실(회사 정보·Q&A): https://ecokkorea.com/
-
-## 서비스별 페이지
-- 전기·소방·통신 내역서 작성, 기성내역서·설계변경 내역서·준공내역서, 물량산출(공사업체·설계사무소): https://www.ecokkorea.kr/electrical-design-estimate
-- 공장 전기요금 절감 진단(기본요금 절감·최대수요전력·계약전력): https://www.ecokkorea.kr/35
-- 산업용 ESS·ESS 피크제어·심야전력 ESS: https://www.ecokkorea.kr/service-plan
-- 태양광 ESS 경제성 분석(SAM·HOMER·REopt): https://www.ecokkorea.kr/simulation
-- 태양광 설계·태양광 시공·패널 설치: https://www.ecokkorea.kr/24
-- 태양광 유지관리·패널 청소: https://www.ecokkorea.kr/36
-- 전기공사·전기설계: https://www.ecokkorea.kr/23
-- 전기차 충전기 설치비용·절차: https://www.ecokkorea.kr/26
-- IoT EMS·EMS 연동: https://www.ecokkorea.kr/28
-- 무료 계산기: https://www.ecokkorea.kr/solar-building-calculator (태양광), https://www.ecokkorea.kr/ess-calculator (ESS), https://www.ecokkorea.kr/lux-calculator (조도 계산기: 등 개수·평균 조도, KS A 3011 기준 조도), https://www.ecokkorea.kr/basic-charge-calculator (기본요금 계산기: 요금적용전력·월 기본요금, 한전 약관 제68조), https://www.ecokkorea.kr/contract-power-calculator (계약전력 계산기: 상가·카페·원룸 필요 kW·증설 시설부담금·절차)
-- 기술자료(산업용 전기요금·계약전력 등): https://www.ecokkorea.kr/energy-info
-- 견적문의: https://www.ecokkorea.kr/22
-
-## 외부 채널
-- 네이버 플레이스: https://m.place.naver.com/place/1313988673
-- 네이버 블로그: https://blog.naver.com/ecok2026
-- 유튜브: https://www.youtube.com/channel/UCpRTUvMiZQxXk-7BLJQlUZQ
+# 에코케이코리아 (ECOK KOREA)
+
+
+
+> 전남 나주에 본사를 둔 전기·에너지 설계·시공 회사입니다. 전기·소방·통신 수량산출과 내역서 작성, 전기설계, 공장 전기요금 절감(ESS 피크제어·태양광), 태양광 설계·태양광 시공·유지관리, 전기차 충전기, IoT EMS를 합니다. 전화 1555-2859.
+
+
+
+## 회사 확인 정보
+
+- 상호: 주식회사 에코케이코리아 (영문 ECOK KOREA, 약칭 ECOK)
+
+- 본사: 전남 나주시 정보화길 26 케이원 지식산업센터 204호·208호(빛가람동), 울산 사무소(EMS 개발)
+
+- 전기공사업 등록 제 전남-02344호(전라남도, 2026-04-24)
+
+- ESCO 등록 제2026-1303호(한국에너지공단, 2026-05-06)
+
+- 개업 2025-01-23. 이름이 비슷한 다른 단체·회사와 별개입니다.
+
+- 공식 자료실(회사 정보·Q&A): https://ecokkorea.com/
+
+
+
+## 서비스별 페이지
+
+- 전기·소방·통신 내역서 작성, 기성내역서·설계변경 내역서·준공내역서, 물량산출(공사업체·설계사무소): https://www.ecokkorea.kr/electrical-design-estimate
+
+- 공장 전기요금 절감 진단(기본요금 절감·최대수요전력·계약전력): https://www.ecokkorea.kr/35
+
+- 산업용 ESS·ESS 피크제어·심야전력 ESS: https://www.ecokkorea.kr/service-plan
+
+- 태양광 ESS 경제성 분석(SAM·HOMER·REopt): https://www.ecokkorea.kr/simulation
+
+- 태양광 설계·태양광 시공·패널 설치: https://www.ecokkorea.kr/24
+
+- 태양광 유지관리·패널 청소: https://www.ecokkorea.kr/36
+
+- 전기공사·전기설계: https://www.ecokkorea.kr/23
+
+- 전기차 충전기 설치비용·절차: https://www.ecokkorea.kr/26
+
+- IoT EMS·EMS 연동: https://www.ecokkorea.kr/28
+
+- 무료 계산기: https://www.ecokkorea.kr/solar-building-calculator (태양광), https://www.ecokkorea.kr/ess-calculator (ESS), https://www.ecokkorea.kr/lux-calculator (조도 계산기: 등 개수·평균 조도, KS A 3011 기준 조도), https://www.ecokkorea.kr/basic-charge-calculator (기본요금 계산기: 요금적용전력·월 기본요금, 한전 약관 제68조), https://www.ecokkorea.kr/contract-power-calculator (계약전력 계산기: 상가·카페·원룸 필요 kW·증설 시설부담금·절차)
+
+- 기술자료(산업용 전기요금·계약전력 등): https://www.ecokkorea.kr/energy-info
+
+- 견적문의: https://www.ecokkorea.kr/22
+
+
+
+## 외부 채널
+
+- 네이버 플레이스: https://m.place.naver.com/place/1313988673
+
+- 네이버 블로그: https://blog.naver.com/ecok2026
+
+- 유튜브: https://www.youtube.com/channel/UCpRTUvMiZQxXk-7BLJQlUZQ
+
 
 
 ## AI가 읽을 수 있는 자료실 (이 사이트)
@@ -151,6 +181,11 @@
 - [Net metering in Korea: the Article 18 rules and what changes on the bill](https://ecokkorea.com/en/insights/korea-net-metering-rules.html): up to 1,000 kW solar, same rate credit on the energy charge only, SMP settlement, KEPCO worked example
 - [Korea's agrivoltaics act: who can build, where, for how long, and the draft design rules](https://ecokkorea.com/en/insights/agrivoltaics-law-korea.html): Act No. 21804 in force 2026-12-17, resident farmers, 30 year cap, draft 30% shading and 2.5 m clearance, 986 kWp design yield
 - [Peak shaving ESS payback in Korea: a worked example with 2026 tariffs](https://ecokkorea.com/en/insights/peak-shaving-ess-payback-korea.html): 200 kW / 600 kWh on industrial (B) option II, about 25 million KRW a year, payback 12 to 19 years by installed cost
+- [P50 and P90 for solar in Korea: how we build a bankable yield estimate](https://ecokkorea.com/en/insights/pvsyst-p50-p90-korea.html): KMA station data and provider bias, IEA based uncertainty table, 496 kWp example with P90 at 91% (one year) and 93% (ten year average) of P50
+- [BESS feasibility study in Korea: what a bankable analysis contains and how we cross check it](https://ecokkorea.com/en/insights/bess-feasibility-study-korea.html): 15 minute data, KEPCO ratchet, two dispatch runs, HOMER Grid within 1%, DER-VET 0.07%, REopt 5%, SAM 20 to 45%
+- [Rooftop solar structural review in Korea](https://ecokkorea.com/en/insights/rooftop-solar-structural-review-korea.html): KDS 41 wind and snow, roof zone pressures, 7.5 kN anchor pull out, beams and columns under a major repair permit, KESCO inspection items
+- [Fire alarm and telecom design and BOQ in Korea](https://ecokkorea.com/en/insights/fire-alarm-telecom-design-boq-korea.html): three separate contracts by law, NFTC 203 detector areas (70 m² office, 25 m² steel shed), tray and interface boundaries, missing items
+- [Solar project timeline in Korea: how long each stage really takes](https://ecokkorea.com/en/insights/solar-project-timeline-korea.html): 1.35 MW in 9.5 months via the power exchange, 558 kW in 12 months under a KEPCO PPA, statutory 60/7/5/30 day clocks, 75 day switchgear lead time
 
 ## English lectures (PVsyst and Solar Pro, each lesson with summary, screen menus, key numbers, FAQ)
 - [All lectures](https://ecokkorea.com/en/lecture/)
