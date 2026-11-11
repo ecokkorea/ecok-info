@@ -351,6 +351,8 @@ iframe.tool{width:100%;border:0;min-height:700px;display:block}
 .rg-t td{overflow-wrap:anywhere}
 .rg-t td{font-size:18px}.rg-t .note{color:var(--slate);font-size:16px}
 @media (max-width:860px){.rg-grid{grid-template-columns:1fr}.rg-t tbody th{width:5.6em;padding-right:10px}}
+.rg-nation{table-layout:fixed;width:100%}.rg-nation th,.rg-nation td{overflow-wrap:anywhere;white-space:normal}.rg-nation tbody th{width:5.5em}.rg-nation td:nth-child(2){width:5.5em}
+@media (max-width:860px){.rg-nation{font-size:15px}.rg-nation tbody th{width:4em}.rg-nation td:nth-child(2){width:3.4em}.rg-nation td:nth-child(4){display:none}.rg-nation thead th:nth-child(4){display:none}}
 
 .lec-video{position:relative;display:block;width:100%;aspect-ratio:16/9;background:#0e141b;border:0;padding:0;cursor:pointer;overflow:hidden}
 .lec-video img{width:100%;height:100%;object-fit:cover;opacity:.92}
