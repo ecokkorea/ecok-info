@@ -1,0 +1,472 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+<style>@font-face{font-family:Paperlogy;src:url(fonts/Paperlogy-4Regular.ttf);font-weight:400}@font-face{font-family:Paperlogy;src:url(fonts/Paperlogy-6SemiBold.ttf);font-weight:600}@font-face{font-family:Paperlogy;src:url(fonts/Paperlogy-8ExtraBold.ttf);font-weight:800}
+html,body{margin:0;background:#fff;overflow-x:hidden}body{font-family:Paperlogy,'Malgun Gothic',sans-serif;word-break:keep-all;color:#16212c}img{max-width:100%;height:auto}@media (max-width:600px){table{display:block;overflow-x:auto}}</style><style>/* ESS 피크제어 계산기: 스타일은 raw.html 안 <style>에 있음 */
+</style><style>:root{--ink:#16212c;--slate:#4a5763;--line:#d5dce2;--mist:#eef2f5;--blue:#1d4f91;--blue-dark:#163d70}
+.gate{margin-top:0;border:1.5px solid var(--ink);background:#fff;display:grid;grid-template-columns:1fr auto;gap:28px;align-items:center;padding:clamp(22px,3vw,36px)}
+.gate h2{font-size:clamp(24px,2.4vw,32px);font-weight:800;letter-spacing:-.02em;line-height:1.35}
+.gate ol{margin:14px 0 0;padding-left:1.4em;color:var(--slate)}.gate ol li{margin:4px 0}
+.gate .note{margin-top:12px;font-size:16px;color:var(--slate)}
+.subbtn{display:inline-flex;align-items:center;gap:12px;padding:18px 30px;border-radius:10px;background:#c4161c;color:#fff;font-weight:800;font-size:21px;text-decoration:none;white-space:nowrap}
+.subbtn:hover{background:#9f1015}.subbtn svg{width:30px;height:21px;flex:none}
+.gate .ok{display:none;font-weight:800;color:#1b6b3a;font-size:20px}
+.gate.done .ok{display:block}.gate.done .subbtn{background:#fff;color:#c4161c;border:2px solid #c4161c;padding:14px 24px;font-size:18px}
+
+.pg-bar{margin:22px 0 0;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.pg-save{font:800 19px Paperlogy,'Malgun Gothic',sans-serif;padding:15px 28px;border:0;border-radius:10px;background:#1d4f91;color:#fff;cursor:pointer}
+.pg-save:hover{background:#163d70}.pg-hint{font-size:15px;color:#4a5763}
+.pg-gatebox{display:none;margin-top:18px}.pg-gatebox.show{display:block}
+.pg-gatebox .gate{grid-template-columns:1fr}.pg-gatebox .subbtn{justify-self:start}
+#pg-sheet{display:none}
+@media print{
+ @page{size:A4;margin:10mm}
+ html,body{background:#fff!important;overflow:visible!important}
+ body>*:not(#pg-sheet){display:none!important}
+ #pg-sheet{display:block!important;width:190mm;color:#16212c;font-family:Paperlogy,'Malgun Gothic',sans-serif;word-break:keep-all;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+#pg-sheet.pg-fr{display:block}
+#pg-sheet.fuse .pgw>div,#pg-sheet.string .pgw>div{column-count:2;column-gap:14px}
+#pg-sheet.string .pgw .sec{break-inside:avoid}
+#pg-sheet.string .pgw .sec:has(table){column-span:all}
+#pg-sheet.fuse .pgw .sh,#pg-sheet.fuse .pgw .chk{break-inside:avoid}
+#pg-sheet *{box-sizing:border-box}
+#pg-sheet .pg-hd{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #1d4f91;padding-bottom:6px}
+#pg-sheet .pg-hd img{height:26px;width:auto}#pg-sheet .pg-dt{font-size:12px;color:#4a5763}
+#pg-sheet .pg-t{font-size:20px;font-weight:800;margin:10px 0 2px;line-height:1.3}
+#pg-sheet .pg-s{font-size:12px;color:#4a5763;margin:0 0 6px}
+#pg-sheet h2{font-size:14px;font-weight:800;margin:10px 0 4px;color:#1d4f91}
+#pg-sheet table.pg-in{width:100%;border-collapse:collapse;table-layout:fixed;font-size:11.5px}
+#pg-sheet table.pg-in th,#pg-sheet table.pg-in td{border-bottom:1px solid #d5dce2;padding:3px 6px;line-height:1.35;vertical-align:top;word-break:keep-all;overflow-wrap:break-word}
+#pg-sheet table.pg-in th{text-align:left;font-weight:600;color:#4a5763;background:#f4f6f8;width:27%}
+#pg-sheet table.pg-in td{font-weight:800;width:23%}
+#pg-sheet .pgw{max-width:none;margin:0;padding:0;color:#16212c}
+#pg-sheet .pgw .sh{margin-top:6px}
+#pg-sheet .pg-ft{margin-top:10px;border-top:1px solid #d5dce2;padding-top:6px;font-size:12px;display:flex;justify-content:space-between;gap:12px}
+#pg-sheet .pg-ft b{font-weight:800}
+
+#pg-sheet.fuse .pgw *,#pg-sheet.string .pgw *{font-size:10.5px!important;line-height:1.45!important}
+#pg-sheet.fuse .pgw .sh,#pg-sheet.string .pgw .sec h3,#pg-sheet.string .pgw .ekmppt h3{font-size:12px!important}
+#pg-sheet.fuse .pgw .sh{padding:5px 10px!important;margin-top:8px!important;break-after:avoid}
+#pg-sheet.fuse .pgw .sb{padding:5px 8px!important}
+#pg-sheet.fuse .pgw .chk{margin-bottom:4px!important;grid-template-columns:1fr 66px!important}
+#pg-sheet.fuse .pgw .chk .f{padding:4px 8px!important}
+#pg-sheet.fuse .pgw .chk .f .v,#pg-sheet.fuse .pgw .chk .f .s{padding:0 4px!important}
+#pg-sheet.string .pgw .sec{margin-top:8px!important}
+#pg-sheet.string .pgw .calcline{padding:3px 6px!important;margin-bottom:3px!important;gap:4px!important}
+#pg-sheet.string .pgw .verdict{padding:5px 8px!important;margin-top:6px!important}
+</style></head><body><!-- 계산 도구 > 공장 ESS 피크제어 회수기간 계산기 /tool-ess-peak.html
+     쪽 제목: 공장 ESS 피크제어 회수기간 계산기 | 기본요금 절감·심야충전 차익·회수기간 무료 계산 | 에코케이코리아
+     단가: 한전 전기요금표(종합) 산업용전력(을) 고압A 선택Ⅰ·Ⅱ·Ⅲ 2026년 4월 16일 시행, 기후환경요금 = 약관 별표7 부칙, 연료비조정단가 = 한전 공지 2026-09-21(2026년 4분기)
+     요금적용전력: 한전 기본공급약관 제68조. 운전 규칙·경제성 식: 사내 ESS 분석 엔진과 같은 규칙(피크컷·심야충전·요금차익, 14일 예측, 20년 현금흐름) -->
+<style>
+.ekep{max-width:1200px;margin:0 auto;padding:60px 20px 70px;color:#1a1e24;box-sizing:border-box;word-break:keep-all;overflow-wrap:break-word;background:#fff;font-size:17px;line-height:1.7}
+.ekep *{box-sizing:border-box}
+.ekep .eb{font-size:13px;font-weight:800;letter-spacing:2px;color:#1a7f37}
+.ekep h1{font-size:38px;margin:10px 0 16px;font-weight:800;line-height:1.3}
+.ekep .lead{list-style:none;padding:0;margin:0 0 26px;font-size:18px;line-height:1.8}
+.ekep .lead li{padding-left:22px;position:relative}.ekep .lead li:before{content:"■";position:absolute;left:0;color:#1a7f37;font-size:12px;top:2px}
+.ekep .sheet{border:2px solid #1b2330;border-radius:12px;padding:22px 24px;background:#fff}
+.ekep .sheet>h2{font-size:24px;margin:0 0 4px}
+.ekep .ref{font-size:14.5px;color:#1f4e79;margin:0 0 14px;line-height:1.6}
+.ekep .sh{background:#1f4e79;color:#fff;font-weight:800;font-size:17px;padding:10px 14px;border-radius:8px 8px 0 0;margin-top:18px}
+.ekep .sb{border:1px solid #dfe3e8;border-top:0;border-radius:0 0 8px 8px;padding:12px 14px}
+.ekep .inp{display:grid;grid-template-columns:1fr 1fr;gap:4px 24px}
+.ekep .row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px dashed #edf0f3}
+.ekep .row label{font-size:17px;font-weight:700}
+.ekep .row label small{display:block;font-size:13.5px;color:#555;font-weight:400}
+.ekep .row input,.ekep .row select{padding:9px 10px;border:1px solid #c9ced6;border-radius:6px;font-size:18px;font-family:inherit;background:#fffbe6;color:#1a1e24}
+.ekep .row input{width:160px;text-align:right}
+.ekep .row select{width:330px;max-width:100%}
+.ekep .m12{display:grid;grid-template-columns:repeat(6,1fr);gap:6px 10px;margin:8px 0 4px}
+.ekep .m12 label{font-size:14px;font-weight:700;display:block}
+.ekep .m12 input{width:100%;padding:6px 8px;border:1px solid #c9ced6;border-radius:6px;font-size:16px;text-align:right;background:#fffbe6;font-family:inherit}
+.ekep .big{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0 12px}
+.ekep .big div{background:#f6f8fb;border-radius:10px;padding:16px 12px;text-align:center;min-width:0}
+.ekep .big div.main{background:#1f4e79}
+.ekep .big small{display:block;font-size:14px;color:#555;margin-bottom:4px}
+.ekep .big div.main small{color:#dbe8f5}
+.ekep .big b{font-size:30px;color:#1f4e79;font-variant-numeric:tabular-nums;line-height:1.2}
+.ekep .big div.main b{color:#fff}
+.ekep .big b em{font-style:normal;font-size:16px;margin-left:3px;opacity:.8}
+.ekep table{width:100%;border-collapse:collapse;font-size:15.5px;margin:4px 0 6px}
+.ekep th,.ekep td{padding:8px 8px;border-bottom:1px solid #e3e6ea;text-align:left;vertical-align:top;line-height:1.5}
+.ekep th{background:#f4f6f9;font-size:14px;color:#3a4048}
+.ekep td.n,.ekep th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ekep td.f{color:#3a4048;font-size:15px}
+.ekep tr.sum td{font-weight:800;border-top:2px solid #1b2330;background:#fafbfc}
+.ekep tr.tot td{font-weight:800;font-size:18px;color:#1f4e79;border-top:2px solid #1f4e79;background:#eef4fb}
+.ekep tr.me td{background:#fff6d6}
+.ekep .twrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ekep .svg{width:100%;height:auto;display:block;margin:6px 0 2px}
+.ekep .lg{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:14.5px;color:#3a4048;margin:0 0 8px}
+.ekep .lg i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.ekep .two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.ekep h3.t{font-size:18px;margin:18px 0 6px;color:#1f4e79}
+.ekep .tip{border-left:5px solid #1f4e79;background:#eef4fb;padding:12px 14px;border-radius:0 8px 8px 0;margin:12px 0 0;font-size:16px;line-height:1.75}
+.ekep .alert{border-left:5px solid #c62828;background:#fde8e8;padding:12px 14px;border-radius:0 8px 8px 0;margin:12px 0 0;font-size:16px;line-height:1.75}
+.ekep .under{list-style:none;margin:18px 0 0;padding:14px 16px;border:1px solid #dfe3e8;border-radius:10px;background:#fafbfc;font-size:15.5px;line-height:1.85}
+.ekep .under li{padding-left:16px;position:relative}.ekep .under li:before{content:"-";position:absolute;left:0}
+.ekep .under a{color:#1f4e79;font-weight:800}
+.ekep h2.h{font-size:26px;margin:44px 0 14px}
+.ekep details{border:1px solid #e3e6ea;border-radius:10px;padding:14px 18px;margin:0 0 10px;background:#fff}
+.ekep summary{font-weight:700;cursor:pointer;font-size:17.5px}
+.ekep details p{font-size:16px;line-height:1.8;color:#3a4048;margin:10px 0 0}
+.ekep .law{border:1px solid #dfe3e8;background:#fafbfc;border-radius:10px;padding:16px 20px;margin:28px 0 0;font-size:15px;line-height:1.8;color:#3a4048}
+.ekep .law b{color:#1a1e24}
+.ekep .law ul{margin:6px 0 0;padding-left:18px}
+.ekep .btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin:30px 0 0}
+.ekep .btns a{display:inline-block;font-weight:800;font-size:20px;padding:16px 30px;border-radius:12px;text-decoration:none}
+.ekep .btns a.call{background:#ff7a00;color:#fff!important}
+.ekep .btns a.q{background:#fff;color:#1f4e79!important;border:2px solid #1f4e79}
+.ekep .contact{margin:22px 0 0;font-size:19px;font-weight:800;color:#1b2330;text-align:center}
+.ekep .busy{font-size:15px;color:#555;margin:8px 0 0}
+@media(max-width:860px){.ekep .twrap table{min-width:640px}.ekep .twrap table.mt{min-width:820px}.ekep{padding:40px 14px 50px}.ekep h1{font-size:28px}.ekep .lead{font-size:16px}.ekep .inp{grid-template-columns:1fr}.ekep .big{grid-template-columns:1fr 1fr}.ekep .big b{font-size:24px}.ekep .sheet{padding:16px 12px}.ekep .row{flex-direction:column;align-items:stretch;gap:6px}.ekep .row input,.ekep .row select{width:100%;font-size:17px}.ekep .m12{grid-template-columns:repeat(3,1fr)}.ekep .two{grid-template-columns:1fr}.ekep table{font-size:14px}.ekep th,.ekep td{padding:7px 5px}.ekep .btns a{display:block;width:100%;text-align:center;font-size:18px}.ekep .contact{font-size:16px}}
+@media(max-width:480px){.ekep .sheet{padding:14px 8px}.ekep .big{grid-template-columns:1fr}.ekep table{font-size:13px}.ekep th,.ekep td{padding:6px 4px}.ekep th{font-size:12.5px}.ekep .m12{grid-template-columns:repeat(2,1fr)}}
+</style>
+<div class="ekep" id="ess-peak-calculator">
+  <div class="eb">ESS PEAK SHAVING · FACTORY</div>
+  <h1>공장 ESS 피크제어 회수기간 계산기 (산업용 을, 고압A)</h1>
+  <ul class="lead">
+    <li>계약전력, 최대수요전력(15분), 월 사용량, 요금제(선택Ⅰ·Ⅱ·Ⅲ)를 넣으면 ESS가 <b>요금적용전력을 얼마나 내려 기본요금을 줄이는지</b>, <b>경부하(밤) 충전·최대부하(낮) 방전 차익</b>이 얼마인지, 20년 현금흐름으로 본 <b>회수기간 범위</b>를 보여 드립니다.</li>
+    <li>1년 35,040개(15분) 부하를 실제 공장 실측 모양으로 만들어, 실제 EMS처럼 지난 14일 부하로만 다음을 예측하는 규칙 운전(피크컷 → 심야충전 → 요금차익 방전)을 돌립니다. 요금 단가는 한국전력 전기요금표(산업용 을, 2026년 4월 16일 시행) 원문, 요금적용전력은 기본공급약관 제68조 그대로입니다.</li>
+    <li>회원가입 없이 무료입니다. 숫자는 이 화면 안에서만 계산되고 어디에도 보내지 않습니다. 사업비는 받으신 견적을 넣으세요.</li>
+  </ul>
+
+  <div class="sheet">
+    <h2>ESS 피크제어 경제성 계산표</h2>
+    <p class="ref">※ 요금적용전력 = 검침 당월 포함 직전 12개월 중 12·1·2·7·8·9월분과 당월분 최대수요전력 가운데 가장 큰 값(계약전력의 30% 하한, 약관 제68조) · 금액은 부가가치세 별도(사업자 환급) · 노란 칸만 입력합니다</p>
+
+    <div class="sh">■ 1. 입력</div>
+    <div class="sb"><div class="inp">
+      <div class="row"><label>① 요금제<small>고지서의 '계약종별'. 계약전력 300kW 이상 공장은 산업용(을)</small></label><select id="ep_tar">
+        <option value="i2h1">산업용(을) 고압A 선택Ⅰ (기본 7,220원/kW)</option>
+        <option value="i2h2" selected>산업용(을) 고압A 선택Ⅱ (기본 8,320원/kW)</option>
+        <option value="i2h3">산업용(을) 고압A 선택Ⅲ (기본 9,810원/kW)</option>
+      </select></div>
+      <div class="row"><label>② 조업 형태(부하 모양)<small>실제 공장 2곳의 한전 15분 실측 1년치를 시간 비중으로 만든 모양</small></label><select id="ep_shape">
+        <option value="fA" selected>주간 1교대 공장 (낮 08~18시 77%, 주말 27%, 실측)</option>
+        <option value="fB">연속 운전 공장 (낮 58%, 주말 56%, 실측)</option>
+        <option value="fM">두 공장 평균 (낮 68%, 주말 42%)</option>
+      </select></div>
+      <div class="row"><label>③ 계약전력 [kW]<small>고지서의 '계약전력'</small></label><input type="number" id="ep_ct" value="1000" step="10" min="300" inputmode="numeric"></div>
+      <div class="row"><label>④ 최대수요전력 [kW]<small>15분 최대수요. 고지서 '최대수요전력' 또는 한전 파워플래너의 연중 최대값</small></label><input type="number" id="ep_peak" value="900" step="10" min="1" inputmode="numeric"></div>
+      <div class="row"><label>⑤ 월 사용량 [kWh]<small>고지서 '사용량'의 1년 평균. 달마다 다르면 아래 '달별 입력'</small></label><input type="number" id="ep_kwh" value="150000" step="1000" min="0" inputmode="numeric"></div>
+      <div class="row"><label>⑥ ESS PCS 출력 [kW]<small>전력변환장치 정격. 최대수요의 15~30%가 보통</small></label><input type="number" id="ep_kw" value="200" step="10" min="1" inputmode="numeric"></div>
+      <div class="row"><label>⑦ 배터리 용량 [kWh]<small>PCS kW의 2~4시간분이 보통. 사용 범위 10~100%</small></label><input type="number" id="ep_kwh_b" value="600" step="10" min="1" inputmode="numeric"></div>
+      <div class="row"><label>⑧ ESS 사업비 [만원, 부가세 별도]<small>받으신 견적 합계(배터리·PCS·EMS·설치·간선 포함). 비워 두면 회수기간은 나오지 않습니다</small></label><input type="number" id="ep_cost" value="" placeholder="견적 금액" step="100" min="0" inputmode="numeric"></div>
+      <div class="row"><label>⑨ 연 운영비 [만원/년]<small>유지관리·통신·보험 등. 없으면 0</small></label><input type="number" id="ep_opex" value="0" step="10" min="0" inputmode="numeric"></div>
+      <div class="row"><label>⑩ 배터리 왕복효율 [%]<small>충전 뒤 방전으로 되찾는 비율. LFP 리튬 85~92</small></label><input type="number" id="ep_rte" value="90" step="1" min="60" max="100" inputmode="numeric"></div>
+      <div class="row"><label>⑪ 절감 감소율 [%/년]<small>배터리 열화로 절감액이 해마다 줄어드는 비율. 20년 2%면 마지막 해 약 68%</small></label><input type="number" id="ep_deg" value="2" step="0.5" min="0" max="10" inputmode="decimal"></div>
+      <div class="row"><label>⑫ 할인율 [%]<small>20년 현금흐름의 현재가치 계산에 쓰는 값</small></label><input type="number" id="ep_disc" value="4.5" step="0.5" min="0" max="20" inputmode="decimal"></div>
+      <div class="row"><label>⑬ 피크 예측 여유 [kW]<small>EMS가 내일 부하를 다 알 수 없어 목표를 이만큼 높게 잡는 현실 운전. 0이면 이상 운전</small></label><input type="number" id="ep_margin" value="20" step="5" min="0" inputmode="numeric"></div>
+    </div>
+    <details style="margin-top:10px"><summary>달별 입력 (여름·겨울 사용량이 다르면)</summary><div class="m12" id="ep_m12"></div><p class="tip" style="margin-top:8px">비워 두면 ⑤의 평균값을 열두 달에 똑같이 씁니다. 달별 최대수요는 그 달 사용량에 비례해 ④를 나눠 갖습니다.</p></details>
+    </div>
+
+    <div id="ep_out"></div>
+
+    <ul class="under">
+      <li>단가 출처: 한국전력 전기요금표 산업용전력(을) 고압A 선택Ⅰ·Ⅱ·Ⅲ(2026년 4월 16일 시행) 원문, 기후환경요금 9.0원/kWh(2023년 1월 1일부터), 연료비조정단가 +5.0원/kWh(2026년 10~12월분). 금액은 부가가치세 별도(사업자는 환급).</li>
+      <li>운전 규칙: 수전이 목표를 넘으면 방전(피크컷) → 밤 경부하에 목표 이하로 충전 → 남는 전기는 최대부하·중간부하에 방전(요금차익). 내일 부하는 지난 14일 같은 시각 최대값으로 예측합니다. 사내 공장 ESS 분석에 쓰는 것과 같은 규칙입니다.</li>
+      <li>실제 분석은 한전 파워플래너 15분 1년치로 합니다. 이 계산기는 사용량·최대수요로 만든 모형 부하라 실제와 차이가 납니다. → <a href="https://www.ecokkorea.kr/35">전기요금 절감 1차 진단(무료)</a></li>
+    </ul>
+  </div>
+
+  <h2 class="h">자주 묻는 질문</h2>
+  <details><summary>요금적용전력이 무엇이고 ESS가 어떻게 줄이나요?</summary><p>산업용 고압 고객의 기본요금은 계약전력이 아니라 요금적용전력에 단가(선택Ⅱ 8,320원/kW)를 곱해 매깁니다. 요금적용전력은 검침 당월을 포함한 직전 12개월 가운데 12·1·2·7·8·9월분과 당월분의 15분 최대수요전력 중 가장 큰 값이고, 계약전력의 30%보다 작을 수는 없습니다(기본공급약관 제68조). 한 번 찍힌 여름·겨울 피크가 1년 내내 기본요금을 정하므로, ESS가 피크 순간에 방전해 수전을 목표 아래로 누르면 열두 달 기본요금이 함께 내려갑니다.</p></details>
+  <details><summary>기본요금 절감과 전력량 차익 중 어느 쪽이 큰가요?</summary><p>공장마다 다릅니다. 피크가 짧고 뾰족한 공장은 적은 배터리로 많은 kW를 깎아 기본요금 절감이 큽니다. 피크가 길고 평평한 공장은 깎을 수 있는 kW가 작아, 밤 경부하(선택Ⅱ 여름 116.0원)에 충전해 낮 최대부하(229.0원)에 방전하는 차익이 더 큰 몫을 차지합니다. 위 결과의 '절감 구성' 표에서 두 값을 따로 보여 드립니다. 충전 전력량요금과 효율 손실은 차익에서 이미 뺀 값입니다.</p></details>
+  <details><summary>선택Ⅰ·Ⅱ·Ⅲ 가운데 어느 요금제가 유리한가요?</summary><p>한전 안내 기준으로 선택Ⅰ은 월 사용시간(설비가동률) 200시간 이하, 선택Ⅱ는 200~500시간, 선택Ⅲ은 500시간 초과 고객에게 유리합니다. 월 사용시간은 월 사용량을 요금적용전력으로 나눈 값입니다. ESS를 넣으면 요금적용전력이 내려가 월 사용시간이 늘어나므로 요금제를 함께 다시 볼 필요가 있습니다. ①을 바꿔 가며 세 요금제의 결과를 비교해 보세요.</p></details>
+  <details><summary>회수기간이 왜 범위로 나오나요?</summary><p>EMS는 내일 부하를 미리 다 알 수 없어 목표를 조금 높게 잡습니다. ⑬ 예측 여유만큼 높게 잡은 현실 운전과, 여유 0으로 잡은 이상 운전 두 가지를 모두 계산해 그 사이를 범위로 보여 드립니다. 여기에 ⑪ 배터리 열화와 ⑨ 운영비를 넣은 20년 현금흐름으로 회수 연차를 셉니다. 실제 분석에서는 한전 15분 실측 1년치로 같은 계산을 해 범위를 좁힙니다.</p></details>
+  <details><summary>ESS 용량(kW와 kWh)은 어떻게 고르나요?</summary><p>PCS kW는 깎을 피크 폭을 정하고, 배터리 kWh는 그 폭을 얼마나 오래 버티는지와 낮에 방전할 양을 정합니다. 피크가 뾰족하면 kW 대비 kWh를 적게, 낮 방전 차익을 노리면 kWh를 넉넉히 둡니다. 위 '용량별 비교' 표는 ⑥의 절반·1배·1.5배 kW에 2·3·4시간분 배터리를 짝지어 연 절감과 회수기간을 한꺼번에 보여 주니, 회수가 가장 짧은 조합부터 견적을 받아 보세요.</p></details>
+  <details><summary>실제 15분 데이터로 분석하면 무엇이 달라지나요?</summary><p>이 계산기는 사용량과 최대수요만으로 날마다 같은 모양의 부하를 만듭니다. 실제 공장은 날씨·생산 계획·휴무에 따라 피크가 흔들리므로 깎을 수 있는 kW와 충전 여유가 달라집니다. 한전 파워플래너에서 15분 데이터 1년치를 내려받아 보내 주시면 같은 규칙으로 실측 분석을 해 드립니다. 1차 진단은 무료입니다.</p></details>
+
+  <div class="law"><b>각주 (원문 확인, 2026-11-11)</b>
+    <ul>
+      <li>한국전력 전기요금표(종합) 산업용전력(을) 고압A: 선택Ⅰ 기본 7,220원/kW, 경부하 121.5(겨울 128.5)·중간 169.3/138.9/169.5·최대 234.5/156.4/210.1원/kWh. 선택Ⅱ 8,320원/kW, 116.0(123.0)·163.8/133.4/164.0·229.0/150.9/204.6. 선택Ⅲ 9,810원/kW, 115.1(122.4)·163.2/132.1/163.4·216.6/142.6/193.4(여름 6~8월/봄가을 3~5·9~10월/겨울 11~2월). 산업용(을)은 2026년 4월 16일 시행.</li>
+      <li>시간대: 여름·봄가을 경부하 22~08시, 중간부하 08~15시·21~22시, 최대부하 15~21시. 겨울 경부하 22~08시, 중간부하 08~09시·12~16시·19~22시, 최대부하 09~12시·16~19시. 토요일 최대부하 사용량은 중간부하로, 공휴일 최대수요전력과 사용량은 경부하로 계량(한전 전기요금표 일반사항). 이 계산기는 요금적용전력을 모든 시간대의 최대수요로 보아(사내 분석과 같은 보수적 계산) 실제보다 절감이 작게 나올 수 있습니다.</li>
+      <li>한전 기본공급약관 제68조(요금적용전력의 결정): 최대수요전력계 설치 고객은 검침 당월 포함 직전 12개월 중 12·1·2·7·8·9월분 및 당월분 최대수요전력 중 가장 큰 값, 그 값이 계약전력의 30% 미만이면 계약전력의 30%.</li>
+      <li>기후환경요금 9.0원/kWh: 약관 별표7 부칙(2022.12.30). 연료비조정단가 +5.0원/kWh: 한전 공지 '2026년 4분기 연료비조정단가 산정내역'(2026-09-21). 전력산업기반기금 2.7%: 전기사업법 시행령 제36조(2025-07-01부터).</li>
+      <li>부하 모양: 공장 2곳의 한전 파워플래너 15분 실측 1년치를 평일·주말 24시간 비중으로 정규화(현장 이름·수치 없음). 공휴일은 2026년 법정공휴일(대체공휴일 포함)로 주말과 같은 모양. 평일 최대수요는 하루 중 사용량이 가장 많은 시각에 30분 동안 ④ 값이 나타나도록 두었습니다.</li>
+      <li>운전·경제성: 사내 공장 ESS 분석 엔진의 규칙 운전(목표 = 1년 동안 지킬 수 있는 최소값 + 예측 여유, 피크컷·심야충전·요금차익, 예비 5%, 기본요금 반영월 낮 동안 일부 용량 비축)과 20년 현금흐름(NPV·IRR·단순/할인 회수)을 그대로 옮겼고, 같은 입력으로 엔진과 대조해 확인했습니다.</li>
+    </ul>
+    넣지 않은 것: 봄·가을철 토·일·공휴일 11~14시 전력량요금 50% 할인, 초과사용부가금(약관 제67조의3), 역률 요금, 전기요금 인상, PCS 교체비, 보조금, 임시공휴일, 검침일이 달 중간인 경우의 날짜 나눔, 태양광 연계(태양광이 있으면 실측 분석으로).
+  </div>
+
+  <div class="btns"><a class="call" href="tel:15552859">공장 ESS 상담 ☎ 1555-2859</a><a class="q" href="https://www.ecokkorea.kr/35">전기요금 절감 1차 진단(무료)</a></div>
+  <p class="contact">☎ 1555-2859 · www.ecokkorea.kr · info@ecokkorea.co.kr</p>
+</div>
+<script>
+(function(){
+  var out=document.getElementById('ep_out');if(!out||out.getAttribute('data-init'))return;out.setAttribute('data-init','1');
+  // ---- 요금표 (한전 전기요금표 산업용전력(을) 고압A, 2026-04-16 시행) 원/kWh
+  var T={
+    i2h1:{name:'산업용(을) 고압A 선택Ⅰ',base:7220,rate:{summer:{off:121.5,mid:169.3,peak:234.5},spring_fall:{off:121.5,mid:138.9,peak:156.4},winter:{off:128.5,mid:169.5,peak:210.1}}},
+    i2h2:{name:'산업용(을) 고압A 선택Ⅱ',base:8320,rate:{summer:{off:116.0,mid:163.8,peak:229.0},spring_fall:{off:116.0,mid:133.4,peak:150.9},winter:{off:123.0,mid:164.0,peak:204.6}}},
+    i2h3:{name:'산업용(을) 고압A 선택Ⅲ',base:9810,rate:{summer:{off:115.1,mid:163.2,peak:216.6},spring_fall:{off:115.1,mid:132.1,peak:142.6},winter:{off:122.4,mid:163.4,peak:193.4}}}
+  };
+  var ADD=9.0+5.0,FUND=0.027,FLOOR=0.30,RATCHET={12:1,1:1,2:1,7:1,8:1,9:1};
+  var SEASON=['winter','winter','spring_fall','spring_fall','spring_fall','summer','summer','summer','spring_fall','spring_fall','winter','winter'];
+  var TOU={summer:{off:[[22,24],[0,8]],peak:[[15,21]]},spring_fall:{off:[[22,24],[0,8]],peak:[[15,21]]},winter:{off:[[22,24],[0,8]],peak:[[9,12],[16,19]]}};
+  var HOL=["01-01", "02-16", "02-17", "02-18", "03-01", "03-02", "05-01", "05-05", "05-24", "05-25", "06-03", "06-06", "07-17", "08-15", "08-17", "09-24", "09-25", "09-26", "10-03", "10-05", "10-09", "12-25"];   // 2026년 법정공휴일 'MM-DD'
+  // ---- 부하 모양(24시간 비중): 공장 2곳 실측 정규화, fM 은 두 공장 평균
+  var SH={
+    fA:{name:'주간 1교대 공장',wd:[0.0094,0.0094,0.0093,0.0093,0.0094,0.0092,0.029,0.0609,0.0831,0.0912,0.0871,0.0886,0.0736,0.0835,0.0827,0.0795,0.0745,0.0299,0.0218,0.017,0.0115,0.0106,0.0098,0.0095],we:[0.0318,0.0317,0.0318,0.0319,0.0319,0.032,0.0353,0.0476,0.0595,0.0642,0.0643,0.0612,0.0559,0.0534,0.0509,0.0481,0.0465,0.036,0.0325,0.0315,0.0307,0.0305,0.0302,0.0303],wr:0.268},
+    fB:{name:'연속 운전 공장',wd:[0.0215,0.0212,0.0209,0.0205,0.02,0.0307,0.0545,0.0621,0.0643,0.0592,0.0565,0.0546,0.054,0.0572,0.0602,0.0646,0.0641,0.0482,0.0348,0.0305,0.0273,0.0256,0.0244,0.0231],we:[0.0373,0.037,0.0364,0.0355,0.0346,0.0435,0.0602,0.063,0.0571,0.047,0.0407,0.0364,0.0362,0.0394,0.0436,0.0486,0.0505,0.042,0.0407,0.0383,0.0347,0.0328,0.0328,0.0316],wr:0.563},
+    fM:{name:'두 공장 평균',wd:[0.0154,0.0153,0.0151,0.0149,0.0147,0.02,0.0418,0.0615,0.0737,0.0752,0.0718,0.0716,0.0638,0.0703,0.0714,0.0721,0.0693,0.0391,0.0283,0.0238,0.0194,0.0181,0.0171,0.0163],we:[0.0345,0.0343,0.0341,0.0337,0.0333,0.0377,0.0478,0.0553,0.0583,0.0556,0.0525,0.0488,0.0461,0.0464,0.0473,0.0483,0.0485,0.039,0.0366,0.0349,0.0327,0.0316,0.0315,0.031],wr:0.415}
+  };
+  var DIM=[31,28,31,30,31,30,31,31,30,31,30,31],ND=365,N=ND*96,DT=0.25,DOW0=3; // 2026-01-01 목요일(월=0)
+  // ---- 달력·시간대 (사내 엔진 tariff.classify 와 같은 규칙)
+  var dMonth=new Int8Array(ND),dDow=new Int8Array(ND),dHol=new Uint8Array(ND),dWork=new Uint8Array(ND);
+  (function(){var hol={};for(var i=0;i<HOL.length;i++)hol[HOL[i]]=1;var d=0;for(var m=0;m<12;m++)for(var k=1;k<=DIM[m];k++,d++){dMonth[d]=m;dDow[d]=(DOW0+d)%7;var key=(m<9?'0':'')+(m+1)+'-'+(k<10?'0':'')+k;dHol[d]=hol[key]?1:0;dWork[d]=(dDow[d]<5&&!dHol[d])?1:0;}})();
+  function inR(h,rs){for(var i=0;i<rs.length;i++)if(rs[i][0]<=h&&h<rs[i][1])return true;return false;}
+  var iDay=new Int16Array(N),iMon=new Int8Array(N),iHour=new Int8Array(N),iBand=new Int8Array(N),iNight=new Uint8Array(N); // band 0 경부하 1 중간 2 최대
+  (function(){for(var t=0;t<N;t++){var d=(t/96)|0,h=((t%96)/4)|0,m=dMonth[d],s=SEASON[m],w=TOU[s],b;
+    iDay[t]=d;iMon[t]=m;iHour[t]=h;iNight[t]=inR(h,w.off)?1:0;
+    if(dDow[d]===6||dHol[d])b=0;else if(inR(h,w.off))b=0;else if(inR(h,w.peak))b=(dDow[d]===5)?1:2;else b=1;
+    iBand[t]=b;}})();
+  function priceOf(tar){var p=new Float64Array(N),r=T[tar].rate,bn=['off','mid','peak'];for(var t=0;t<N;t++)p[t]=r[SEASON[iMon[t]]][bn[iBand[t]]]+ADD;return p;}
+  // ---- 1년 요금 (엔진 tariff.bill, ratchet steady · 검침일 없음 · 부가세 별도)
+  function bill(G,tar,ct,price){
+    var pk=new Float64Array(12),en=new Float64Array(12),kwh=new Float64Array(12),kb=[0,0,0],t,m;
+    for(t=0;t<N;t++){m=iMon[t];var g=G[t],k=g*DT;if(g>pk[m])pk[m]=g;kwh[m]+=k;en[m]+=k*price[t];kb[iBand[t]]+=k;}
+    var R=0;for(m=0;m<12;m++)if(RATCHET[m+1]&&pk[m]>R)R=pk[m];
+    var fl=FLOOR*ct,bd=[],base=[],fund=[],tot=[],B=0,E=0,F=0,K=0,br=T[tar].base;
+    for(m=0;m<12;m++){bd[m]=Math.max(pk[m],R,fl);base[m]=bd[m]*br;fund[m]=(base[m]+en[m])*FUND;tot[m]=base[m]+en[m]+fund[m];B+=base[m];E+=en[m];F+=fund[m];K+=kwh[m];}
+    return {peak:pk,billing:bd,base:base,energy:en,fund:fund,total:tot,kwh:kwh,B:B,E:E,F:F,K:K,T:B+E+F,R:R,kb:kb,maxKw:Math.max.apply(null,Array.prototype.slice.call(pk))};
+  }
+  // ---- 부하 만들기: 월 사용량·최대수요·모양 → 15분 kW 35,040개
+  function norm(a){var s=0,i,o=[];for(i=0;i<24;i++)s+=a[i];for(i=0;i<24;i++)o.push(a[i]/s);return o;}
+  function profile(p){
+    var sh=SH[p.shape],wd=norm(sh.wd),we=norm(sh.we),wr=sh.wr,hs=0,i,m,d;
+    for(i=1;i<24;i++)if(wd[i]>wd[hs])hs=i;
+    var nwd=[0,0,0,0,0,0,0,0,0,0,0,0],nwe=nwd.slice();
+    for(d=0;d<ND;d++){if(dWork[d])nwd[dMonth[d]]++;else nwe[dMonth[d]]++;}
+    var dayE=[],mx=0;for(m=0;m<12;m++){dayE[m]=p.monthly[m]/(nwd[m]+wr*nwe[m]);if(dayE[m]>mx)mx=dayE[m];}
+    var L=new Float64Array(N),t=0,maxHourly=0,clip=false,noSpike=false,peakDay=-1,peakVal=-1;
+    for(d=0;d<ND;d++){m=dMonth[d];var work=dWork[d],de=dayE[m]*(work?1:wr),prof=work?wd:we,Pd=mx>0?p.peak*dayE[m]/mx:0;
+      for(var h=0;h<24;h++,t+=4){var v=de*prof[h];
+        if(work&&v>maxHourly)maxHourly=v;
+        if(work&&h===hs&&Pd>v){var x=(4*v-2*Pd)/2;if(x<0){x=0;clip=true;}L[t]=x;L[t+1]=Pd;L[t+2]=Pd;L[t+3]=x;}
+        else{if(work&&h===hs)noSpike=true;L[t]=v;L[t+1]=v;L[t+2]=v;L[t+3]=v;}
+      }
+    }
+    for(t=0;t<N;t++)if(L[t]>peakVal){peakVal=L[t];peakDay=iDay[t];}
+    return {L:L,maxHourly:maxHourly,clip:clip,noSpike:noSpike,peakDay:peakDay,peakVal:peakVal,hs:hs};
+  }
+  // ---- 규칙 운전 (엔진 dispatch_rule.simulate, 태양광 없음)
+  function revCum(a){var o=new Float64Array(N),s=0,t;for(t=N-1;t>=0;t--){if(t<N-1&&iDay[t]!==iDay[t+1])s=0;s+=a[t];o[t]=s;}return o;}
+  function prep(L,ess){
+    var fc=new Float64Array(N),t,k;
+    for(t=0;t<N;t++){var mxv=-Infinity;for(k=1;k<=14;k++){var v=L[((t-k*96)%N+N)%N];if(v>mxv)mxv=v;}fc[t]=mxv;}
+    var eta=Math.sqrt(ess.rte),P=ess.kw,pk=new Float64Array(N);
+    for(t=0;t<N;t++)pk[t]=iBand[t]===2?Math.min(P,Math.max(fc[t],0))*DT/eta:0;
+    var ip=new Float64Array(N),im=new Float64Array(N);for(t=0;t<N;t++){ip[t]=iBand[t]===2?1:0;im[t]=iBand[t]===1?1:0;}
+    return {fc:fc,capPkRem:revCum(pk),remPk:revCum(ip),remMd:revCum(im)};
+  }
+  function simulate(L,ess,pre,Tk,o){
+    o=o||{};var margin=o.margin||1.2,arb=o.arbitrage!==false,hf=o.hold||0,holdUntil=18,resv=0.05;
+    var E=ess.kwh,P=ess.kw,eta=Math.sqrt(ess.rte),smin=0.1*E,smax=1.0*E,baseRes=smin+resv*(smax-smin),t;
+    var over=new Float64Array(N);for(t=0;t<N;t++)over[t]=Math.max(pre.fc[t]-Tk,0)*DT/eta*margin;
+    var need=revCum(over),nightCap=smax;
+    var G=new Float64Array(N),C=new Float64Array(N),D=new Float64Array(N),S=new Float64Array(N),soc=smin+0.5*(smax-smin),exceed=0;
+    for(t=0;t<N;t++){var net=L[t],ch=0,dis=0,b=iBand[t];
+      if(net>Tk){dis=Math.min(P,net-Tk,Math.max(soc-smin,0)*eta/DT);}
+      else if(b===0&&iNight[t]){ch=Math.min(P,Math.max(Tk-net,0),Math.max(nightCap-soc,0)/eta/DT);}
+      else if(b!==0&&arb){
+        var hold=(RATCHET[iMon[t]+1]&&iHour[t]<holdUntil)?hf*(smax-smin):0;
+        var avail=Math.max(soc-Math.max(baseRes,smin+need[t],smin+hold),0),rate;
+        if(b===2)rate=avail*eta/DT;
+        else if(b===1&&pre.remPk[t]>0){var extra=Math.max(avail-pre.capPkRem[t],0);rate=extra*eta/(Math.max(pre.remMd[t],1)*DT);}
+        else if(b===1)rate=avail*eta/DT;
+        else rate=0;
+        dis=Math.min(P,rate,Math.max(net,0));
+      }
+      soc+=(ch*eta-dis/eta)*DT;var gt=net+ch-dis;if(gt<0)gt=0;
+      if(gt>Tk+1e-6&&gt-Tk>exceed)exceed=gt-Tk;
+      G[t]=gt;C[t]=ch;D[t]=dis;S[t]=soc;}
+    return {G:G,C:C,D:D,S:S,exceed:exceed};
+  }
+  // ---- 목표 찾기 (엔진 dispatch_rule.find_target)
+  function findTarget(L,ess,pre,margin,tar,ct,price){
+    var hi=0,t;for(t=0;t<N;t++)if(L[t]>hi)hi=L[t];
+    var lo=Math.max(hi-ess.kw,0),best=hi;
+    while(hi-lo>1.0){var mid=(lo+hi)/2;var ex=simulate(L,ess,pre,mid,{arbitrage:false}).exceed;if(ex<=0.5){hi=mid;best=mid;}else lo=mid;}
+    var Tmin=best+1.0,Tk=Tmin+margin;
+    var cands=[{name:'peak_only',r:simulate(L,ess,pre,Tk,{arbitrage:false})}],hfs=[0,0.3,0.5,0.7],ms=[1.2,2.0];
+    for(var i=0;i<hfs.length;i++)for(var j=0;j<ms.length;j++)cands.push({name:'hold'+hfs[i].toFixed(1)+'_m'+ms[j].toFixed(1),r:simulate(L,ess,pre,Tk,{margin:ms[j],hold:hfs[i]})});
+    var bi=0,bt=Infinity;for(i=0;i<cands.length;i++){var tt=bill(cands[i].r.G,tar,ct,price).T;cands[i].total=tt;if(tt<bt-1e-6){bt=tt;bi=i;}}   // 동점(부동소수 오차 안)은 앞 후보: 엔진의 안정 정렬과 같게
+    return {T:Tk,Tmin:Tmin,res:cands[bi].r,mode:cands[bi].name};
+  }
+  // ---- 20년 경제성 (엔진 finance.cashflow / metrics / irr / _payback)
+  function payback(cum){var n=cum.length;if(cum[n-1]<0)return null;var k=-1;for(var i=0;i<n;i++)if(cum[i]<0)k=i;if(k<0)return 0;return k+(-cum[k])/(cum[k+1]-cum[k]);}
+  function irr(cf){
+    var f=function(r){var s=0;for(var n=0;n<cf.length;n++)s+=cf[n]/Math.pow(1+r,n);return s;};
+    var grid=[],i;for(i=0;i<50;i++)grid.push(-0.99+i*(0.49/50));for(i=0;i<=1500;i++)grid.push(-0.5+i*0.001);
+    var vals=grid.map(f);
+    for(i=0;i<grid.length-1;i++){var a=grid[i],b=grid[i+1],fa=vals[i],fb=vals[i+1];
+      if(fa===0&&fb<0)return a;
+      if(fa>0&&fb<=0){var lo=a,hi=b;for(var k=0;k<200;k++){var mid=(lo+hi)/2;if(f(mid)>0)lo=mid;else hi=mid;}return (lo+hi)/2;}}
+    return null;
+  }
+  function cashflow(capex,s1,years,disc,deg,opex){
+    var cf=[-capex],n;for(n=1;n<=years;n++)cf.push(s1*Math.pow(1-deg,n-1)-opex);
+    var npv=0,cum=[],cumd=[],c=0,cd=0;for(n=0;n<cf.length;n++){var dsc=Math.pow(1+disc,-n);npv+=cf[n]*dsc;c+=cf[n];cd+=cf[n]*dsc;cum.push(c);cumd.push(cd);}
+    return {cf:cf,npv:npv,irr:irr(cf),payback:payback(cum),discPayback:payback(cumd)};
+  }
+  // ---- 화면
+  function $(id){return document.getElementById(id);}
+  function won(x){return Math.round(x).toLocaleString('ko-KR');}
+  function man(x){return Math.round(x/10000).toLocaleString('ko-KR');}
+  function kw1(x){return (Math.round(x*10)/10).toLocaleString('ko-KR',{minimumFractionDigits:0,maximumFractionDigits:1});}
+  function yr(x){return x===null||x===undefined?'20년 내 회수 안 됨':(x<=0?'0':x.toFixed(1)+'년');}
+  function pct(x){return x===null||x===undefined?'-':(x*100).toFixed(1)+'%';}
+  function readMonthly(avg){var a=[];for(var i=1;i<=12;i++){var v=parseFloat($('ep_mm'+i).value);a.push(isFinite(v)&&v>=0?v:avg);}return a;}
+  function params(){
+    var avg=parseFloat($('ep_kwh').value);
+    return {tar:$('ep_tar').value,shape:$('ep_shape').value,ct:parseFloat($('ep_ct').value),peak:parseFloat($('ep_peak').value),avg:avg,monthly:readMonthly(avg),
+      kw:parseFloat($('ep_kw').value),kwh:parseFloat($('ep_kwh_b').value),cost:parseFloat($('ep_cost').value),opex:parseFloat($('ep_opex').value)||0,
+      rte:parseFloat($('ep_rte').value)/100,deg:parseFloat($('ep_deg').value)/100,disc:parseFloat($('ep_disc').value)/100,margin:parseFloat($('ep_margin').value)};
+  }
+  // 한 벌 계산: 부하 → ESS 전 요금 → 현실(여유 margin)·이상(여유 0) 운전 → 요금·경제성
+  function run(p){
+    var pr=profile(p),price=priceOf(p.tar),b0=bill(pr.L,p.tar,p.ct,price),ess={kwh:p.kwh,kw:p.kw,rte:p.rte},pre=prep(pr.L,ess);
+    var capex=isFinite(p.cost)&&p.cost>0?p.cost*10000:null,opex=p.opex*10000;
+    function one(margin){var ft=findTarget(pr.L,ess,pre,margin,p.tar,p.ct,price),b1=bill(ft.res.G,p.tar,p.ct,price),sav=Math.round(b0.T-b1.T),ch=0,ds=0;
+      for(var t=0;t<N;t++){ch+=ft.res.C[t]*DT;ds+=ft.res.D[t]*DT;}
+      return {ft:ft,b1:b1,saving:sav,charge:ch,discharge:ds,econ:capex?cashflow(capex,sav,20,p.disc,p.deg,opex):null};}
+    var real=one(p.margin),ideal=p.margin>0?one(0):real;
+    return {pr:pr,price:price,b0:b0,ess:ess,pre:pre,real:real,ideal:ideal,capex:capex,opex:opex};
+  }
+  function svgDay(R,p){
+    var d=R.pr.peakDay,L=R.pr.L,G=R.real.ft.res.G,C=R.real.ft.res.C,D=R.real.ft.res.D,Tk=R.real.ft.T,t0=d*96,W=720,H=240,pl=50,pb=26,pt=10,mx=0,i;
+    for(i=0;i<96;i++){mx=Math.max(mx,L[t0+i],G[t0+i]);}if(mx<=0)return '';mx*=1.08;
+    var X=function(i){return pl+(W-pl-10)*i/95;},Y=function(v){return pt+(H-pt-pb)*(1-v/mx);};
+    var s='<svg class="svg" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="최대수요일 하루: ESS 전 부하, ESS 후 수전, 목표">';
+    for(i=0;i<=4;i++){var y=pt+(H-pt-pb)*(1-i/4);s+='<line x1="'+pl+'" y1="'+y+'" x2="'+W+'" y2="'+y+'" stroke="#e3e6ea"/><text x="'+(pl-6)+'" y="'+(y+4)+'" font-size="11" text-anchor="end" fill="#555">'+Math.round(mx*i/4)+'</text>';}
+    var bw=(W-pl-10)/96;
+    for(i=0;i<96;i++){var c=C[t0+i],dd=D[t0+i];if(c>0)s+='<rect x="'+X(i)+'" y="'+Y(c)+'" width="'+(bw*0.9)+'" height="'+(Y(0)-Y(c))+'" fill="#9fd3ad"/>';if(dd>0)s+='<rect x="'+X(i)+'" y="'+Y(dd)+'" width="'+(bw*0.9)+'" height="'+(Y(0)-Y(dd))+'" fill="#f6b26b"/>';}
+    var p1='',p2='';for(i=0;i<96;i++){p1+=(i?' ':'')+X(i)+','+Y(L[t0+i]);p2+=(i?' ':'')+X(i)+','+Y(G[t0+i]);}
+    s+='<polyline points="'+p1+'" fill="none" stroke="#9aa3ad" stroke-width="2.5"/><polyline points="'+p2+'" fill="none" stroke="#1f4e79" stroke-width="3"/>';
+    s+='<line x1="'+pl+'" y1="'+Y(Tk)+'" x2="'+W+'" y2="'+Y(Tk)+'" stroke="#c62828" stroke-width="2" stroke-dasharray="6 4"/><text x="'+(W-4)+'" y="'+(Y(Tk)-5)+'" font-size="12" text-anchor="end" fill="#c62828">목표 '+Math.round(Tk)+'kW</text>';
+    for(i=0;i<=24;i+=3)s+='<text x="'+X(i*4)+'" y="'+(H-8)+'" font-size="12" text-anchor="middle" fill="#3a4048">'+i+'시</text>';
+    return s+'</svg>';
+  }
+  var gridTimer=null;
+  function gridTable(p,R){
+    var kws=[Math.max(Math.round(p.kw*0.5/5)*5,5),p.kw,Math.round(p.kw*1.5/5)*5],hrs=[2,3,4],rows=[],i,j;
+    for(i=0;i<kws.length;i++)for(j=0;j<hrs.length;j++){var kw=kws[i],kwh=kw*hrs[j],ess={kwh:kwh,kw:kw,rte:p.rte},pre=prep(R.pr.L,ess);
+      var ft=findTarget(R.pr.L,ess,pre,p.margin,p.tar,p.ct,R.price),b1=bill(ft.res.G,p.tar,p.ct,R.price),sav=Math.round(R.b0.T-b1.T);
+      var cap=R.capex?R.capex*(0.2+0.6*kwh/p.kwh+0.2*kw/p.kw):null,ec=cap?cashflow(cap,sav,20,p.disc,p.deg,R.opex):null;
+      rows.push({kw:kw,kwh:kwh,h:hrs[j],sav:sav,T:ft.T,bk:Math.max(b1.R,FLOOR*p.ct),cap:cap,ec:ec,me:(kw===p.kw&&kwh===p.kwh)});}
+    var h='<div class="twrap"><table><thead><tr><th class="n">PCS kW</th><th class="n">배터리 kWh</th><th class="n">피크 목표 kW</th><th class="n">요금적용전력 kW</th><th class="n">연 절감 (현실)</th><th class="n">사업비 (환산)</th><th class="n">단순 회수</th><th class="n">20년 NPV</th></tr></thead><tbody>';
+    rows.forEach(function(r){h+='<tr'+(r.me?' class="me"':'')+'><td class="n">'+r.kw+'</td><td class="n">'+r.kwh+' ('+r.h+'h)</td><td class="n">'+Math.round(r.T)+'</td><td class="n">'+Math.round(r.bk)+'</td><td class="n">'+won(r.sav)+'원</td><td class="n">'+(r.cap?man(r.cap)+'만원':'-')+'</td><td class="n">'+(r.ec?yr(r.ec.payback):'-')+'</td><td class="n">'+(r.ec?man(r.ec.npv)+'만원':'-')+'</td></tr>';});
+    h+='</tbody></table></div><p class="f" style="font-size:13.5px;color:#555;margin:4px 0 0">노란 줄이 ⑥⑦ 입력값. 다른 용량의 사업비는 ⑧을 공통비 20%·배터리 60%(kWh 비례)·PCS 20%(kW 비례)로 나눠 환산한 가정값입니다.</p>';
+    return h;
+  }
+  function calc(){
+    var p=params(),t=T[p.tar];
+    var bad=!isFinite(p.ct)||p.ct<=0||!isFinite(p.peak)||p.peak<=0||!isFinite(p.avg)||p.avg<=0||!isFinite(p.kw)||p.kw<=0||!isFinite(p.kwh)||p.kwh<=0||!isFinite(p.rte)||p.rte<=0||p.rte>1||!isFinite(p.margin)||p.margin<0;
+    if(bad){out.innerHTML='<div class="sh">■ 2. 계산 결과</div><div class="sb"><p class="tip">계약전력·최대수요·월 사용량·ESS 용량을 넣으면 결과가 나옵니다.</p></div>';return;}
+    var R=run(p),b0=R.b0,re=R.real,id=R.ideal,b1=re.b1,b2=id.b1;
+    var bk0=Math.max(b0.R,FLOOR*p.ct),bk1=Math.max(b1.R,FLOOR*p.ct),bk2=Math.max(b2.R,FLOOR*p.ct);
+    var h='<div class="sh">■ 2. 계산 결과 ('+t.name+' · 계약 '+won(p.ct)+'&nbsp;kW · 최대수요 '+won(p.peak)+'&nbsp;kW · ESS '+won(p.kw)+'&nbsp;kW / '+won(p.kwh)+'&nbsp;kWh)</div><div class="sb">';
+    h+='<div class="big"><div class="main"><small>연 절감액 (현실 운전, 예측 여유 '+p.margin+'kW)</small><b id="ep_r_save">'+man(re.saving)+'<em>만원</em></b></div><div><small>연 절감액 범위 (현실 ~ 이상 운전)</small><b>'+man(re.saving)+'~'+man(id.saving)+'<em>만원</em></b></div><div><small>회수기간 범위 (20년 현금흐름, 열화 '+(p.deg*100).toFixed(1)+'%/년)</small><b>'+(R.capex?((id.econ.payback===null?'회수 안 됨':id.econ.payback.toFixed(1))+'~'+(re.econ.payback===null?'20년 넘음':re.econ.payback.toFixed(1))+'<em>년</em>'):'사업비 입력')+'</b></div><div><small>요금적용전력 (ESS 전 → 후)</small><b>'+Math.round(bk0)+' → '+Math.round(bk1)+'<em>kW</em></b></div></div>';
+    if(R.pr.noSpike)h+='<p class="alert"><b>④ 최대수요 '+won(p.peak)+'kW가 사용량으로 본 시간 평균 최대('+Math.round(R.pr.maxHourly)+'kW)보다 작습니다.</b> 최대수요전력이 더 큰 값이어야 맞습니다. 평균값 그대로 계산했습니다.</p>';
+    if(R.pr.clip)h+='<p class="tip">④ 최대수요가 그 시각 평균의 2배를 넘어 피크 전후 30분을 0으로 두었습니다. 피크가 매우 뾰족한 공장이라 실측 분석을 권합니다.</p>';
+    if(bk1<=FLOOR*p.ct+1e-6)h+='<p class="tip"><b>요금적용전력이 계약전력의 30% 하한('+Math.round(FLOOR*p.ct)+'kW)에 걸렸습니다.</b> 그 아래로는 기본요금이 더 줄지 않으니 ESS를 키워도 기본요금 절감은 늘지 않고, 계약전력 감소 신청을 함께 검토할 일입니다.</p>';
+    if(!R.capex)h+='<p class="tip">⑧에 견적 사업비(부가세 별도)를 넣으면 회수기간·NPV·IRR이 나옵니다.</p>';
+    // 절감 구성
+    h+='<h3 class="t">절감 구성 (1년, 부가세 별도)</h3><div class="twrap"><table><thead><tr><th>항목</th><th class="n">ESS 전</th><th class="n">ESS 후 (현실)</th><th class="n">ESS 후 (이상)</th><th class="n">절감 (현실)</th><th>근거</th></tr></thead><tbody>';
+    h+='<tr><td>요금적용전력</td><td class="n">'+Math.round(bk0)+' kW</td><td class="n">'+Math.round(bk1)+' kW</td><td class="n">'+Math.round(bk2)+' kW</td><td class="n">'+Math.round(bk0-bk1)+' kW</td><td class="f">12·1·2·7·8·9월 최대수요 중 최대, 계약전력 30% 하한</td></tr>';
+    h+='<tr><td>기본요금</td><td class="n">'+won(b0.B)+'</td><td class="n">'+won(b1.B)+'</td><td class="n">'+won(b2.B)+'</td><td class="n">'+won(b0.B-b1.B)+'</td><td class="f">요금적용전력 × '+won(t.base)+'원 × 12달</td></tr>';
+    h+='<tr><td>전력량요금</td><td class="n">'+won(b0.E)+'</td><td class="n">'+won(b1.E)+'</td><td class="n">'+won(b2.E)+'</td><td class="n">'+won(b0.E-b1.E)+'</td><td class="f">경부하 충전 비용과 효율 손실을 뺀 최대·중간부하 방전 차익 (기후환경·연료비조정 포함)</td></tr>';
+    h+='<tr><td>전력산업기반기금</td><td class="n">'+won(b0.F)+'</td><td class="n">'+won(b1.F)+'</td><td class="n">'+won(b2.F)+'</td><td class="n">'+won(b0.F-b1.F)+'</td><td class="f">전기요금 × 2.7%</td></tr>';
+    h+='<tr class="tot"><td>합계</td><td class="n">'+won(b0.T)+'</td><td class="n">'+won(b1.T)+'</td><td class="n">'+won(b2.T)+'</td><td class="n">'+won(re.saving)+'</td><td class="f">연 절감 '+man(re.saving)+'만원 (이상 운전 '+man(id.saving)+'만원)</td></tr>';
+    h+='<tr><td>피크 목표 / 운전 방식</td><td class="n">-</td><td class="n">'+Math.round(re.ft.T)+' kW</td><td class="n">'+Math.round(id.ft.T)+' kW</td><td class="n">-</td><td class="f">지킬 수 있는 최소 목표 '+Math.round(re.ft.Tmin)+'kW + 예측 여유. 1년 충전 '+won(re.charge)+'kWh · 방전 '+won(re.discharge)+'kWh (등가 사이클 약 '+Math.round(re.discharge/p.kwh)+'회)</td></tr></tbody></table></div>';
+    // 경제성
+    if(R.capex){var e1=re.econ,e2=id.econ;
+      h+='<h3 class="t">20년 경제성 (사업비 '+man(R.capex)+'만원 · 운영비 연 '+man(R.opex)+'만원 · 할인율 '+(p.disc*100).toFixed(1)+'%)</h3><div class="twrap"><table><thead><tr><th>항목</th><th class="n">현실 운전</th><th class="n">이상 운전</th><th>뜻</th></tr></thead><tbody>';
+      h+='<tr><td>1년차 절감</td><td class="n">'+won(e1.cf[1]+R.opex)+'원</td><td class="n">'+won(e2.cf[1]+R.opex)+'원</td><td class="f">요금 절감, 운영비 빼기 전</td></tr>';
+      h+='<tr><td>단순 회수기간</td><td class="n">'+yr(e1.payback)+'</td><td class="n">'+yr(e2.payback)+'</td><td class="f">누적 현금흐름이 0을 넘는 연차 (열화·운영비 반영)</td></tr>';
+      h+='<tr><td>할인 회수기간</td><td class="n">'+yr(e1.discPayback)+'</td><td class="n">'+yr(e2.discPayback)+'</td><td class="f">현재가치로 누적했을 때</td></tr>';
+      h+='<tr><td>20년 순현재가치(NPV)</td><td class="n">'+man(e1.npv)+'만원</td><td class="n">'+man(e2.npv)+'만원</td><td class="f">0보다 크면 할인율만큼의 수익을 넘는다는 뜻</td></tr>';
+      h+='<tr><td>내부수익률(IRR)</td><td class="n">'+pct(e1.irr)+'</td><td class="n">'+pct(e2.irr)+'</td><td class="f">20년 평균 연 수익률</td></tr></tbody></table></div>';}
+    // 그림
+    h+='<h3 class="t">최대수요일 운전 모습 (현실 운전)</h3><div class="lg"><span><i style="background:#9aa3ad"></i>ESS 전 부하 kW</span><span><i style="background:#1f4e79"></i>ESS 후 한전 수전 kW</span><span><i style="background:#9fd3ad"></i>충전</span><span><i style="background:#f6b26b"></i>방전</span><span><i style="background:#c62828"></i>피크 목표</span></div>'+svgDay(R,p);
+    // 월별
+    h+='<h3 class="t">월별 요금 (현실 운전, 부가세 별도)</h3><div class="twrap"><table class="mt"><thead><tr><th>월</th><th class="n">최대수요 전</th><th class="n">최대수요 후</th><th class="n">요금적용전력 전</th><th class="n">요금적용전력 후</th><th class="n">기본요금 전</th><th class="n">기본요금 후</th><th class="n">전력량요금 전</th><th class="n">전력량요금 후</th><th class="n">절감</th></tr></thead><tbody>';
+    for(var m=0;m<12;m++)h+='<tr><td>'+(m+1)+'월</td><td class="n">'+Math.round(b0.peak[m])+'</td><td class="n">'+Math.round(b1.peak[m])+'</td><td class="n">'+Math.round(b0.billing[m])+'</td><td class="n">'+Math.round(b1.billing[m])+'</td><td class="n">'+won(b0.base[m])+'</td><td class="n">'+won(b1.base[m])+'</td><td class="n">'+won(b0.energy[m])+'</td><td class="n">'+won(b1.energy[m])+'</td><td class="n">'+won(b0.total[m]-b1.total[m])+'</td></tr>';
+    h+='<tr class="sum"><td>연간</td><td class="n">'+Math.round(b0.maxKw)+'</td><td class="n">'+Math.round(b1.maxKw)+'</td><td class="n">-</td><td class="n">-</td><td class="n">'+won(b0.B)+'</td><td class="n">'+won(b1.B)+'</td><td class="n">'+won(b0.E)+'</td><td class="n">'+won(b1.E)+'</td><td class="n">'+won(re.saving)+'</td></tr></tbody></table></div>';
+    h+='<h3 class="t">용량별 비교 (현실 운전)</h3><div id="ep_grid"><p class="busy">용량 9가지를 계산하는 중입니다…</p></div>';
+    h+='</div>';
+    out.innerHTML=h;
+    if(gridTimer)clearTimeout(gridTimer);
+    gridTimer=setTimeout(function(){var g=$('ep_grid');if(g)g.innerHTML=gridTable(p,R);},30);
+  }
+  var m12=$('ep_m12');for(var i=1;i<=12;i++){var lab=document.createElement('label');lab.textContent=i+'월';var inp=document.createElement('input');inp.type='number';inp.id='ep_mm'+i;inp.placeholder='평균';inp.min='0';inp.step='1000';lab.appendChild(inp);m12.appendChild(lab);inp.addEventListener('change',calc);}
+  ['ep_tar','ep_shape','ep_ct','ep_peak','ep_kwh','ep_kw','ep_kwh_b','ep_cost','ep_opex','ep_rte','ep_deg','ep_disc','ep_margin'].forEach(function(id){var e=$(id);e.addEventListener('change',calc);});
+  calc();
+  window.EP={T:T,SH:SH,profile:profile,bill:bill,priceOf:priceOf,prep:prep,simulate:simulate,findTarget:findTarget,cashflow:cashflow,run:run,params:params,calc:calc,N:N};
+})();
+</script>
+
+<div class="pg-bar" id="pg-bar"><button type="button" class="pg-save" id="pg-save">보고서 PDF로 저장</button><span class="pg-hint">A4 한 장, 입력값과 결과 표</span></div><div class="pg-gatebox" id="pg-gatebox"><div class="gate" id="subgate"><div><h2>유튜브 채널을 구독하시면 PDF 보고서가 저장됩니다</h2><ol><li>아래 빨간 단추를 누르면 유튜브 구독 창이 새로 열립니다.</li><li>구독을 마치고 이 창으로 돌아오시면 PDF 저장이 바로 열립니다.</li></ol><p class="note">계산은 구독 없이 무료입니다. 이미 구독 중이시면 같은 단추를 누르고 돌아오시면 됩니다. 한 번 열면 이 브라우저에서는 홈페이지 어디서나 계속 열려 있습니다.</p><p class="ok" role="status">열렸습니다. 구독해 주셔서 고맙습니다.</p></div><a class="subbtn" id="subbtn" href="https://www.youtube.com/channel/UCpRTUvMiZQxXk-7BLJQlUZQ?sub_confirmation=1" target="_blank" rel="noopener"><svg viewBox="0 0 30 21" aria-hidden="true"><rect width="30" height="21" rx="5" fill="#fff"/><path d="M12 6l8 4.5-8 4.5z" fill="#c4161c"/></svg>유튜브 구독하고 PDF 저장</a></div></div><script>(function(){var R=document.getElementById("ep_out"),b=document.getElementById('pg-bar'),g=document.getElementById('pg-gatebox');if(R&&R.parentNode){R.parentNode.insertBefore(b,R.nextSibling);b.parentNode.insertBefore(g,b.nextSibling)}})();(function(){
+var K='ecok_sub_ok',KEY="ess-peak",ROOT="ekep",FIT=(KEY==='fuse'||KEY==='string')?1005:960,RID="ep_out",CO="☎ 1555-2859 · www.ecokkorea.kr · info@ecokkorea.co.kr",NOTE="참고용 계산, 실제 설계는 현장 조건 확인",ok=false,clicked=0,pending=false;
+function setOk(){try{window.localStorage.setItem(K,'1')}catch(e){}try{document.cookie=K+'=1; max-age=31536000; path=/; SameSite=Lax'}catch(e){}}
+function getOk(){var v=false;try{v=window.localStorage.getItem(K)==='1'}catch(e){}
+ if(!v){try{v=/(?:^|; )ecok_sub_ok=1/.test(document.cookie)}catch(e){}}
+ if(v)setOk();return v}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function rows(){var out=[];document.querySelectorAll('.sheet .row').forEach(function(r){
+ var el=r.querySelector('input,select,output');if(!el)return;
+ var lb=r.querySelector('label');if(!lb)return;var c=lb.cloneNode(true);
+ c.querySelectorAll('small').forEach(function(s){var t=s.textContent.trim();if(t.length<=6)s.replaceWith(document.createTextNode(' ('+t+')'));else s.remove()});
+ var name=c.textContent.replace(/\s+/g,' ').trim(),v;
+ if(el.type==='checkbox')v=el.checked?'예':'아니오';
+ else if(el.tagName==='SELECT')v=el.options[el.selectedIndex]?el.options[el.selectedIndex].text:'';
+ else if(el.tagName==='OUTPUT')v=el.textContent;
+ else v=el.value||'자동';
+ out.push([name,String(v).replace(/\s+/g,' ').trim()])});return out}
+function sheetHtml(){
+ var R=document.getElementById(RID);if(!R)return null;
+ var cl=R.cloneNode(true);cl.removeAttribute('id');cl.querySelectorAll('[id]').forEach(function(n){n.removeAttribute('id')});
+ if(KEY==='string')cl.querySelectorAll('table').forEach(function(t){if(t.rows[0]&&t.rows[0].cells.length>10)t.remove()});
+ var rs=rows(),h='';
+ for(var i=0;i<rs.length;i+=2){var a=rs[i],b=rs[i+1];
+  h+='<tr><th>'+esc(a[0])+'</th><td>'+esc(a[1])+'</td>'+(b?'<th>'+esc(b[0])+'</th><td>'+esc(b[1])+'</td>':'<th></th><td></td>')+'</tr>'}
+ var h1=document.querySelector('h1'),title=h1?h1.textContent.trim():document.title;
+ var d=new Date(),ds=d.getFullYear()+'.'+(d.getMonth()+1)+'.'+d.getDate();
+ var w=document.createElement('div');w.className='pgw '+ROOT;w.appendChild(cl);
+ var extra='';
+ if(KEY==='fire'){var t1=document.getElementById('ft1'),t2=document.getElementById('ft2');
+  if(t1&&t2){var nt=t1.closest('.tw').previousElementSibling,x=document.createElement('div');x.className='pgw '+ROOT;
+   if(nt)x.appendChild(nt.cloneNode(true));[t1,t2].forEach(function(t){var c=t.closest('.tw').cloneNode(true);c.querySelectorAll('[id]').forEach(function(n){n.removeAttribute('id')});x.appendChild(c)});
+   extra='<h2>감지면적 표 (NFTC 203 원문)</h2>'+x.outerHTML}}
+ return '<div id="pg-sheet" class="pg-fr '+KEY+'"><div class="pg-hd"><img src="img/logo.png" alt="에코케이코리아"><span class="pg-dt">계산일 '+ds+'</span></div>'
+  +'<div class="pg-t">'+esc(title)+'</div><p class="pg-s">입력값과 계산 결과</p>'
+  +'<h2>입력값</h2><table class="pg-in"><tbody>'+h+'</tbody></table><h2>계산 결과</h2>'+w.outerHTML+extra
+  +'<div class="pg-ft"><b>'+esc(CO)+'</b><span>'+esc(NOTE)+'</span></div></div>'}
+function frameHtml(){var s=sheetHtml();if(!s)return null;
+ var bs=document.createElement('base');bs.href=document.baseURI;var heads='';document.querySelectorAll('head style').forEach(function(x){heads+=x.outerHTML});
+ return '<!doctype html><html lang="ko"><head><meta charset="utf-8">'+bs.outerHTML+heads+'<style>html,body{margin:0;background:#fff}</style></head><body>'+s+'</body></html>'}
+function doSave(){var html=frameHtml();if(!html)return;
+ var old=document.getElementById('pg-frame');if(old)old.remove();
+ var f=document.createElement('iframe');f.id='pg-frame';f.setAttribute('aria-hidden','true');
+ f.style.cssText='position:absolute;left:-9999px;top:0;width:190mm;height:1400px;border:0;visibility:hidden';
+ f.onload=function(){var w=f.contentWindow,doc=f.contentDocument,s=doc.getElementById('pg-sheet');if(!s)return;
+  var go=function(){var hh=s.scrollHeight;s.style.zoom=Math.min(1,FIT/hh).toFixed(3);
+   setTimeout(function(){try{w.focus();w.print()}catch(e){try{window.print()}catch(e2){}}},120)};
+  (doc.fonts&&doc.fonts.ready?doc.fonts.ready:Promise.resolve()).then(function(){setTimeout(go,150)},go)};
+ document.body.appendChild(f);f.srcdoc=html}
+window.__pgFrameHtml=frameHtml;
+var box=document.getElementById('pg-gatebox'),btn=document.getElementById('pg-save');
+function openGate(){ok=true;setOk();var g=box.querySelector('.gate');g.classList.add('done');
+ if(pending){pending=false;doSave()}}
+ok=getOk();
+btn.addEventListener('click',function(){
+ if(ok){doSave();return}
+ pending=true;box.classList.add('show');try{box.scrollIntoView({block:'nearest'})}catch(e){}});
+document.getElementById('subbtn').addEventListener('click',function(){clicked=Date.now()});
+function back(){if(clicked&&!ok&&Date.now()-clicked>2500)openGate()}
+addEventListener('focus',back);document.addEventListener('visibilitychange',function(){if(!document.hidden)back()});
+window.__pgUnlock=openGate;
+})();</script><script>(function(){function s(){parent.postMessage({h:document.documentElement.scrollHeight},'*')}addEventListener('load',s);new ResizeObserver(s).observe(document.body);setTimeout(s,800)})()</script></body></html>
