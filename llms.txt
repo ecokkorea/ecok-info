@@ -92,6 +92,17 @@
 - [울산 태양광·ESS 설계 시공](https://ecokkorea.com/region/ulsan.html): 울산광역시 태양광·ESS 설계·인허가·시공. 1개 시·군 조례 이격거리 원문(조항·시행일)과 재생에너지법 제27조의3 대조, 한전 부산울산본부, 상담 ☎ 1555-2859.
 - [전국 태양광·ESS 설계 시공](https://ecokkorea.com/region/nationwide.html): 서울·부산·대구·인천·대전·세종·강원·제주 태양광·ESS 설계·인허가·시공. 재생에너지법 제27조의3 이격거리 기준과 지역별 한전 본부, 상담 ☎ 1555-2859.
 
+## 강의(PVsyst·쏠라프로, 강의마다 요약·화면 메뉴·핵심 숫자·자주 묻는 질문)
+- [강의 모음](https://ecokkorea.com/lecture/)
+- [PVsyst 1강 첫 화면에서 꼭 알아야 할 설정 5가지](https://ecokkorea.com/lecture/pvsyst-01-first-screen.html): PVsyst를 처음 열었을 때 Grid-Connected, 새 프로젝트, 프로젝트 이름, Variant 칸, 시험판 Save 잠김까지 첫 화면 설정 5가지를 영상과 함께 정리했습니다.
+- [PVsyst 2강 기상 자료, 같은 땅도 출처에 따라 연 일사가 7&nbsp;% 넘게 달라집니다](https://ecokkorea.com/lecture/pvsyst-02-weather-data.html): PVsyst 기상 파일 표에서 PVGIS 연 수평면 일사 1,412.7&nbsp;kWh/㎡와 기상청 평년값에 맞춘 파일 1,306.6&nbsp;kWh/㎡를 읽고 약 7.5&nbsp;% 차이를 확인합니다.
+- [PVsyst 3강 방위·경사·수평선, 경사와 방위를 바꾸면 연 일사가 어떻게 달라질까](https://ecokkorea.com/lecture/pvsyst-03-tilt-azimuth-horizon.html): PVsyst Orientation 창에서 경사 15°를 0°·30°·40°로, 방위를 ±30°로 바꿔 Transposition Factor와 연 일사를 읽고, Horizon에 먼 산을 넣는 법을 봅니다.
+- [PVsyst 4강 모듈 PAN 파일에서 꼭 볼 6칸 (645&nbsp;W 모듈)](https://ecokkorea.com/lecture/pvsyst-04-module-pan-file.html): PVsyst 모듈 PAN 파일에서 정격 출력·허용차, Voc·Isc, Vmp·Imp, 셀 구조, 온도계수, 양면 계수 6칸을 645&nbsp;W 양면 모듈로 읽습니다.
+- [쏠라프로 1강 첫 화면 네 창, PVsyst와 무엇이 다른가](https://ecokkorea.com/lecture/solarpro-01-first-screen.html): 쏠라프로(Solar Pro 4.8) 첫 화면의 3D CAD, I-V 곡선, 발전량, 경제성 네 창과 그늘을 모듈 한 장씩 계산하는 점이 PVsyst와 어떻게 다른지 봅니다.
+- [쏠라프로 2강 마법사 다섯 단계로 97.2&nbsp;kW 평지 발전소 만들기](https://ecokkorea.com/lecture/solarpro-02-wizard.html): 쏠라프로 마법사(Wizard) 다섯 단계로 지역, 모듈과 용량, 설치 형태, 줄과 간격, 경사와 결선을 넣어 가상 목포 평지 발전소 97.2&nbsp;kW를 만듭니다.
+- [쏠라프로 3강 기상 자료 고르기, 월평균과 시간별 실측의 그늘 손실 차이](https://ecokkorea.com/lecture/solarpro-03-weather-data.html): 쏠라프로 Location 창에서 월평균 기상 지점과 시간별 실측 CSV(8,760시간)를 고르는 법, 같은 지붕에서 그늘 손실이 0.64&nbsp;%와 1.21&nbsp;%로 달라진 결과를 봅니다.
+- [쏠라프로 4강 건물·나무·지평선 넣기, 지평선 방위는 북 0°](https://ecokkorea.com/lecture/solarpro-04-buildings-trees-horizon.html): 쏠라프로에서 그늘을 만드는 건물(꼭짓점 시계 방향), 나무(높이·반지름), 지평선 표를 넣고, 지평선 방위 북 0°와 어레이 방위 정남 0°의 차이, 겹침 경고를 봅니다.
+
 ## English pages
 - [Home](https://ecokkorea.com/en/): site feasibility, permitting, EPC electrical design, supervision
 - [Site feasibility and permitting](https://ecokkorea.com/en/permit.html)

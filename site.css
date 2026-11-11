@@ -316,3 +316,36 @@ iframe.tool{width:100%;border:0;min-height:700px;display:block}
 .rg-t td{overflow-wrap:anywhere}
 .rg-t td{font-size:18px}.rg-t .note{color:var(--slate);font-size:16px}
 @media (max-width:860px){.rg-grid{grid-template-columns:1fr}.rg-t tbody th{width:5.6em;padding-right:10px}}
+
+.lec-video{position:relative;display:block;width:100%;aspect-ratio:16/9;background:#0e141b;border:0;padding:0;cursor:pointer;overflow:hidden}
+.lec-video img{width:100%;height:100%;object-fit:cover;opacity:.92}
+.lec-video .play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:12px;padding:16px 26px;border-radius:12px;background:#c4161c;color:#fff;font:800 21px/1 Paperlogy,'Malgun Gothic',sans-serif;white-space:nowrap}
+.lec-video .play svg{width:30px;height:21px}
+.lec-video:hover .play{background:#9f1015}
+.lec-video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.lec-meta{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:14px;font-size:17px;color:var(--slate)}
+.lec-meta a{font-weight:700;color:var(--blue)}
+.lec-h{margin-top:clamp(40px,5vw,64px)}.lec-sum{margin-top:18px}.lec-sum p{margin-top:16px;max-width:52em}.lec-sum p:first-child{margin-top:0}
+.lec-two{display:grid;grid-template-columns:1fr 1fr;gap:clamp(20px,3vw,40px);margin-top:8px}
+.lec-two>div{min-width:0}
+.lec-t{width:100%;table-layout:fixed;margin-top:14px}.lec-t th{width:45%;white-space:normal;text-align:left}.lec-t td{overflow-wrap:anywhere}
+.lec-t th,.lec-t td{font-size:17px}
+.lec-faq{margin-top:12px}.lec-faq details{border-bottom:1px solid var(--line);padding:16px 0}
+.lec-faq summary{font-weight:800;font-size:20px;cursor:pointer}.lec-faq details p{margin-top:10px;color:var(--ink)}
+.lec-en{border-left:4px solid var(--blue);padding:4px 0 4px 20px;max-width:52em;word-break:normal}
+.lec-nav{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:8px}
+.lec-nav a,.lec-nav span{display:block;border:1px solid var(--line);padding:18px 22px;text-decoration:none;background:#fff;min-height:100%}
+.lec-nav b{display:block;font-size:15px;color:var(--slate);font-weight:600}.lec-nav a:hover{border-color:var(--blue)}
+.lec-nav .nx{text-align:right}.lec-nav span{color:var(--slate)}
+.lec-grid{list-style:none;margin:20px 0 0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+.lec-card a{display:flex;flex-direction:column;height:100%;border:1px solid var(--line);background:#fff;text-decoration:none}
+.lec-card a:hover{border-color:var(--blue)}
+.lec-card img{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;border-bottom:1px solid var(--line)}
+.lec-card .tx{padding:16px 18px 18px}.lec-card b{display:block;color:var(--blue);font-size:15px}.lec-card h3{font-size:20px;font-weight:800;line-height:1.4;margin-top:4px}
+.lec-card p{font-size:15px;color:var(--slate);margin-top:6px}
+.lec-soon{margin-top:18px;font-size:17px;color:var(--slate)}
+.lec-p1{border:1.5px solid var(--ink);background:#fff;padding:clamp(22px,3vw,36px)}
+.lec-p1 h3{font-size:clamp(22px,2vw,28px);font-weight:800}.lec-p1 p{margin-top:10px;max-width:52em}
+@media (max-width:1100px){.lec-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:760px){.lec-two,.lec-nav{grid-template-columns:1fr}.lec-nav .nx{text-align:left}.lec-t th{width:42%}}
+@media (max-width:520px){.lec-grid{grid-template-columns:1fr}.lec-video .play{font-size:18px;padding:12px 18px}}
