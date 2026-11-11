@@ -53,6 +53,11 @@
 - 전기공사 기성내역서·설계변경 내역서·준공내역서 작성 대행(공사업체·설계사무소, 물량 근거표 포함): https://ecokkorea.com/estimate.html
 - 소방·통신 공사 내역서와 물량산출 대행(감지기·회로, 선번·포트 단위, 전기 내역과 같은 근거표): https://ecokkorea.com/fire-telecom.html
 - 전남 전기설계와 설계내역서 함께(ECO PLANT 명의 설계, 계산서 포함, 나주 본사): https://ecokkorea.com/electrical.html
+- 태양광 발전사업허가와 변경허가(허가증의 용량·설치 구역·준비기간, 사업개시신고 전기사업법 제9조, 558kW 실제 날짜): https://ecokkorea.com/generation-license.html
+- 태양광 구조검토(공장 지붕 5가지 하중, 고정부 인발력 7.5kN, 보·기둥 보강과 대수선허가·내진설계 확인서): https://ecokkorea.com/solar-structure-review.html
+- 태양광 공사계획신고(사전기술검토 대상·보완 5가지, 착공신고, 공사 기간 변경신고 실제 날짜): https://ecokkorea.com/construction-plan.html
+- 태양광 사용전검사(검사일 7일 전 신청·법정 첨부서류, 558kW·1.35MW 한 번에 합격한 서류와 순서): https://ecokkorea.com/pre-use-inspection.html
+- PVsyst 발전량 시뮬레이션(입력·결과, 직병렬 설계와 함께, 550kWp 사례로 ESS 용량·경제성까지): https://ecokkorea.com/pvsyst.html
 
 ## 연락처
 - ☎ 1555-2859 · 홈페이지 https://www.ecokkorea.kr · 이메일 info@ecokkorea.co.kr
