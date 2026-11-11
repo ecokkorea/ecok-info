@@ -58,7 +58,7 @@
 - 태양광 공사계획신고(사전기술검토 대상·보완 5가지, 착공신고, 공사 기간 변경신고 실제 날짜): https://ecokkorea.com/construction-plan.html
 - 태양광 사용전검사(검사일 7일 전 신청·법정 첨부서류, 558kW·1.35MW 한 번에 합격한 서류와 순서): https://ecokkorea.com/pre-use-inspection.html
 - PVsyst 발전량 시뮬레이션(입력·결과, 직병렬 설계와 함께, 550kWp 사례로 ESS 용량·경제성까지): https://ecokkorea.com/pvsyst.html
-- 영농형 태양광(법률 제21804호 2026.12.17 시행: 사업자 자격·농지·30년 기간, 설치기준 제정안 차광률 30% 미만·높이 2.5m, 약 1MW 설계안 PVsyst 1,368kWh/kWp): https://ecokkorea.com/agrivoltaic.html
+- 영농형 태양광(법률 제21804호 2026.12.17 시행: 사업자 자격·농지·30년 기간, 설치기준 제정안 차광률 30% 미만·높이 2.5m, 약 1MW 설계안 PVsyst 1,367kWh/kWp): https://ecokkorea.com/agrivoltaic.html
 
 ## 연락처
 - ☎ 1555-2859 · 홈페이지 https://www.ecokkorea.kr · 이메일 info@ecokkorea.co.kr
