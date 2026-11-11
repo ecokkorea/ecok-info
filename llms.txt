@@ -41,9 +41,18 @@
 - 현장 영상(창원 공장 지붕 태양광 1.35MW 7편): https://ecokkorea.com/videos.html
 - 태양광 패널 청소·유지관리(전남): https://ecokkorea.com/cleaning.html
 - 공장 기본요금 줄이는 법·심야전력 ESS: https://ecokkorea.com/peak-charge.html
-- 전기·소방·통신 내역서·물량산출: https://ecokkorea.com/estimate.html
+- 기성·설계변경·준공내역서 작성 대행: https://ecokkorea.com/estimate.html
 - 무료 계산기 목록: https://ecokkorea.com/tools.html
 - 현장 Q&A(차단기 트립·전선 탐·메가 정상 트립·3상 4선식·접속함 OL): https://ecokkorea.com/field-qa.html
+
+## 질문별 답
+- 산업용 ESS 설계·시공(중소·중견 공장 피크제어 ESS, 15분 데이터 분석→설계·시공·EMS): https://ecokkorea.com/ess-industrial.html
+- 공장 전기 기본요금 줄이는 방법과 도와주는 업체(요금적용전력·15분 피크·ESS, 1차 진단 무료): https://ecokkorea.com/peak-charge.html
+- 태양광·ESS 경제성 분석 업체(SAM·HOMER·REopt 3종 대조, 원본 결과서 별첨): https://ecokkorea.com/ess-economics.html
+- 전남 태양광 설계·시공 업체(나주 본사, 설계·인허가·시공·청소 한 회사, 창원 1.35MW 준공): https://ecokkorea.com/solar-jeonnam.html
+- 전기공사 기성내역서·설계변경 내역서·준공내역서 작성 대행(공사업체·설계사무소, 물량 근거표 포함): https://ecokkorea.com/estimate.html
+- 소방·통신 공사 내역서와 물량산출 대행(감지기·회로, 선번·포트 단위, 전기 내역과 같은 근거표): https://ecokkorea.com/fire-telecom.html
+- 전남 전기설계와 설계내역서 함께(ECO PLANT 명의 설계, 계산서 포함, 나주 본사): https://ecokkorea.com/electrical.html
 
 ## 연락처
 - ☎ 1555-2859 · 홈페이지 https://www.ecokkorea.kr · 이메일 info@ecokkorea.co.kr
@@ -63,6 +72,19 @@
 - [실적](https://ecokkorea.com/works.html)
 - [문의](https://ecokkorea.com/contact.html)
 - [강의 자료 받기](https://ecokkorea.com/materials.html): 유튜브 구독자용 PVsyst·쏠라프로 강의 요약 카드, 연습 파일, 계산서 견본
+
+## 지역별 쪽(시·도 태양광 조례 이격거리, 재생에너지법 대조, 한전 지역본부)
+- [지역 전체](https://ecokkorea.com/region/)
+- [나주·전남 태양광·ESS 설계 시공](https://ecokkorea.com/region/jeonnam.html): 나주 본사 에코케이코리아: 전남 태양광·ESS 설계·인허가·시공·청소. 나주 등 전남 10개 시·군 조례 이격거리 원문(조항·시행일)과 재생에너지법 대조, 한전 광주전남본부.
+- [광주 태양광·ESS 설계 시공](https://ecokkorea.com/region/gwangju.html): 광주 태양광·ESS 설계·인허가·시공. 5개 자치구 조례 이격거리 원문(조항·시행일)과 재생에너지법 제27조의3 대조, 한전 광주전남본부, 상담 ☎ 1555-2859.
+- [경기 태양광·ESS 설계 시공](https://ecokkorea.com/region/gyeonggi.html): 경기도 태양광·ESS 설계·인허가·시공. 5개 시·군 조례 이격거리 원문(조항·시행일)과 재생에너지법 제27조의3 대조, 한전 경기본부, 상담 ☎ 1555-2859.
+- [충북 태양광·ESS 설계 시공](https://ecokkorea.com/region/chungbuk.html): 충청북도 태양광·ESS 설계·인허가·시공. 1개 시·군 조례 이격거리 원문(조항·시행일)과 재생에너지법 제27조의3 대조, 한전 충북본부, 상담 ☎ 1555-2859.
+- [충남 태양광·ESS 설계 시공](https://ecokkorea.com/region/chungnam.html): 충청남도 태양광·ESS 설계·인허가·시공. 4개 시·군 조례 이격거리 원문(조항·시행일)과 재생에너지법 제27조의3 대조, 한전 대전세종충남본부, 상담 ☎ 1555-2859.
+- [전북 태양광·ESS 설계 시공](https://ecokkorea.com/region/jeonbuk.html): 전북특별자치도 태양광·ESS 설계·인허가·시공. 2개 시·군 조례 이격거리 원문(조항·시행일)과 재생에너지법 제27조의3 대조, 한전 전북본부, 상담 ☎ 1555-2859.
+- [경북 태양광·ESS 설계 시공](https://ecokkorea.com/region/gyeongbuk.html): 경상북도 태양광·ESS 설계·인허가·시공. 3개 시·군 조례 이격거리 원문(조항·시행일)과 재생에너지법 제27조의3 대조, 한전 경북본부, 상담 ☎ 1555-2859.
+- [경남 태양광·ESS 설계 시공](https://ecokkorea.com/region/gyeongnam.html): 경상남도 태양광·ESS 설계·인허가·시공. 2개 시·군 조례 이격거리 원문(조항·시행일)과 재생에너지법 제27조의3 대조, 한전 경남본부, 상담 ☎ 1555-2859.
+- [울산 태양광·ESS 설계 시공](https://ecokkorea.com/region/ulsan.html): 울산광역시 태양광·ESS 설계·인허가·시공. 1개 시·군 조례 이격거리 원문(조항·시행일)과 재생에너지법 제27조의3 대조, 한전 부산울산본부, 상담 ☎ 1555-2859.
+- [전국 태양광·ESS 설계 시공](https://ecokkorea.com/region/nationwide.html): 서울·부산·대구·인천·대전·세종·강원·제주 태양광·ESS 설계·인허가·시공. 재생에너지법 제27조의3 이격거리 기준과 지역별 한전 본부, 상담 ☎ 1555-2859.
 
 ## English pages
 - [Home](https://ecokkorea.com/en/): site feasibility, permitting, EPC electrical design, supervision
