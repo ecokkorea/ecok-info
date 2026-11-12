@@ -346,6 +346,29 @@ iframe.tool{width:100%;border:0;min-height:700px;display:block}
 .wreg b{font-size:21px;white-space:nowrap}.wreg span{flex:1}.wreg em{font-style:normal;color:var(--blue);font-weight:800;white-space:nowrap}
 @media(max-width:520px){.wgrid{grid-template-columns:1fr}.wtabs label{font-size:17px;padding:7px 14px}}
 
+.bc-idx{list-style:none;margin:28px 0 0;padding:0;display:grid;grid-template-columns:repeat(2,1fr);gap:0 40px;border-top:1.5px solid var(--ink)}
+.bc-idx li{border-bottom:1px solid var(--line)}
+.bc-idx a{display:flex;gap:14px;align-items:baseline;padding:16px 6px;text-decoration:none;font-weight:600}
+.bc-idx a:hover{background:var(--mist)}.bc-idx b{color:var(--blue);font-weight:800;min-width:1.6em}
+.bc-q{padding:clamp(36px,4.5vw,60px) 0;border-bottom:1px solid var(--line);scroll-margin-top:90px}
+.bc-q h2{font-size:clamp(26px,2.6vw,36px);line-height:1.35;font-weight:800;letter-spacing:-.02em}
+.bc-q h2 b{color:var(--blue);margin-right:.4em}
+.bc-q .sub{margin-top:10px;color:var(--slate);max-width:44em}
+.bc-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px;margin-top:24px;align-items:stretch}
+.bc-v{display:flex;flex-direction:column;border:1px solid var(--line);background:#fff;text-decoration:none}
+.bc-v:hover{border-color:var(--blue)}
+.bc-v .th{position:relative;display:block;background:#0e141b}
+.bc-v img{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;opacity:.94}
+.bc-v .play{position:absolute;left:14px;bottom:14px;padding:9px 16px;border-radius:8px;background:#c4161c;color:#fff;font-weight:800;font-size:16px;line-height:1}
+.bc-v .tx{display:flex;flex-direction:column;gap:6px;padding:16px 18px 18px;flex:1}
+.bc-v .kind{font-size:15px;font-weight:600;color:var(--blue)}
+.bc-v h3{font-size:clamp(19px,1.5vw,22px);font-weight:800;line-height:1.45}
+.bc-l{border:1.5px solid var(--ink);background:var(--mist);padding:20px 22px;display:flex;flex-direction:column;gap:4px}
+.bc-l h3{font-size:19px;font-weight:800;margin-bottom:6px}
+.bc-l a{flex:1;display:flex;align-items:center;min-height:52px;padding:11px 0;border-top:1px solid var(--line);font-weight:600;color:var(--blue);text-decoration:none}
+.bc-l a:hover{text-decoration:underline}
+@media (max-width:760px){.bc-idx{grid-template-columns:1fr}}
+
 .rg-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(20px,3vw,40px);margin-top:32px}
 .rg-card h3{font-size:24px;font-weight:800;padding-bottom:8px;border-bottom:1.5px solid var(--ink)}
 .rg-card{min-width:0}
