@@ -85,6 +85,7 @@
 - [문의](https://ecokkorea.com/contact.html)
 - [강의 자료 받기](https://ecokkorea.com/materials.html): 유튜브 구독자용 PVsyst·쏠라프로 강의 요약 카드, 연습 파일, 계산서 견본
 - [상담 전에 보시면 좋은 영상](https://ecokkorea.com/before-consult.html): 태양광 이격거리·개발행위허가·사전기술검토·공사계획신고·사용전검사·계약전력과 기본요금·ESS 회수기간·영농형·구조검토·상계거래 질문 10가지와 영상, 관련 계산기
+- [무료 입지분석 신청](https://ecokkorea.com/site-check.html): 현장 지번·연락처·이메일을 적어 태양광 입지분석(조례 이격거리, 경사도, 한전 계통 여유)을 무료로 신청
 
 ## 지역별 쪽(시·도 태양광 조례 이격거리, 재생에너지법 대조, 한전 지역본부)
 - [지역 전체](https://ecokkorea.com/region/)
