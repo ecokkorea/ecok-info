@@ -403,7 +403,16 @@ iframe.tool{width:100%;border:0;min-height:700px;display:block}
 .sc-done ul{margin:16px 0 0;padding-left:1.2em;font-size:19px;line-height:1.8}
 .sc-done .sc-go{align-items:flex-start;text-align:left}
 .sc-co{margin-top:18px;font-size:19px;font-weight:600}
-@media (max-width:860px){.sc-agree,.sc-err,.sc-form .send{grid-column:auto}.sc-btn{width:100%;padding:18px 16px}.sc-form .send{width:100%}.sc-agree th{width:5.5em}.sc-agree table{font-size:15px}}
+.sc-gate{margin:0 0 26px;padding:22px 24px;border:2px solid #c4161c;border-radius:10px;background:#fff5f5}
+.sc-gate h3{margin:0 0 8px;font-size:clamp(21px,2.2vw,26px);font-weight:800;color:#c4161c}
+.sc-gate p{margin:0 0 14px;font-size:18px;word-break:keep-all}
+.sc-gate .row{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center}
+.sc-gate .yt{display:inline-flex;align-items:center;justify-content:center;min-height:56px;padding:12px 28px;background:#c4161c;color:#fff;border-radius:8px;font-size:20px;font-weight:800;text-decoration:none}
+.sc-gate .chk{display:flex;align-items:center;gap:12px;font-size:20px;font-weight:800;cursor:pointer}
+.sc-gate .chk input{width:28px;height:28px;margin:0;flex:none;accent-color:#c4161c}
+.sc-gate.ok{border-color:#1f7a3a;background:#f2fbf4}.sc-gate.ok h3{color:#1f7a3a}
+#scform.locked{display:none}
+@media (max-width:860px){.sc-gate .yt{width:100%}.sc-agree,.sc-err,.sc-form .send{grid-column:auto}.sc-btn{width:100%;padding:18px 16px}.sc-form .send{width:100%}.sc-agree th{width:5.5em}.sc-agree table{font-size:15px}}
 .menu a.nav-apply{display:none}.fab-apply{display:none}@media (max-width:1080px){.menu a.nav-apply{display:block;align-self:flex-start;margin-top:8px;padding:12px 18px;background:#c4161c;color:#fff;border-radius:6px}}@media (min-width:1081px){.fab-apply{display:block;position:fixed;right:24px;bottom:24px;z-index:60;padding:16px 24px;border-radius:999px;background:#c4161c;color:#fff;font-weight:800;font-size:19px;text-decoration:none;box-shadow:0 6px 18px rgba(0,0,0,.25)}.fab-apply:hover{background:#a31117}}@media print{.fab-apply{display:none!important}}
 .rg-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(20px,3vw,40px);margin-top:32px}
 .rg-card h3{font-size:24px;font-weight:800;padding-bottom:8px;border-bottom:1.5px solid var(--ink)}
