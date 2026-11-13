@@ -169,7 +169,7 @@ html,body{margin:0;background:#fff;overflow-x:hidden}body{font-family:Paperlogy,
 
     <ul class="under">
       <li>강우강도 출처: 60분 이상은 환경부 홍수량 산정 표준지침(2019.7) 지점별 확률강우량(수자원관리종합정보시스템 WAMIS), 60분 미만은 시·군 하수도정비기본계획의 강우강도식 또는 기상청 종관기상관측 연최대 10분·60분 강우량 빈도해석(위 지역 안내 참조). 5분 값은 10분 아래로 식을 늘려 구한 값입니다.</li>
-      <li>식과 한도: 합리식은 KDS 44 40 00 식 (2.6-1)을 면적 ha 단위로 바꾼 꼴, 매닝식은 같은 기준 식 (2.7-1), 우수관로 유속 0.8~3.0 m/s는 KDS 61 40 00, 조도계수는 KDS 44 40 00 표 2.7-1(콘크리트 개수로 0.013~0.015, 관 0.013).</li>
+      <li>식과 한도: 합리식은 KDS 44 40 00 식 (2.6-1)을 면적 ha 단위로 바꾼 꼴, 매닝식은 같은 기준 식 (2.7-1), 우수관로 유속 0.8~3.0 m/s는 KDS 61 40 00, 조도계수는 KDS 44 40 00 표 2.7-1(콘크리트 개수로 0.013~0.015, 관 0.013).</li>
       <li>간이 값입니다. 실제 설계는 현장 측량으로 유역을 나누고, 외부 유입수·하류 수로 통수능·침사지 용량을 함께 검토합니다. → 문의: ☎ 1555-2859 · info@ecokkorea.co.kr</li>
     </ul>
   </div>
@@ -179,13 +179,13 @@ html,body{margin:0;background:#fff;overflow-x:hidden}body{font-family:Paperlogy,
   <details><summary>강우강도는 왜 도달시간에 따라 달라지나요?</summary><p>비가 오래 올수록 시간당 비의 양(강우강도)은 줄어듭니다. 유역 끝의 빗물이 구간 끝에 모이는 시간(도달시간)만큼의 강우를 쓰므로, 도달시간이 짧은 작은 유역은 더 센 비로 계산합니다. 이 계산기는 구간마다 유입시간과 위 구간에서 흘러온 시간을 더해 도달시간을 구하고, 그 시간에 해당하는 강우강도를 표에서 고릅니다. 도달시간보다 길지 않은 지속시간 가운데 가장 긴 값을 써서 약간 안전 쪽으로 잡습니다.</p></details>
   <details><summary>5분·10분 강우강도는 믿을 수 있나요?</summary><p>환경부 지점별 확률강우량은 60분 이상만 줍니다. 60분 미만은 시·군 하수도정비기본계획의 강우강도식이 있으면 그 식으로, 없으면 가까운 기상청 관측소의 연최대 10분·60분 강우량으로 빈도해석해 구합니다. 5분 값은 이 식을 10분 아래로 늘린 값이라 가장 불확실하고, 지역마다 10~30%까지 차이가 날 수 있습니다. 허가 서류에는 해당 시·군이 받는 기준을 확인하세요.</p></details>
   <details><summary>모듈 아래 땅의 유출계수는 얼마로 잡나요?</summary><p>국내 기준과 지침에 태양광 모듈 설치면의 공식 유출계수가 없습니다. 모듈이 비를 가로막지만 땅은 그대로 투수하는 면이 대부분이라 잡지 0.6 안팎으로 잡는 설계가 많고, 정지로 다진 면이나 비탈면은 0.8까지 올립니다. 허가 부서가 값을 정해 주는 경우가 있으니 확인한 값을 쓰세요.</p></details>
-  <details><summary>U형 측구와 흄관 어느 쪽 규격을 고르나요?</summary><p>구간마다 규격을 하나 골라 넣으면 통수량과 유속을 확인합니다. 표의 '통과 최소 규격' 열은 정사각 U형(0.3, 0.4, 0.5, 0.6, 0.8, 1.0 m)과 흄관(300 ~ 1,200 mm) 가운데 우수량을 버티고 유속이 한도 안에 들어오는 가장 작은 규격입니다. 위 구간을 그 규격으로 바꿨다고 보고 아래 구간 도달시간을 다시 계산합니다. 물이 모자라면 구배를 키우거나 규격을 올립니다.</p></details>
-  <details><summary>유속이 너무 크거나 작으면 어떻게 하나요?</summary><p>우수관로 유속은 0.8~3.0 m/s가 기준입니다. 느리면 흙이 쌓이므로 구배를 키우거나 규격을 줄이고, 3.0 m/s를 넘으면 세굴 위험이 있어 낙차공이나 감세 시설을 둡니다. 급경사 측구는 단차를 두어 구배를 나누는 방식이 흔합니다.</p></details>
+  <details><summary>U형 측구와 흄관 어느 쪽 규격을 고르나요?</summary><p>구간마다 규격을 하나 골라 넣으면 통수량과 유속을 확인합니다. 표의 '통과 최소 규격' 열은 정사각 U형(0.3, 0.4, 0.5, 0.6, 0.8, 1.0 m)과 흄관(300 ~ 1,200 mm) 가운데 우수량을 버티고 유속이 한도 안에 들어오는 가장 작은 규격입니다. 위 구간을 그 규격으로 바꿨다고 보고 아래 구간 도달시간을 다시 계산합니다. 물이 모자라면 구배를 키우거나 규격을 올립니다.</p></details>
+  <details><summary>유속이 너무 크거나 작으면 어떻게 하나요?</summary><p>우수관로 유속은 0.8~3.0 m/s가 기준입니다. 느리면 흙이 쌓이므로 구배를 키우거나 규격을 줄이고, 3.0 m/s를 넘으면 세굴 위험이 있어 낙차공이나 감세 시설을 둡니다. 급경사 측구는 단차를 두어 구배를 나누는 방식이 흔합니다.</p></details>
 
   <div class="law"><b>각주 (기준일 2026-11-13)</b>
     <ul>
       <li>합리식: 도로배수시설 설계기준 KDS 44 40 00(2026-10-02) 식 (2.6-1) Q = (1/3.6)·C·I·A (A ㎢, I mm/hr)를 A를 ha로 바꾼 Q = C·I·A / 360으로 사용. 유출계수는 같은 기준 표 2.6-1.</li>
-      <li>매닝식·조도계수: KDS 44 40 00 식 (2.7-1), 표 2.7-1. 우수관로 유속 최소 0.8·최대 3.0 m/s: 하수도설계기준 KDS 61 40 00(2025-10-01) 1.3.</li>
+      <li>매닝식·조도계수: KDS 44 40 00 식 (2.7-1), 표 2.7-1. 우수관로 유속 최소 0.8·최대 3.0 m/s: 하수도설계기준 KDS 61 40 00(2025-10-01) 1.3.</li>
       <li>확률강우량: 홍수량 산정 표준지침(환경부, 2019.7) 지역빈도해석 결과를 WAMIS(map.wamis.go.kr)가 제공하는 지점별 값, 강우자료 2017년까지. 국토교통부 한국확률강우량정보(k-idf.re.kr)는 2020-06-17 서비스를 종료했습니다.</li>
       <li>60분 미만: 시·군 하수도정비기본계획(변경) 강우강도식(General형) 또는 기상청 종관기상관측(ASOS) 연최대 10분·60분 강우량의 Gumbel(확률가중모멘트법) 빈도해석에 60분 이상 값을 이어 맞춘 General형. 결측이 긴 해는 뺐고, 5분 값은 식을 10분 아래로 연장한 값입니다.</li>
       <li>통수 높이 0.8H, 흄관 만관 기준 통수: 설계 수리계산서의 일반 관행. 측구 규격 후보는 정사각 단면(B = H)으로 단순화했습니다.</li>
@@ -287,7 +287,7 @@ function recommend(segs,cond){
 
 function regionTable(){
   var key=$("rw_reg").value;
-  if(key==="direct"){var I=rd($("rw_idir").value,200,1,1000,"강우강도"," mm/hr");return [{t:5,i:I}]}
+  if(key==="direct"){var I=rd($("rw_idir").value,200,1,1000,"강우강도"," mm/hr");return [{t:5,i:I}]}
   var r=null;for(var k=0;k<RAIN.length;k++){if(RAIN[k].이름===key)r=RAIN[k]}
   var T=$("rw_T").value,tbl=[];
   Object.keys(r.값).map(Number).sort(function(a,b){return a-b}).forEach(function(t){var v=r.값[String(t)][T];if(v!==null&&v!==undefined)tbl.push({t:t,i:v})});
@@ -313,7 +313,7 @@ function segHTML(i,d){
    +'<div class="row"><label>유역 면적 [㎡]<small>이 구간 측구가 직접 받는 면적</small></label><input type="number" id="'+id("A")+'" value="'+(d.A!==undefined?d.A:5000)+'" step="100" min="0" inputmode="numeric"></div>'
    +'<div class="row"><label>유출계수 C<small>법면 0.8 · 잡지 0.6 · 포장 0.9</small></label><input type="number" id="'+id("C")+'" value="'+(d.C!==undefined?d.C:0.6)+'" step="0.05" min="0.05" max="1" inputmode="decimal"></div>'
    +'<div class="row"><label>연장 [m]</label><input type="number" id="'+id("L")+'" value="'+(d.L!==undefined?d.L:60)+'" step="1" min="1" inputmode="decimal"></div>'
-   +'<div class="row"><label>구배 [‰]<small>1‰ = 1 m당 1 mm. 20‰ = 2%</small></label><input type="number" id="'+id("S")+'" value="'+(d.S!==undefined?d.S:20)+'" step="1" min="1" inputmode="decimal"></div>'
+   +'<div class="row"><label>구배 [‰]<small>1‰ = 1 m당 1 mm. 20‰ = 2%</small></label><input type="number" id="'+id("S")+'" value="'+(d.S!==undefined?d.S:20)+'" step="1" min="1" inputmode="decimal"></div>'
    +'<div class="row"><label>단면 종류</label><select id="'+id("K")+'"><option value="u"'+(d.K==="circ"?"":" selected")+'>U형 측구 (사각)</option><option value="circ"'+(d.K==="circ"?" selected":"")+'>흄관 (원형)</option></select></div>'
    +'<div class="row" data-f="u"><label>폭 B [m]</label><input type="number" id="'+id("B")+'" value="'+(d.B!==undefined?d.B:0.4)+'" step="0.1" min="0.1" inputmode="decimal"></div>'
    +'<div class="row" data-f="u"><label>높이 H [m]</label><input type="number" id="'+id("H")+'" value="'+(d.H!==undefined?d.H:0.4)+'" step="0.1" min="0.1" inputmode="decimal"></div>'
@@ -344,16 +344,16 @@ function readSegs(){
     var g=function(n){return el.querySelector("[id$=_"+n+"]")};
     var circ=g("K").value==="circ",nm="구간 "+(i+1)+" ";
     segs.push({A_m2:rd(g("A").value,0,0,100000000,nm+"유역 면적","㎡"),C:rd(g("C").value,0.6,0.05,1,nm+"유출계수",""),
-      L:rd(g("L").value,10,1,5000,nm+"연장"," m"),S_permil:rd(g("S").value,10,0.1,1000,nm+"구배","‰"),
-      kind:circ?"circ":"u",B:rd(g("B").value,0.4,0.1,5,nm+"폭 B"," m"),H:rd(g("H").value,0.4,0.1,5,nm+"높이 H"," m"),D:rd(g("D").value,300,100,3000,nm+"관경 D"," mm"),
+      L:rd(g("L").value,10,1,5000,nm+"연장"," m"),S_permil:rd(g("S").value,10,0.1,1000,nm+"구배","‰"),
+      kind:circ?"circ":"u",B:rd(g("B").value,0.4,0.1,5,nm+"폭 B"," m"),H:rd(g("H").value,0.4,0.1,5,nm+"높이 H"," m"),D:rd(g("D").value,300,100,3000,nm+"관경 D"," mm"),
       n:rd(g("N").value,0.015,0.008,0.05,nm+"조도계수 n",""),conn:(i>0&&g("J").value==="1")});
   });
   return segs;
 }
 function readCond(){
-  var tin=rd($("rw_tin").value,5,1,120,"유입시간"," 분"),vmin=rd($("rw_vmin").value,0.8,0,10,"유속 한도 최소"," m/s"),vmax=rd($("rw_vmax").value,3.0,0.3,15,"유속 한도 최대"," m/s");
+  var tin=rd($("rw_tin").value,5,1,120,"유입시간"," 분"),vmin=rd($("rw_vmin").value,0.8,0,10,"유속 한도 최소"," m/s"),vmax=rd($("rw_vmax").value,3.0,0.3,15,"유속 한도 최대"," m/s");
   var ratio=rd($("rw_ratio").value,0.8,0.5,1,"U형 통수 높이 비율","배");
-  if(vmin>=vmax){NOTES.push("유속 한도: 최소("+vmin+")가 최대("+vmax+") 이상이라 최소를 "+Math.max(0,Math.round((vmax-0.1)*10)/10)+" m/s 로 낮춰 계산했습니다.");vmin=Math.max(0,Math.round((vmax-0.1)*10)/10)}
+  if(vmin>=vmax){NOTES.push("유속 한도: 최소("+vmin+")가 최대("+vmax+") 이상이라 최소를 "+Math.max(0,Math.round((vmax-0.1)*10)/10)+" m/s 로 낮춰 계산했습니다.");vmin=Math.max(0,Math.round((vmax-0.1)*10)/10)}
   return {tin:tin,tbl:regionTable(),vmin:vmin,vmax:vmax,ratio:ratio};
 }
 function specText(p){return p.kind==="circ"?("흄관 D"+fmt(p.D,0)):("U형 "+fmt(p.B,2)+"×"+fmt(p.H,2))}
@@ -396,7 +396,7 @@ function devCalc(){
   var A=rd($("dv_A").value,20000,1,100000000,"부지 면적","㎡")/10000,C0=rd($("dv_C0").value,0.6,0.05,1,"개발 전 유출계수",""),C1=rd($("dv_C1").value,0.75,0.05,1,"개발 후 유출계수",""),tc=rd($("dv_tc").value,10,1,1440,"도달시간"," 분");
   var pi=pickI(tbl,tc),Q0=C0*pi.i*A/360,Q1=C1*pi.i*A/360;
   var h='<div class="big"><div><small>개발 전 첨두유출량</small><b>'+fmt(Q0,3)+'<em>㎥/s</em></b></div><div><small>개발 후 첨두유출량</small><b>'+fmt(Q1,3)+'<em>㎥/s</em></b></div><div><small>증가량</small><b>'+fmt(Q1-Q0,3)+'<em>㎥/s</em></b></div><div class="main"><small>증가율</small><b>'+(Q0>0?fmt((Q1/Q0-1)*100,1):"-")+'<em>%</em></b></div></div>';
-  h+='<p class="tip">강우강도 '+fmt(pi.i,1)+' mm/hr (도달시간 '+fmt(tc,1)+'분 → 지속시간 '+pi.t+'분 값). 침사지 겸 저류지는 개발 후 첨두방류량이 개발 전 첨두홍수량 이하가 되도록 정하는 것이 원칙입니다(재해영향평가 실무지침). 저류 용량 산정은 정식 계산서에서 합니다.</p>';
+  h+='<p class="tip">강우강도 '+fmt(pi.i,1)+' mm/hr (도달시간 '+fmt(tc,1)+'분 → 지속시간 '+pi.t+'분 값). 침사지 겸 저류지는 개발 후 첨두방류량이 개발 전 첨두홍수량 이하가 되도록 정하는 것이 원칙입니다(재해영향평가 실무지침). 저류 용량 산정은 정식 계산서에서 합니다.</p>';
   $("dv_out").innerHTML=h;
 }
 function init(){

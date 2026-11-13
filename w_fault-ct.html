@@ -123,23 +123,23 @@ html,body{margin:0;background:#fff;overflow-x:hidden}body{font-family:Paperlogy,
 </style>
 <div class="ekfc" id="fault-ct-calculator">
   <div class="eb">SHORT-CIRCUIT · CT</div>
-  <h1>단락전류·CT비 간이 계산기 (22.9 kV 수전·태양광 변압기)</h1>
+  <h1>단락전류·CT비 간이 계산기 (22.9 kV 수전·태양광 변압기)</h1>
   <ul class="lead">
-    <li>변압기 용량·%Z, 한전 쪽 단락전류(또는 일반값), 저압 전압을 넣으면 <b>22.9 kV 모선과 저압 모선의 3상 단락전류(최대·최소)</b>와 <b>1선지락전류</b>, 변압기 정격전류를 보여 드립니다.</li>
+    <li>변압기 용량·%Z, 한전 쪽 단락전류(또는 일반값), 저압 전압을 넣으면 <b>22.9 kV 모선과 저압 모선의 3상 단락전류(최대·최소)</b>와 <b>1선지락전류</b>, 변압기 정격전류를 보여 드립니다.</li>
     <li>이어서 <b>보호용 CT(5P20) 후보별로 정격전류·포화 시작 전류·계기용 변성기(MOF) 과전류강도</b>를 따져 알맞은 CT비를 골라 드립니다. 계산 식은 보호계전기 정정서에 쓰는 IEC 60909 단락계산과 CT 포화 검토 식 그대로입니다.</li>
     <li>회원가입 없이 무료입니다. 숫자는 이 화면 안에서만 계산되고 어디에도 보내지 않습니다. 한전 회신값이 없으면 일반값으로 계산하며, 실제 값은 한전 회신으로 바뀝니다.</li>
   </ul>
 
   <div class="sheet">
     <h2>단락전류·CT비 계산표</h2>
-    <p class="ref">※ 100 MVA 기준 %임피던스로 계산합니다. 노란 칸이 입력, 아래 표가 결과입니다.</p>
+    <p class="ref">※ 100 MVA 기준 %임피던스로 계산합니다. 노란 칸이 입력, 아래 표가 결과입니다.</p>
 
     <div class="sh">① 한전 쪽 (전원)</div>
     <div class="sb inp">
       <div class="row"><label for="fc_src">전원 값을 어떻게 아시나요?<small>한전 회신(단락전류 kA)이 있으면 그 값을 쓰세요</small></label>
         <select id="fc_src"><option value="typ">한전 회신 없음 (일반값 사용)</option><option value="ka" selected>한전 단락전류(kA) 회신 있음</option></select></div>
-      <div class="row"><label for="fc_ka">22.9 kV 전원 3상 단락전류 (kA)<small>한전 변전소 모선 기준</small></label><input id="fc_ka" type="number" step="0.1" value="12.5"></div>
-      <div class="row"><label for="fc_r1">선로 정상분 %R (100 MVA)<small>변전소에서 수전점까지 합계, 모르면 0</small></label><input id="fc_r1" type="number" step="0.01" value="0"></div>
+      <div class="row"><label for="fc_ka">22.9 kV 전원 3상 단락전류 (kA)<small>한전 변전소 모선 기준</small></label><input id="fc_ka" type="number" step="0.1" value="12.5"></div>
+      <div class="row"><label for="fc_r1">선로 정상분 %R (100 MVA)<small>변전소에서 수전점까지 합계, 모르면 0</small></label><input id="fc_r1" type="number" step="0.01" value="0"></div>
       <div class="row"><label for="fc_x1">선로 정상분 %X</label><input id="fc_x1" type="number" step="0.01" value="0"></div>
       <div class="row"><label for="fc_r0">선로 영상분 %R</label><input id="fc_r0" type="number" step="0.01" value="0"></div>
       <div class="row"><label for="fc_x0">선로 영상분 %X</label><input id="fc_x0" type="number" step="0.01" value="0"></div>
@@ -149,11 +149,11 @@ html,body{margin:0;background:#fff;overflow-x:hidden}body{font-family:Paperlogy,
     <div class="sb inp">
       <div class="row"><label for="fc_kva">변압기 용량 (kVA)</label><input id="fc_kva" type="number" step="1" value="1500"></div>
       <div class="row"><label for="fc_z">변압기 %Z<small>명판 값</small></label><input id="fc_z" type="number" step="0.1" value="6.0"></div>
-      <div class="row"><label for="fc_xr">변압기 X/R<small>모르면 0 (1,000 kVA 이하 5, 초과 6)</small></label><input id="fc_xr" type="number" step="0.1" value="0"></div>
-      <div class="row"><label for="fc_v2">저압 쪽 전압</label><select id="fc_v2"><option value="0.22">220 V</option><option value="0.38" selected>380 V</option><option value="0.44">440 V</option></select></div>
+      <div class="row"><label for="fc_xr">변압기 X/R<small>모르면 0 (1,000 kVA 이하 5, 초과 6)</small></label><input id="fc_xr" type="number" step="0.1" value="0"></div>
+      <div class="row"><label for="fc_v2">저압 쪽 전압</label><select id="fc_v2"><option value="0.22">220 V</option><option value="0.38" selected>380 V</option><option value="0.44">440 V</option></select></div>
     </div>
 
-    <div class="sh">③ 보호용 CT (22.9 kV 쪽)</div>
+    <div class="sh">③ 보호용 CT (22.9 kV 쪽)</div>
     <div class="sb inp">
       <div class="row"><label for="fc_va">CT 정격부담 (VA)</label><input id="fc_va" type="number" step="1" value="15"></div>
       <div class="row"><label for="fc_alf">과전류정수 (5P 뒤 숫자)</label><input id="fc_alf" type="number" step="1" value="20"></div>
@@ -172,20 +172,20 @@ html,body{margin:0;background:#fff;overflow-x:hidden}body{font-family:Paperlogy,
     <div class="tip" id="fc_tip"></div>
     <div class="alert" id="fc_warn" style="display:none"></div>
     </div>
-    <p class="note">계산 가정: ① 한전 단락전류(kA) 회신값에는 전압계수 1.1을 곱해 '최대'로 보여 드립니다(12.5 kA 회신이면 약 13.75 kA). ② 한전 kA 회신만 넣으면 영상분을 정상분과 같게 두므로 22.9 kV 모선 1선지락은 3상과 비슷하게 나옵니다. 실제 선로 영상분은 더 커서 지락전류가 작아지니 참고로만 보세요. ③ '한전 회신 없음'은 154/22.9 kV 변전소 한 곳의 회신 예(%Z 0.146 + j33.6, 영상 j48.3, 100 MVA 기준)를 일반값으로 쓴 것입니다.</p>
+    <p class="note">계산 가정: ① 한전 단락전류(kA) 회신값에는 전압계수 1.1을 곱해 '최대'로 보여 드립니다(12.5 kA 회신이면 약 13.75 kA). ② 한전 kA 회신만 넣으면 영상분을 정상분과 같게 두므로 22.9 kV 모선 1선지락은 3상과 비슷하게 나옵니다. 실제 선로 영상분은 더 커서 지락전류가 작아지니 참고로만 보세요. ③ '한전 회신 없음'은 154/22.9 kV 변전소 한 곳의 회신 예(%Z 0.146 + j33.6, 영상 j48.3, 100 MVA 기준)를 일반값으로 쓴 것입니다.</p>
     <p class="note">이 숫자는 간이 값입니다. 정식 단락계산서와 보호계전기 정정서는 한전 회신, 선로 선종·거리, 변압기 시험성적서로 다시 계산해 드립니다.</p>
   </div>
 
   <h2 class="h">자주 묻는 질문</h2>
-  <details><summary>최대 단락전류와 최소 단락전류는 어디에 쓰나요?</summary><p>최대값은 차단기 차단용량, CT·MOF 강도, 계전기 순시 정정의 상한을 정할 때, 최소값은 계전기가 끝 지점의 작은 고장도 감지하는지 확인할 때 씁니다. 최대는 전압계수 c 를 크게(1.1), 최소는 작게(고압 1.0, 저압 0.95) 잡고, 최소에는 선로 저항을 80 ℃로 환산해 넣습니다.</p></details>
-  <details><summary>한전 단락전류를 모르면 어떻게 하나요?</summary><p>'한전 회신 없음'을 고르면 154/22.9 kV 변전소 모선의 변전소 한 곳의 회신 예(%Z 0.146 + j33.6, 100 MVA 기준)로 계산합니다. 선로 임피던스를 0으로 두면 고장전류가 크게 나오는 쪽입니다. 정식 계산에는 한전의 변전소 모선 %Z와 선로 임피던스 회신이 필요합니다.</p></details>
-  <details><summary>CT비는 어떤 기준으로 고르나요?</summary><p>세 가지를 모두 만족하는 가장 작은 비를 추천합니다. ① CT 1차 정격이 변압기 1차 정격전류 이상, ② 포화 시작 전류(실부담 과전류정수 × CT 1차)가 22.9 kV 최대 단락전류 이상, ③ 계기용 변성기(MOF) 과전류강도 75배 이내(최대 단락전류 ÷ CT 1차 ≤ 75). 포화 시작이 모자라도 순시 정정이 포화 전에 동작하면 보호는 되므로, 표의 각 칸을 보고 판단하세요.</p></details>
-  <details><summary>1선지락전류는 변압기 결선에 따라 다르지 않나요?</summary><p>이 간이 계산기는 22.9 kV 델타, 저압 Y 접지(Dyn)인 가장 흔한 결선만 다룹니다. 22.9 kV 모선의 지락은 한전 선로 영상 임피던스로, 저압 쪽 지락은 변압기 영상 임피던스로 계산합니다. 3권선·Y접지 변압기, 접지저항(NGR)이 있는 설비는 정식 계산이 필요합니다.</p></details>
+  <details><summary>최대 단락전류와 최소 단락전류는 어디에 쓰나요?</summary><p>최대값은 차단기 차단용량, CT·MOF 강도, 계전기 순시 정정의 상한을 정할 때, 최소값은 계전기가 끝 지점의 작은 고장도 감지하는지 확인할 때 씁니다. 최대는 전압계수 c 를 크게(1.1), 최소는 작게(고압 1.0, 저압 0.95) 잡고, 최소에는 선로 저항을 80 ℃로 환산해 넣습니다.</p></details>
+  <details><summary>한전 단락전류를 모르면 어떻게 하나요?</summary><p>'한전 회신 없음'을 고르면 154/22.9 kV 변전소 모선의 변전소 한 곳의 회신 예(%Z 0.146 + j33.6, 100 MVA 기준)로 계산합니다. 선로 임피던스를 0으로 두면 고장전류가 크게 나오는 쪽입니다. 정식 계산에는 한전의 변전소 모선 %Z와 선로 임피던스 회신이 필요합니다.</p></details>
+  <details><summary>CT비는 어떤 기준으로 고르나요?</summary><p>세 가지를 모두 만족하는 가장 작은 비를 추천합니다. ① CT 1차 정격이 변압기 1차 정격전류 이상, ② 포화 시작 전류(실부담 과전류정수 × CT 1차)가 22.9 kV 최대 단락전류 이상, ③ 계기용 변성기(MOF) 과전류강도 75배 이내(최대 단락전류 ÷ CT 1차 ≤ 75). 포화 시작이 모자라도 순시 정정이 포화 전에 동작하면 보호는 되므로, 표의 각 칸을 보고 판단하세요.</p></details>
+  <details><summary>1선지락전류는 변압기 결선에 따라 다르지 않나요?</summary><p>이 간이 계산기는 22.9 kV 델타, 저압 Y 접지(Dyn)인 가장 흔한 결선만 다룹니다. 22.9 kV 모선의 지락은 한전 선로 영상 임피던스로, 저압 쪽 지락은 변압기 영상 임피던스로 계산합니다. 3권선·Y접지 변압기, 접지저항(NGR)이 있는 설비는 정식 계산이 필요합니다.</p></details>
 
   <div class="law"><b>각주 (계산 기준)</b>
     <ul>
       <li>KS C IEC 60909-0 단락전류 계산 방식(원문 최신판과의 대조는 하지 않았습니다): 3상 Ik = c·Un/(√3·|Z1|), 1선지락 Ik1 = 3·c·Un/(√3·|2·Z1 + Z0|), 변압기 보정계수 K_T = 0.95·c_max/(1 + 0.6·x_T). 전압계수 c: 최대 1.1, 최소 고압 1.0·저압 0.95.</li>
-      <li>CT 포화 검토: 실부담 과전류정수 ALF' = ALF × (Rct + Rb) ÷ (Rct + R배선 + R계전기), 포화 시작 전류 = ALF' × CT 1차. 배선 저항은 KIV 4㎟ 도체의 20 ℃ 값 4.61 Ω/km를 75 ℃로 환산해 쓰고(왕복 길이), 계전기 부담 Ω = VA ÷ 25입니다.</li>
+      <li>CT 포화 검토: 실부담 과전류정수 ALF' = ALF × (Rct + Rb) ÷ (Rct + R배선 + R계전기), 포화 시작 전류 = ALF' × CT 1차. 배선 저항은 KIV 4㎟ 도체의 20 ℃ 값 4.61 Ω/km를 75 ℃로 환산해 쓰고(왕복 길이), 계전기 부담 Ω = VA ÷ 25입니다.</li>
       <li>MOF 과전류강도 75배: 당사 검토 기준입니다(한전 규정 조항 번호는 확인하지 못했으며, 150배 MOF 적용은 한전과 협의). 표준 CT 비 열은 일반 제조 시리즈이며, 표준 규격 원문 대조는 하지 않았습니다.</li>
     </ul>
     넣지 않은 것: 발전기·인버터 기여전류, 풍력, 3권선·Y접지 변압기, 중성점 접지저항, 케이블·모선 임피던스, 비대칭 첨두전류, CT 열적강도·여자특성.
@@ -246,7 +246,7 @@ html,body{margin:0;background:#fff;overflow-x:hidden}body{font-family:Paperlogy,
     var p={src:$('fc_src').value,ka:lim('fc_ka',12.5,0.1,100,'전원 단락전류'),r1:lim('fc_r1',0,0,100000,'선로 정상분 %R'),x1:lim('fc_x1',0,0,100000,'선로 정상분 %X'),r0:lim('fc_r0',0,0,100000,'선로 영상분 %R'),x0:lim('fc_x0',0,0,100000,'선로 영상분 %X'),
     kva:lim('fc_kva',1500,10,100000,'변압기 용량'),z:lim('fc_z',6,0.5,30,'변압기 %Z'),xr:lim('fc_xr',0,0,50,'변압기 X/R'),v2:parseFloat($('fc_v2').value),
     va:lim('fc_va',15,1,200,'CT 정격부담'),alf:lim('fc_alf',20,5,50,'과전류정수'),rct:lim('fc_rct',0.1,0,50,'CT 권선저항'),rva:lim('fc_rva',0.5,0,100,'계전기 소비'),lead:lim('fc_lead',5,0,2000,'배선 길이')};
-    if(p.rct+2*p.lead/1000*4.61*(1+0.00393*55)+p.rva/25<=0){p.rct=0.01;MSG.push('CT 권선저항, 배선, 계전기 소비가 모두 0이면 계산할 수 없어 권선저항을 0.01 Ω으로 두었습니다.');}
+    if(p.rct+2*p.lead/1000*4.61*(1+0.00393*55)+p.rva/25<=0){p.rct=0.01;MSG.push('CT 권선저항, 배선, 계전기 소비가 모두 0이면 계산할 수 없어 권선저항을 0.01 Ω으로 두었습니다.');}
     return p}
   function kA(v){return d(v/1000,2)}
   function run(){
@@ -254,20 +254,20 @@ html,body{margin:0;background:#fff;overflow-x:hidden}body{font-family:Paperlogy,
     $('fc_ka').disabled=(p.src!=='ka');
     var w=$('fc_warn');if(MSG.length){w.style.display='block';w.innerHTML=MSG.join('<br>');}else{w.style.display='none';w.innerHTML='';}
     $('fc_big').innerHTML=
-      '<div class="main"><small>22.9 kV 모선 3상 단락(최대)</small><b id="o_hv3">'+kA(o.hv.ik_max)+'<em>kA</em></b></div>'+
-      '<div><small>22.9 kV 모선 3상 단락(최소)</small><b id="o_hv3m">'+kA(o.hv.ik_min)+'<em>kA</em></b></div>'+
+      '<div class="main"><small>22.9 kV 모선 3상 단락(최대)</small><b id="o_hv3">'+kA(o.hv.ik_max)+'<em>kA</em></b></div>'+
+      '<div><small>22.9 kV 모선 3상 단락(최소)</small><b id="o_hv3m">'+kA(o.hv.ik_min)+'<em>kA</em></b></div>'+
       '<div class="main"><small>저압 모선 3상 단락(최대)</small><b id="o_lv3">'+kA(o.lv.ik_max)+'<em>kA</em></b></div>'+
       '<div><small>변압기 1차 정격전류</small><b id="o_ifl">'+d(o.ifl_hv,1)+'<em>A</em></b></div>';
     $('fc_tab').innerHTML='<tr><th>고장 위치</th><th class="n">3상 최대 (A)</th><th class="n">3상 최소 (A)</th><th class="n">1선지락 최대 (A)</th><th class="n">1선지락 최소 (A)</th></tr>'+
-      '<tr><td>22.9 kV 모선</td><td class="n" id="t_hv3">'+n(o.hv.ik_max)+'</td><td class="n" id="t_hv3m">'+n(o.hv.ik_min)+'</td><td class="n" id="t_hvg">'+n(o.hv.ig_max)+'</td><td class="n" id="t_hvgm">'+n(o.hv.ig_min)+'</td></tr>'+
-      '<tr><td>저압 모선 ('+Math.round(p.v2*1000)+' V)</td><td class="n" id="t_lv3">'+n(o.lv.ik_max)+'</td><td class="n" id="t_lv3m">'+n(o.lv.ik_min)+'</td><td class="n" id="t_lvg">'+n(o.lv.ig_max)+'</td><td class="n" id="t_lvgm">'+n(o.lv.ig_min)+'</td></tr>'+
-      '<tr><td colspan="5" class="f">저압 3상 최대를 22.9 kV 쪽으로 환산하면 '+n(o.lv.ref_max)+' A, 변압기 2차 정격전류는 '+n(o.ifl_lv)+' A입니다.</td></tr>';
-    var h='<tr><th class="n">CT비</th><th>정격전류 ≥ '+d(o.ifl_hv,1)+' A</th><th class="n">포화 시작 (A)</th><th>포화 시작 ≥ '+n(o.hv.ik_max)+' A</th><th class="n">MOF 배수</th><th>75배 이내</th></tr>';
+      '<tr><td>22.9 kV 모선</td><td class="n" id="t_hv3">'+n(o.hv.ik_max)+'</td><td class="n" id="t_hv3m">'+n(o.hv.ik_min)+'</td><td class="n" id="t_hvg">'+n(o.hv.ig_max)+'</td><td class="n" id="t_hvgm">'+n(o.hv.ig_min)+'</td></tr>'+
+      '<tr><td>저압 모선 ('+Math.round(p.v2*1000)+' V)</td><td class="n" id="t_lv3">'+n(o.lv.ik_max)+'</td><td class="n" id="t_lv3m">'+n(o.lv.ik_min)+'</td><td class="n" id="t_lvg">'+n(o.lv.ig_max)+'</td><td class="n" id="t_lvgm">'+n(o.lv.ig_min)+'</td></tr>'+
+      '<tr><td colspan="5" class="f">저압 3상 최대를 22.9 kV 쪽으로 환산하면 '+n(o.lv.ref_max)+' A, 변압기 2차 정격전류는 '+n(o.ifl_lv)+' A입니다.</td></tr>';
+    var h='<tr><th class="n">CT비</th><th>정격전류 ≥ '+d(o.ifl_hv,1)+' A</th><th class="n">포화 시작 (A)</th><th>포화 시작 ≥ '+n(o.hv.ik_max)+' A</th><th class="n">MOF 배수</th><th>75배 이내</th></tr>';
     o.cts.forEach(function(c){
       var me=(c.n===o.pick)?' class="me"':'';
       h+='<tr'+me+'><td class="n">'+c.n+'/5'+(c.n===o.pick?' (추천)':'')+'</td><td class="'+(c.rated?'ok':'ng')+'">'+(c.rated?'적합':'부족')+'</td><td class="n">'+n(c.sat)+'</td><td class="'+(c.satok?'ok':'ng')+'">'+(c.satok?'적합':'포화')+'</td><td class="n">'+d(c.mof,0)+'</td><td class="'+(c.mofok?'ok':'ng')+'">'+(c.mofok?'적합':'초과')+'</td></tr>';});
     $('fc_ct').innerHTML=h;
-    $('fc_tip').innerHTML=(o.pick?'<b>추천 CT비: '+o.pick+'/5 (5P'+p.alf+', '+p.va+' VA)</b>. 실제 부담으로 보면 과전류정수가 '+d(o.alf_eff,1)+'로 계산되어 포화 시작 전류는 '+n(o.alf_eff*o.pick)+' A입니다. ':'<b>표의 CT비 가운데 세 조건을 모두 만족하는 것이 없습니다.</b> 정격부담이나 과전류정수를 올리거나 150배 MOF 적용을 한전과 협의해야 합니다. ')+'실부담 과전류정수 '+d(o.alf_eff,1)+'(정격 '+p.alf+'), 22.9 kV 최대 단락 '+n(o.hv.ik_max)+' A.';
+    $('fc_tip').innerHTML=(o.pick?'<b>추천 CT비: '+o.pick+'/5 (5P'+p.alf+', '+p.va+' VA)</b>. 실제 부담으로 보면 과전류정수가 '+d(o.alf_eff,1)+'로 계산되어 포화 시작 전류는 '+n(o.alf_eff*o.pick)+' A입니다. ':'<b>표의 CT비 가운데 세 조건을 모두 만족하는 것이 없습니다.</b> 정격부담이나 과전류정수를 올리거나 150배 MOF 적용을 한전과 협의해야 합니다. ')+'실부담 과전류정수 '+d(o.alf_eff,1)+'(정격 '+p.alf+'), 22.9 kV 최대 단락 '+n(o.hv.ik_max)+' A.';
   }
   ['fc_src','fc_ka','fc_r1','fc_x1','fc_r0','fc_x0','fc_kva','fc_z','fc_xr','fc_v2','fc_va','fc_alf','fc_rct','fc_rva','fc_lead'].forEach(function(i){$(i).addEventListener('input',run);$(i).addEventListener('change',run);});
   window.fcRun=run;run();
