@@ -1,0 +1,363 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+<style>@font-face{font-family:Paperlogy;src:url(fonts/Paperlogy-4Regular.ttf);font-weight:400}@font-face{font-family:Paperlogy;src:url(fonts/Paperlogy-6SemiBold.ttf);font-weight:600}@font-face{font-family:Paperlogy;src:url(fonts/Paperlogy-8ExtraBold.ttf);font-weight:800}
+html,body{margin:0;background:#fff;overflow-x:hidden}body{font-family:Paperlogy,'Malgun Gothic',sans-serif;word-break:keep-all;color:#16212c}img{max-width:100%;height:auto}@media (max-width:600px){table{display:block;overflow-x:auto}}</style><style>/* 스타일은 위젯 안 <style> */
+</style><style>:root{--ink:#16212c;--slate:#4a5763;--line:#d5dce2;--mist:#eef2f5;--blue:#1d4f91;--blue-dark:#163d70}
+.gate{margin-top:0;border:1.5px solid var(--ink);background:#fff;display:grid;grid-template-columns:1fr auto;gap:28px;align-items:center;padding:clamp(22px,3vw,36px)}
+.gate h2{font-size:clamp(24px,2.4vw,32px);font-weight:800;letter-spacing:-.02em;line-height:1.35}
+.gate ol{margin:14px 0 0;padding-left:1.4em;color:var(--slate)}.gate ol li{margin:4px 0}
+.gate .note{margin-top:12px;font-size:16px;color:var(--slate)}
+.subbtn{display:inline-flex;align-items:center;gap:12px;padding:18px 30px;border-radius:10px;background:#c4161c;color:#fff;font-weight:800;font-size:21px;text-decoration:none;white-space:nowrap}
+.subbtn:hover{background:#9f1015}.subbtn svg{width:30px;height:21px;flex:none}
+.gate .ok{display:none;font-weight:800;color:#1b6b3a;font-size:20px}
+.gate.done .ok{display:block}.gate.done .subbtn{background:#fff;color:#c4161c;border:2px solid #c4161c;padding:14px 24px;font-size:18px}
+
+.pg-bar{margin:22px 0 0;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.pg-save{font:800 19px Paperlogy,'Malgun Gothic',sans-serif;padding:15px 28px;border:0;border-radius:10px;background:#1d4f91;color:#fff;cursor:pointer}
+.pg-save:hover{background:#163d70}.pg-hint{font-size:15px;color:#4a5763}
+.pg-gatebox{display:none;margin-top:18px}.pg-gatebox.show{display:block}
+.pg-gatebox .gate{grid-template-columns:1fr}.pg-gatebox .subbtn{justify-self:start}
+#pg-sheet{display:none}
+@media print{
+ @page{size:A4;margin:10mm}
+ html,body{background:#fff!important;overflow:visible!important}
+ body>*:not(#pg-sheet){display:none!important}
+ #pg-sheet{display:block!important;width:190mm;color:#16212c;font-family:Paperlogy,'Malgun Gothic',sans-serif;word-break:keep-all;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+#pg-sheet.pg-fr{display:block}
+#pg-sheet.fuse .pgw>div,#pg-sheet.string .pgw>div{column-count:2;column-gap:14px}
+#pg-sheet.string .pgw .sec{break-inside:avoid}
+#pg-sheet.string .pgw .sec:has(table){column-span:all}
+#pg-sheet.fuse .pgw .sh,#pg-sheet.fuse .pgw .chk{break-inside:avoid}
+#pg-sheet *{box-sizing:border-box}
+#pg-sheet .pg-hd{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #1d4f91;padding-bottom:6px}
+#pg-sheet .pg-hd img{height:26px;width:auto}#pg-sheet .pg-dt{font-size:12px;color:#4a5763}
+#pg-sheet .pg-t{font-size:20px;font-weight:800;margin:10px 0 2px;line-height:1.3}
+#pg-sheet .pg-s{font-size:12px;color:#4a5763;margin:0 0 6px}
+#pg-sheet h2{font-size:14px;font-weight:800;margin:10px 0 4px;color:#1d4f91}
+#pg-sheet table.pg-in{width:100%;border-collapse:collapse;table-layout:fixed;font-size:11.5px}
+#pg-sheet table.pg-in th,#pg-sheet table.pg-in td{border-bottom:1px solid #d5dce2;padding:3px 6px;line-height:1.35;vertical-align:top;word-break:keep-all;overflow-wrap:break-word}
+#pg-sheet table.pg-in th{text-align:left;font-weight:600;color:#4a5763;background:#f4f6f8;width:27%}
+#pg-sheet table.pg-in td{font-weight:800;width:23%}
+#pg-sheet .pgw{max-width:none;margin:0;padding:0;color:#16212c}
+#pg-sheet .pgw .sh{margin-top:6px}
+#pg-sheet .pg-ft{margin-top:10px;border-top:1px solid #d5dce2;padding-top:6px;font-size:12px;display:flex;justify-content:space-between;gap:12px}
+#pg-sheet .pg-ft b{font-weight:800}
+
+#pg-sheet.fuse .pgw *,#pg-sheet.string .pgw *{font-size:10.5px!important;line-height:1.45!important}
+#pg-sheet.fuse .pgw .sh,#pg-sheet.string .pgw .sec h3,#pg-sheet.string .pgw .ekmppt h3{font-size:12px!important}
+#pg-sheet.fuse .pgw .sh{padding:5px 10px!important;margin-top:8px!important;break-after:avoid}
+#pg-sheet.fuse .pgw .sb{padding:5px 8px!important}
+#pg-sheet.fuse .pgw .chk{margin-bottom:4px!important;grid-template-columns:1fr 66px!important}
+#pg-sheet.fuse .pgw .chk .f{padding:4px 8px!important}
+#pg-sheet.fuse .pgw .chk .f .v,#pg-sheet.fuse .pgw .chk .f .s{padding:0 4px!important}
+#pg-sheet.string .pgw .sec{margin-top:8px!important}
+#pg-sheet.string .pgw .calcline{padding:3px 6px!important;margin-bottom:3px!important;gap:4px!important}
+#pg-sheet.string .pgw .verdict{padding:5px 8px!important;margin-top:6px!important}
+</style></head><body><style>
+.ekcq{max-width:1200px;margin:0 auto;padding:60px 20px 70px;color:#1a1e24;box-sizing:border-box;word-break:keep-all;overflow-wrap:break-word;background:#fff;font-size:17px;line-height:1.7}
+.ekcq *{box-sizing:border-box}
+.ekcq .eb{font-size:13px;font-weight:800;letter-spacing:2px;color:#1a7f37}
+.ekcq h1{font-size:38px;margin:10px 0 16px;font-weight:800;line-height:1.3}
+.ekcq .lead{list-style:none;padding:0;margin:0 0 26px;font-size:18px;line-height:1.8}
+.ekcq .lead li{padding-left:22px;position:relative}.ekcq .lead li:before{content:"■";position:absolute;left:0;color:#1a7f37;font-size:12px;top:2px}
+.ekcq .sheet{border:2px solid #1b2330;border-radius:12px;padding:22px 24px;background:#fff}
+.ekcq .sheet>h2{font-size:24px;margin:0 0 4px}
+.ekcq .ref{font-size:14.5px;color:#1f4e79;margin:0 0 14px;line-height:1.6}
+.ekcq .sh{background:#1f4e79;color:#fff;font-weight:800;font-size:17px;padding:10px 14px;border-radius:8px 8px 0 0;margin-top:18px}
+.ekcq .sb{border:1px solid #dfe3e8;border-top:0;border-radius:0 0 8px 8px;padding:12px 14px}
+.ekcq .inp{display:grid;grid-template-columns:1fr 1fr;gap:4px 24px}
+.ekcq .row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px dashed #edf0f3}
+.ekcq .row label{font-size:17px;font-weight:700}
+.ekcq .row label small{display:block;font-size:13.5px;color:#555;font-weight:400}
+.ekcq .row input,.ekcq .row select{padding:9px 10px;border:1px solid #c9ced6;border-radius:6px;font-size:18px;font-family:inherit;background:#fffbe6;color:#1a1e24}
+.ekcq .row input{width:160px;text-align:right}
+.ekcq .row select{width:330px;max-width:100%}
+.ekcq .big{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0 12px}
+.ekcq .big div{background:#f6f8fb;border-radius:10px;padding:16px 12px;text-align:center;min-width:0}
+.ekcq .big div.main{background:#1f4e79}
+.ekcq .big small{display:block;font-size:14px;color:#555;margin-bottom:4px}
+.ekcq .big div.main small{color:#dbe8f5}
+.ekcq .big b{font-size:28px;color:#1f4e79;font-variant-numeric:tabular-nums;line-height:1.25;display:block}
+.ekcq .big div.main b{color:#fff}
+.ekcq .big b em{font-style:normal;font-size:16px;margin-left:3px;opacity:.8}
+.ekcq table{width:100%;border-collapse:collapse;font-size:15.5px;margin:4px 0 6px}
+.ekcq th,.ekcq td{padding:8px 8px;border-bottom:1px solid #e3e6ea;text-align:left;vertical-align:top;line-height:1.5}
+.ekcq th{background:#f4f6f9;font-size:14px;color:#3a4048}
+.ekcq td.n,.ekcq th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ekcq tr.tot td{font-weight:800;font-size:16.5px;color:#1f4e79}
+.ekcq tr.me td{background:#fff6d6}
+.ekcq .twrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ekcq .tip{border-left:5px solid #1f4e79;background:#eef4fb;padding:12px 14px;border-radius:0 8px 8px 0;margin:12px 0 0;font-size:16px;line-height:1.75}
+.ekcq .alert{border-left:5px solid #c62828;background:#fde8e8;padding:12px 14px;border-radius:0 8px 8px 0;margin:12px 0 0;font-size:16px;line-height:1.75}
+.ekcq .under{list-style:none;margin:18px 0 0;padding:14px 16px;border:1px solid #dfe3e8;border-radius:10px;background:#fafbfc;font-size:15.5px;line-height:1.85}
+.ekcq .under li{padding-left:16px;position:relative}.ekcq .under li:before{content:"-";position:absolute;left:0}
+.ekcq .under a{color:#1f4e79;font-weight:800}
+.ekcq h2.h{font-size:26px;margin:44px 0 14px}
+.ekcq details{border:1px solid #e3e6ea;border-radius:10px;padding:14px 18px;margin:0 0 10px;background:#fff}
+.ekcq summary{font-weight:700;cursor:pointer;font-size:17.5px}
+.ekcq details p{font-size:16px;line-height:1.8;color:#3a4048;margin:10px 0 0}
+.ekcq .law{border:1px solid #dfe3e8;background:#fafbfc;border-radius:10px;padding:16px 20px;margin:28px 0 0;font-size:15px;line-height:1.8;color:#3a4048}
+.ekcq .law b{color:#1a1e24}
+.ekcq .law ul{margin:6px 0 0;padding-left:18px}
+.ekcq .btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin:30px 0 0}
+.ekcq .btns a{display:inline-block;font-weight:800;font-size:20px;padding:16px 30px;border-radius:12px;text-decoration:none}
+.ekcq .btns a.call{background:#ff7a00;color:#fff!important}
+.ekcq .btns a.q{background:#fff;color:#1f4e79!important;border:2px solid #1f4e79}
+.ekcq .contact{margin:22px 0 0;font-size:19px;font-weight:800;color:#1b2330;text-align:center}
+@media(max-width:860px){.ekcq .twrap table{min-width:760px}.ekcq{padding:40px 14px 50px}.ekcq h1{font-size:28px}.ekcq .lead{font-size:16px}.ekcq .inp{grid-template-columns:1fr}.ekcq .big{grid-template-columns:1fr 1fr}.ekcq .big b{font-size:22px}.ekcq .sheet{padding:16px 12px}.ekcq .row{flex-direction:column;align-items:stretch;gap:6px}.ekcq .row input,.ekcq .row select{width:100%;font-size:17px}.ekcq table{font-size:14px}.ekcq th,.ekcq td{padding:7px 5px}.ekcq .btns a{display:block;width:100%;text-align:center;font-size:18px}.ekcq .contact{font-size:16px}}
+@media(max-width:480px){.ekcq .sheet{padding:14px 8px}.ekcq .big{grid-template-columns:1fr}.ekcq table{font-size:13px}.ekcq th,.ekcq td{padding:6px 4px}.ekcq th{font-size:12.5px}}
+</style>
+<div class="ekcq" id="cleaning-quote-calculator">
+  <div class="eb">SOLAR PANEL CLEANING · QUOTE</div>
+  <h1>태양광 패널 청소 비용 계산기 (지붕형·지상형 1회 간이 견적)</h1>
+  <ul class="lead">
+    <li>설치 형태, 용량(kW), 지붕 높이, 차량 진입 여부를 넣으면 <b>사람이 하는 방식·드론·자동 장비별 1회 청소 비용</b>, 필요한 <b>인원·작업 일수</b>, 우리가 권하는 방식을 보여 드립니다.</li>
+    <li>물, 발전기 연료, 세제, 장비, 인건비, 풀이 자라는 지상형의 제초까지 한 번에 넣어 계산합니다. 사진 판독과 현장 확인을 거친 정식 견적서는 따로 드립니다.</li>
+    <li>회원가입 없이 무료입니다. 숫자는 이 화면 안에서만 계산되고 어디에도 보내지 않습니다. 청소하면 발전량이 얼마나 오르는지는 <a target="_top" href="https://ecokkorea.com/tool-cleaning-loss.html">태양광 청소 효과 계산기</a>에서 보세요.</li>
+  </ul>
+
+  <div class="sheet">
+    <h2>1회 청소 견적 간이 계산표</h2>
+    <p class="ref">※ 금액은 부가가치세 별도 · 1회 청소 기준 · 노란 칸만 입력합니다</p>
+
+    <div class="sh">■ 1. 입력</div>
+    <div class="sb"><div class="inp">
+      <div class="row"><label>① 설치 형태<small>건물 위는 지붕형, 땅 위는 지상형</small></label><select id="cq_kind"><option value="roof" selected>지붕형(건물 지붕 위)</option><option value="ground">지상형(땅 위, 나대지)</option></select></div>
+      <div class="row"><label>② 설비 용량 [kW]<small>발전소 모듈 합계 용량</small></label><input type="number" id="cq_kw" value="100" step="10" min="3" max="200000" inputmode="numeric"></div>
+      <div class="row" id="cq_r_h"><label>③ 지붕 높이 [m]<small>지면에서 지붕 끝까지 (공장 2층 정도 6~9 m)</small></label><input type="number" id="cq_h" value="6" step="0.5" min="1" max="25" inputmode="decimal"></div>
+      <div class="row" id="cq_r_rt"><label>④ 지붕 종류<small>건축물대장의 지붕 재료</small></label><select id="cq_rt"><option value="steel" selected>강판·패널 지붕</option><option value="slab">슬래브(평) 콘크리트 지붕, 옥상 계단 있음</option><option value="slate">슬레이트 지붕(밟으면 깨짐)</option></select></div>
+      <div class="row" id="cq_r_pa" style="display:none"><label>③ 부지 넓이 [㎡]<small>지상형 발전소가 놓인 땅 전체 넓이(제초 범위)</small></label><input type="number" id="cq_pa" value="3000" step="100" min="100" max="5000000" inputmode="numeric"></div>
+      <div class="row" id="cq_r_gr" style="display:none"><label>④ 풀이 자라는 땅인가<small>포장·자갈이면 제초가 없습니다</small></label><select id="cq_gr"><option value="1" selected>풀이 자람(제초 포함)</option><option value="0">포장 또는 자갈(제초 없음)</option></select></div>
+      <div class="row"><label>⑤ 차량 진입<small>1톤 트럭(스카이차)이 패널 근처까지 들어오는가</small></label><select id="cq_v"><option value="1" selected>들어감</option><option value="0">못 들어가거나 모름</option></select></div>
+      <div class="row"><label>⑥ 오염 정도<small>먼지·분진·새 분변이 심한 곳은 세제와 솔이 더 듭니다</small></label><select id="cq_d"><option value="n" selected>보통(주택·일반 부지)</option><option value="d">심함(공장·창고·해안·시멘트 먼지 인근)</option><option value="l">축사·농장(출입 소독 포함)</option></select></div>
+    </div></div>
+
+    <div id="cq_out"></div>
+
+    <ul class="under">
+      <li>계산 방식: 설계·견적 실무 방식과 같습니다. 패널 넓이 = 용량 × 5 ㎡/kW, 물 2.1 L/㎡, 하루 작업 6시간, 인원은 하루 안에 끝내는 수(최대 6명)로 정하고, 일반관리비와 이윤을 더했습니다.</li>
+      <li>드론·청소 로봇·원격 제초기 작업은 협력 업체 장비로 진행하는 것을 전제로, 장비 구입가를 수명·연 가동일로 나눈 감가와 정비·보험을 하루 사용료로 넣은 기준입니다.</li>
+      <li>단가는 당사 기준 평균값이고, 인건비·물값·연료·관리비·이윤은 현장과 계약 조건에 따라 달라집니다. 이 금액은 간이 값이며, 현장 사진(지붕 재질·패널 오염·진입로)과 건축물대장을 확인한 정식 견적서는 문의 주시면 보내 드립니다.</li><li>각 칸은 천 원 단위로 반올림해 보여 드리므로 합계와 몇 천 원 어긋날 수 있습니다. 물·연료 단가와 제초 생산성은 현장에서 확정하는 값이라 이 표에서는 당사 기준 평균값으로 두었습니다.</li>
+    </ul>
+  </div>
+
+  <h2 class="h">자주 묻는 질문</h2>
+  <details><summary>청소는 일 년에 몇 번 하는 것이 좋은가요?</summary><p>일반 부지는 연 1~2회에 황사·꽃가루·공사 분진이 지나간 뒤를 더하는 정도로 봅니다. 축사·공장·해안·시멘트 먼지 인근처럼 오염이 끈적하고 심한 곳은 연 2~4회 이상이 보통입니다. 이 계산기의 금액은 1회분이므로 횟수를 곱해 보세요.</p></details>
+  <details><summary>사람이 하는 방식, 드론, 자동 장비는 어떻게 다른가요?</summary><p>지붕형 기본은 물과 부드러운 솔을 쓰는 사람 작업입니다. 지붕이 높거나 밟으면 깨지는 슬레이트면 사람이 올라가지 않는 드론 물 분사가 유리합니다. 지상형 큰 부지(약 1MW 이상)는 이동식 청소 로봇이 사람 작업보다 유리해집니다. 위 표에서 방식별 금액을 나란히 비교할 수 있습니다.</p></details>
+  <details><summary>물은 현장 수도를 써야 하나요?</summary><p>원칙은 1,000L 물탱크를 싣고 가서 쓰는 것입니다. 차량이 못 들어가면 현장 수도에서 긴 호스로 끌어와야 해서 수도 위치 확인이 필요하고, 물이 모자라면 물차 임대를 더하기도 합니다.</p></details>
+  <details><summary>풀이 자라는 부지는 제초도 같이 하나요?</summary><p>지상형에서 풀이 자라는 땅이면 제초를 함께 넣어 계산합니다. 제초는 세척보다 자주(연 2~6회) 필요해서 따로 정기 계약으로 드리기도 합니다. 공장·대지·주차장처럼 포장·자갈 땅이면 제초를 넣지 않습니다.</p></details>
+  <details><summary>이 금액이 실제 견적과 얼마나 다른가요?</summary><p>간이 값은 용량, 지붕 높이, 차량 진입, 오염 정도만으로 만든 평균 모형입니다. 실제 견적은 위성·현장 사진으로 패널 넓이와 지붕 재질, 진입로를 확인하고 단가를 현장에 맞춰 정합니다. 차이가 나면 정식 견적서의 숫자를 따르세요.</p></details>
+
+  <div class="law"><b>각주 (기준일 2026-11-13)</b>
+    <ul>
+      <li>패널 면적 5 ㎡/kW(고효율 모듈 가정), 청소 물 2.1 L/㎡(연구 평균, 설계 범위 1~3), 하루 작업 6시간(일사가 약한 이른 아침 위주, 모듈 제조사 권장 일사 200 W/㎡ 이하).</li>
+      <li>사람 작업 생산성: 지붕 36 ㎡/인시, 지상 150 ㎡/인시(공개 조사 자료 역산). 드론 725 ㎡/h(제조사 사양), 청소 로봇 1,000 ㎡/h(공개 자료 범위 400~1,600 ㎡/h의 가운데).</li>
+      <li>스카이차 임대는 업체 공시 단가(2026-10-13, 8시간 기준, 부가세 별도)의 톤급별 값을 썼습니다.</li>
+      <li>국내 청소업체 홍보 글(2026-06-29)의 100kW 1회 시세 참고: 쉬운 곳 70~80만원, 어려운 곳 100~120만원. 현장 조건과 포함 범위(제초·장비)가 달라 직접 비교는 어렵습니다.</li>
+    </ul>
+    넣지 않은 것: 모듈 제조사 서면 승인이 필요한 세제 사용 확정, 야간·휴일 할증, 지붕 안전 시설 설치, 추락 방지 난간 공사, 폐수 수거, 보험료, 먼 거리 출장비.
+  </div>
+
+  <div class="btns"><a class="call" href="tel:15552859">청소 견적 상담 ☎ 1555-2859</a><a target="_top" class="q" href="https://ecokkorea.com/tool-cleaning-loss.html">청소 효과 계산기</a></div>
+  <p class="contact">☎ 1555-2859 · www.ecokkorea.kr · info@ecokkorea.co.kr</p>
+</div>
+<script>
+(function(){
+  var out=document.getElementById('cq_out');if(!out||out.getAttribute('data-init'))return;out.setAttribute('data-init','1');
+  var B={"area_kw": 5.0, "water_l": 2.1, "hours": 6, "pay": 300000, "eq": {"rod": 35000, "spray": 50000, "hose": 65000, "step": 30000, "rot": 175000, "truck": 150000, "tank": 50000, "safety": 10000}, "sup": {"water_m3": 2000, "gen_lph": 1.5, "fuel_l": 1700, "det_l": 13000, "det_lpm2": 0.004, "etc_day": 30000}, "wp": {"refill": 2, "rate": 1.2}, "tank": 1.0, "move_day": 70000, "disinfect": 50000, "prod": {"roof": 36, "ground": 150}, "sky_min": 3.5, "sky": [{"name": "1~3.5톤", "h": 12, "key": "스카이_1_3.5t"}, {"name": "5톤", "h": 18, "key": "스카이_5t"}, {"name": "8톤", "h": 25, "key": "스카이_8t"}], "rent": {"truck5": 350000, "스카이_1_3.5t": 600000, "스카이_5t": 700000, "스카이_8t": 900000, "물차_5t": 350000, "크레인_25t": 900000}, "drone": {"price": 38500000, "life": 4, "days": 100, "upkeep": 0.15, "crew": 2, "per_h": 725}, "robot": {"price": 45000000, "life": 6, "days": 100, "upkeep": 0.12, "crew": 2, "per_h": 1000}, "weed": {"per_day": 1500, "mower_day": 30000}, "weed_auto": {"price": 11500000, "life": 5, "days": 100, "upkeep": 0.15, "crew": 1, "per_h": 800}, "mgmt": 0.06, "profit": 0.1, "drone_rec_h": 12, "robot_rec": 25000, "freq_normal": "연 1~2회 + 황사·꽃가루·공사 분진 뒤", "freq_dirty": "연 2~4회 이상"};
+  function $(i){return document.getElementById(i);}
+  function won(x){return Math.round(x/1000)*1000;}
+  function fm(x){return Math.round(x).toLocaleString('ko-KR');}
+  function man(x){var m=Math.round(x/10000);return m.toLocaleString('ko-KR')+'만원';}
+  function ownDay(c){return c.price/(c.life*c.days)+c.price*c.upkeep/c.days;}
+
+  function plan(inp){
+    var kind=inp.kind,kw=inp.kw;
+    var area=kw*B.area_kw,water=area*B.water_l/1000,H=B.hours,pay=B.pay,eq=B.eq,S=B.sup;
+    var height=kind==='roof'?inp.height:0;
+    var livestock=inp.dirt==='l',dirty=inp.dirt!=='n';
+    var vehicle=!!inp.vehicle,warn=[];
+    function crew(prod,baseMin,extra){var needH=area/prod,n=Math.max(baseMin,Math.ceil(needH/H));n=Math.min(n,6);
+      var days=Math.max(0.5,Math.ceil(needH/(n*H)*2)/2);return [n+extra,days];}
+    var adjust=[];
+    function supplies(days){
+      var gd=Math.ceil(days),hrs=days*H,WP=B.wp,unit=S.water_m3;
+      var cap=vehicle?(B.tank*(1+WP.refill)*gd):0.0,own=Math.min(water,cap),short=Math.max(0.0,water-own),its=[];
+      if(own>0)its.push(['s','물값',own*unit]);
+      if(short>0){its.push(['s','부족분 물 사업주 공급',short*unit*WP.rate]);
+        var msg='사업주 물을 못 받으면 물차 임대를 더해야 해서 금액이 올라갑니다';if(adjust.indexOf(msg)<0)adjust.push(msg);}
+      its.push(['s','연료',hrs*S.gen_lph*S.fuel_l]);
+      if(dirty)its.push(['s','세제',area*S.det_lpm2*S.det_l]);
+      its.push(['s','소모품',gd*S.etc_day]);its.push(['s','운반',gd*B.move_day]);
+      return its;
+    }
+    var opts=[],items,n,days,access,gear;
+    if(kind==='roof'){
+      var c=crew(B.prod.roof,2,1);n=c[0];days=c[1];
+      items=[['p','인건비',n*days*pay]];
+      gear=[['rod',2],['spray',1],['hose',1],['step',1]];
+      var slab=inp.roof==='slab';
+      if(slab){access='옥상 계단 출입';gear=gear.filter(function(g){return g[0]!=='step';});}
+      else if(height<B.sky_min){access='사다리 + 안전줄';}
+      else if(vehicle){var pick=null;for(var i=0;i<B.sky.length;i++){if(height<=B.sky[i].h){pick=B.sky[i];break;}}if(!pick)pick=B.sky[B.sky.length-1];
+        access='스카이차 '+pick.name;var sd=Math.max(1,Math.ceil(days));items.push(['e','스카이차',sd*B.rent[pick.key]]);}
+      else{access='사다리 + 안전줄';warn.push('지붕 높이 '+height+' m인데 차량 진입이 어려워 사다리 작업으로 잡았습니다. 현장 확인이 필요합니다.');}
+    }else{
+      var c2=crew(B.prod.ground,2,0);n=c2[0];days=c2[1];
+      items=[['p','인건비',n*days*pay]];
+      gear=[['rot',Math.max(1,Math.floor(n/2))],['spray',1],['hose',1]];access='지상 작업';
+    }
+    if(vehicle)gear=gear.concat([['truck',1],['tank',1]]);
+    var gday=Math.ceil(days);
+    gear.forEach(function(g){items.push(['e','장비',g[1]*gday*eq[g[0]]]);});
+    items.push(['e','안전장비',n*gday*eq.safety]);
+    items=items.concat(supplies(days));
+    if(livestock)items.push(['s','소독',B.disinfect]);
+    opts.push({name:'A. 사람이 하는 방식',how:kind==='roof'?'물+부드러운 솔('+access+')':'회전 브러시+물(지상)',n:n,days:days,items:items});
+
+    var dr=B.drone,dh=area/dr.per_h,ddays=Math.max(0.5,Math.ceil(dh/H*2)/2),dday=ownDay(dr),dg=Math.max(1,Math.ceil(ddays));
+    var ditems=[['e','드론',dg*dday],['p','인건비',dr.crew*ddays*pay],['e','장비',dg*eq.truck],['e','장비',dg*eq.tank]].concat(supplies(ddays));
+    if(livestock)ditems.push(['s','소독',B.disinfect]);
+    opts.push({name:'B. 드론 청소',how:'청소 드론(물 분사, 유선 전원)',n:dr.crew,days:ddays,items:ditems});
+
+    if(kind==='ground'){
+      var rb=B.robot,rh=area/rb.per_h,rdays=Math.max(0.5,Math.ceil(rh/H*2)/2),rg=Math.ceil(rdays);
+      var ritems=[['e','로봇',rg*ownDay(rb)],['p','인건비',rb.crew*rdays*pay],['e','장비',rg*eq.truck],['e','장비',rg*eq.tank]].concat(supplies(rdays));
+      opts.push({name:'C. 자동 장비(로봇)',how:'청소 로봇',n:rb.crew,days:rdays,items:ritems});
+    }
+
+    var weed=null;
+    if(kind==='ground'&&inp.grass){
+      var warea=Math.max(0,inp.parcel),wz=B.weed,wa=B.weed_auto;
+      var wd=warea/wz.per_day,wn=Math.max(1,Math.min(4,Math.ceil(wd))),wdays=Math.max(0.5,Math.ceil(wd/wn*2)/2);
+      var manual=[['w','제초',wn*wdays*pay],['w','제초',wn*Math.ceil(wdays)*wz.mower_day]];
+      var adays=Math.max(0.5,Math.ceil(warea/wa.per_h/H*2)/2);
+      var auto=[['w','제초',Math.ceil(adays)*ownDay(wa)],['w','제초',wa.crew*adays*pay],['w','제초',adays*H*S.gen_lph*S.fuel_l]];
+      var sum=function(a){return a.reduce(function(t,x){return t+x[2];},0);};
+      var useAuto=sum(auto)<=sum(manual);
+      opts.forEach(function(o){o.items=o.items.concat(useAuto?auto:manual);o.weedDays=useAuto?adays:wdays;});
+      weed={area:warea,auto:useAuto};
+    }
+    opts.forEach(function(o){var d=0,g={p:0,e:0,s:0,w:0};o.items.forEach(function(x){d+=x[2];g[x[0]]+=x[2];});
+      o.direct=d;o.g=g;o.mg=d*B.mgmt;o.profit=(d+o.mg)*B.profit;o.total=d+o.mg+o.profit;});
+
+    var rec=opts[0].name,why;
+    if(kind==='roof'){
+      var a=opts[0],b=opts[1];
+      why='지붕형 기본: 저압수와 부드러운 솔이 오염 제거에 가장 안정적입니다.';
+      if(height>=B.drone_rec_h||inp.roof==='slate'){rec=b.name;why='지붕이 높거나('+height+' m) 밟으면 깨지는 슬레이트라 사람이 올라가지 않는 방식을 권합니다.';}
+      else if(dirty){why='오염이 끈적한 현장이라 솔로 문질러야 잘 닦입니다. 사람+솔 방식이 기본이고 드론 물 분사는 보조입니다.';}
+      else if(b.total<a.total){rec=b.name;why='드론 방식이 사람 작업보다 싸고 사람이 지붕에 오르지 않습니다.';}
+    }else{
+      var a2=opts[0],c3=opts[2];why='작은 지상형: 회전 브러시와 물로 자체 작업합니다.';
+      if(area>=B.robot_rec){rec=c3.name;why='패널 넓이 '+fm(area)+' ㎡. 대형 지상형은 청소 로봇이 사람 작업보다 유리합니다.';}
+      else if(c3.total<a2.total){rec=c3.name;why='청소 로봇이 사람 작업보다 싸고 사람이 적게 듭니다.';}
+      else why='이 크기에서는 사람 작업(회전 브러시)이 자동 장비보다 쌉니다.';
+    }
+    if(inp.roof==='slate'&&kind==='roof')warn.push('슬레이트 지붕은 석면이 있을 수 있고 밟으면 깨집니다. 사람이 올라가는 작업은 하지 않습니다.');
+    var freq=dirty?B.freq_dirty:B.freq_normal;
+    return {kind:kind,area:area,kw:kw,water:water,vehicle:vehicle,opts:opts,rec:rec,why:why,weed:weed,freq:freq,warn:warn,adjust:adjust,access:access};
+  }
+  function render(){
+    var kind=$('cq_kind').value;
+    var isRoof=kind==='roof';
+    $('cq_r_h').style.display=isRoof?'':'none';$('cq_r_rt').style.display=isRoof?'':'none';
+    $('cq_r_pa').style.display=isRoof?'none':'';$('cq_r_gr').style.display=isRoof?'none':'';
+    var kw=parseFloat($('cq_kw').value),cut=[];
+    if(!(kw>=3)){out.innerHTML='<div class="alert">② 설비 용량은 3 kW 이상으로 넣어 주세요.</div>';return;}
+    var KMAX=isRoof?20000:200000;
+    if(kw>KMAX){out.innerHTML='<div class="alert">② '+(isRoof?'지붕형':'지상형')+' '+fm(KMAX)+' kW를 넘는 설비는 현장 조건이 달라 간이 계산이 맞지 않습니다. 문의 주세요. ☎ 1555-2859</div>';return;}
+    var hh=parseFloat($('cq_h').value)||0;
+    if(isRoof&&!(hh>=1)){out.innerHTML='<div class="alert">③ 지붕 높이를 1 m 이상으로 넣어 주세요.</div>';return;}
+    if(isRoof&&hh>B.sky[B.sky.length-1].h){out.innerHTML='<div class="alert">③ 지붕 높이가 '+B.sky[B.sky.length-1].h+' m를 넘으면 일반 스카이차로 닿지 않아 장비를 현장에서 따로 정해야 합니다. 간이 계산을 하지 않으니 문의 주세요. ☎ 1555-2859</div>';return;}
+    var pa=parseFloat($('cq_pa').value)||0;
+    var inp={kind:kind,kw:kw,height:hh,roof:$('cq_rt').value,parcel:pa,
+      grass:$('cq_gr').value==='1',vehicle:$('cq_v').value==='1',dirt:$('cq_d').value};
+    if(!isRoof&&inp.grass&&!(pa>=100)){out.innerHTML='<div class="alert">③ 부지 넓이를 100 ㎡ 이상으로 넣어 주세요.</div>';return;}
+    if(!isRoof&&inp.grass&&pa>5000000){out.innerHTML='<div class="alert">③ 부지 넓이가 500만 ㎡를 넘으면 간이 계산이 맞지 않습니다. 문의 주세요. ☎ 1555-2859</div>';return;}
+    var r=plan(inp),rec=r.opts.filter(function(o){return o.name===r.rec;})[0];
+    window.__cq_last=r;
+    var h='<div class="sh">■ 2. 결과 (1회 청소, 부가세 별도)</div><div class="sb"><div class="big">'
+      +'<div class="main"><small>권하는 방식</small><b>'+rec.name.slice(3)+'</b></div>'
+      +'<div class="main"><small>1회 금액(부가세 별도)</small><b>'+man(won(rec.total))+'</b></div>'
+      +'<div><small>인원 · 작업 일수</small><b>'+rec.n+'명 · '+rec.days+'일</b></div>'
+      +'<div><small>패널 넓이 · 물 사용</small><b>'+fm(r.area)+' ㎡ · '+r.water.toFixed(1)+' ㎥</b></div></div>';
+    h+='<div class="tip"><b>왜 이 방식인가:</b> '+r.why+'<br><b>청소 주기:</b> '+r.freq+'</div>';
+    r.warn.forEach(function(w){h+='<div class="alert">'+w+'</div>';});
+    if(!r.vehicle)h+='<div class="alert">차량이 못 들어가면 드론·로봇 방식은 장비와 물을 옮기는 방법이 달라져 아래 금액이 맞지 않을 수 있습니다. 이 경우 사람이 하는 방식 기준으로 보시고 정식 견적을 문의해 주세요.</div>';
+    h+='<h3 style="font-size:18px;margin:18px 0 6px;color:#1f4e79">방식별 비교</h3><div class="twrap"><table><tr><th>방식</th><th class="n">인원·일수</th><th class="n">인건비</th><th class="n">장비·차량</th><th class="n">물·연료·소모품</th>'
+      +(r.weed?'<th class="n">제초</th>':'')+'<th class="n">관리비·이윤</th><th class="n">합계</th></tr>';
+    r.opts.forEach(function(o){h+='<tr'+(o.name===r.rec?' class="me tot"':'')+'><td>'+o.name+'<br><small>'+o.how+(r.weed?(o.name.charAt(0)==='C'?'':(r.weed.auto?' + 원격 제초기':' + 예초기 제초')):'')+'</small></td><td class="n">'+o.n+'명·'+o.days+'일</td><td class="n">'+fm(won(o.g.p))+'</td><td class="n">'+fm(won(o.g.e))+'</td><td class="n">'+fm(won(o.g.s))+'</td>'
+      +(r.weed?'<td class="n">'+fm(won(o.g.w))+'</td>':'')+'<td class="n">'+fm(won(o.mg+o.profit))+'</td><td class="n"><b>'+fm(won(o.total))+'원</b></td></tr>';});
+    h+='</table></div>';
+    if(r.weed)h+='<div class="tip">제초 '+fm(r.weed.area)+' ㎡ 포함입니다. 제초는 연 2~6회로 세척보다 자주 필요해서 정기 계약으로 따로 드리기도 합니다.</div>';
+    r.adjust.forEach(function(a){h+='<div class="tip">'+a+'</div>';});
+    h+='<p class="ref" style="margin-top:10px">※ 이 숫자는 간이 값입니다. 정식 견적서는 현장 사진과 건축물대장을 확인해 드립니다. ☎ 1555-2859</p></div>';
+    out.innerHTML=h;
+  }
+  ['cq_kind','cq_kw','cq_h','cq_rt','cq_pa','cq_gr','cq_v','cq_d'].forEach(function(id){$(id).addEventListener('input',render);$(id).addEventListener('change',render);});
+  window.__cq_plan=plan;render();
+})();
+</script>
+
+<div class="pg-bar" id="pg-bar"><button type="button" class="pg-save" id="pg-save">보고서 PDF로 저장</button><span class="pg-hint">A4 한 장, 입력값과 결과 표</span></div><div class="pg-gatebox" id="pg-gatebox"><div class="gate" id="subgate"><div><h2>유튜브 채널을 구독하시면 PDF 보고서가 저장됩니다</h2><ol><li>아래 빨간 단추를 누르면 유튜브 구독 창이 새로 열립니다.</li><li>구독을 마치고 이 창으로 돌아오시면 PDF 저장이 바로 열립니다.</li></ol><p class="note">계산은 구독 없이 무료입니다. 이미 구독 중이시면 같은 단추를 누르고 돌아오시면 됩니다. 한 번 열면 이 브라우저에서는 홈페이지 어디서나 계속 열려 있습니다.</p><p class="ok" role="status">열렸습니다. 구독해 주셔서 고맙습니다.</p></div><a class="subbtn" id="subbtn" href="https://www.youtube.com/channel/UCpRTUvMiZQxXk-7BLJQlUZQ?sub_confirmation=1" target="_blank" rel="noopener"><svg viewBox="0 0 30 21" aria-hidden="true"><rect width="30" height="21" rx="5" fill="#fff"/><path d="M12 6l8 4.5-8 4.5z" fill="#c4161c"/></svg>유튜브 구독하고 PDF 저장</a></div></div><script>(function(){var R=document.getElementById("cq_out"),b=document.getElementById('pg-bar'),g=document.getElementById('pg-gatebox');if(R&&R.parentNode){R.parentNode.insertBefore(b,R.nextSibling);b.parentNode.insertBefore(g,b.nextSibling)}})();(function(){
+var K='ecok_sub_ok',KEY="cleaning-quote",ROOT="ekcq",FIT=(KEY==='fuse'||KEY==='string')?1005:960,RID="cq_out",CO="☎ 1555-2859 · www.ecokkorea.kr · info@ecokkorea.co.kr",NOTE="참고용 계산, 실제 설계는 현장 조건 확인",ok=false,clicked=0,pending=false;
+function setOk(){try{window.localStorage.setItem(K,'1')}catch(e){}try{document.cookie=K+'=1; max-age=31536000; path=/; SameSite=Lax'}catch(e){}}
+function getOk(){var v=false;try{v=window.localStorage.getItem(K)==='1'}catch(e){}
+ if(!v){try{v=/(?:^|; )ecok_sub_ok=1/.test(document.cookie)}catch(e){}}
+ if(v)setOk();return v}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function rows(){var out=[];document.querySelectorAll('.sheet .row').forEach(function(r){
+ var el=r.querySelector('input,select,output');if(!el)return;
+ var lb=r.querySelector('label');if(!lb)return;var c=lb.cloneNode(true);
+ c.querySelectorAll('small').forEach(function(s){var t=s.textContent.trim();if(t.length<=6)s.replaceWith(document.createTextNode(' ('+t+')'));else s.remove()});
+ var name=c.textContent.replace(/\s+/g,' ').trim(),v;
+ if(el.type==='checkbox')v=el.checked?"예":"아니오";
+ else if(el.tagName==='SELECT')v=el.options[el.selectedIndex]?el.options[el.selectedIndex].text:'';
+ else if(el.tagName==='OUTPUT')v=el.textContent;
+ else v=el.value||"자동";
+ out.push([name,String(v).replace(/\s+/g,' ').trim()])});return out}
+function sheetHtml(){
+ var R=document.getElementById(RID);if(!R)return null;
+ var cl=R.cloneNode(true);cl.removeAttribute('id');cl.querySelectorAll('[id]').forEach(function(n){n.removeAttribute('id')});
+ if(KEY==='string')cl.querySelectorAll('table').forEach(function(t){if(t.rows[0]&&t.rows[0].cells.length>10)t.remove()});
+ var rs=rows(),h='';
+ for(var i=0;i<rs.length;i+=2){var a=rs[i],b=rs[i+1];
+  h+='<tr><th>'+esc(a[0])+'</th><td>'+esc(a[1])+'</td>'+(b?'<th>'+esc(b[0])+'</th><td>'+esc(b[1])+'</td>':'<th></th><td></td>')+'</tr>'}
+ var h1=document.querySelector('h1'),title=h1?h1.textContent.trim():document.title;
+ var d=new Date(),ds=d.getFullYear()+'.'+(d.getMonth()+1)+'.'+d.getDate();
+ var w=document.createElement('div');w.className='pgw '+ROOT;w.appendChild(cl);
+ var extra='';
+ if(KEY==='fire'){var t1=document.getElementById('ft1'),t2=document.getElementById('ft2');
+  if(t1&&t2){var nt=t1.closest('.tw').previousElementSibling,x=document.createElement('div');x.className='pgw '+ROOT;
+   if(nt)x.appendChild(nt.cloneNode(true));[t1,t2].forEach(function(t){var c=t.closest('.tw').cloneNode(true);c.querySelectorAll('[id]').forEach(function(n){n.removeAttribute('id')});x.appendChild(c)});
+   extra='<h2>'+"감지면적 표 (NFTC 203 원문)"+'</h2>'+x.outerHTML}}
+ return '<div id="pg-sheet" class="pg-fr '+KEY+'"><div class="pg-hd"><img src="img/logo.png" alt="'+"에코케이코리아"+'"><span class="pg-dt">'+"계산일 "+ds+'</span></div>'
+  +'<div class="pg-t">'+esc(title)+'</div><p class="pg-s">'+"입력값과 계산 결과"+'</p>'
+  +'<h2>'+"입력값"+'</h2><table class="pg-in"><tbody>'+h+'</tbody></table><h2>'+"계산 결과"+'</h2>'+w.outerHTML+extra
+  +'<div class="pg-ft"><b>'+esc(CO)+'</b><span>'+esc(NOTE)+'</span></div></div>'}
+function frameHtml(){var s=sheetHtml();if(!s)return null;
+ var bs=document.createElement('base');bs.href=document.baseURI;var heads='';document.querySelectorAll('head style').forEach(function(x){heads+=x.outerHTML});
+ return '<!doctype html><html lang="'+"ko"+'"><head><meta charset="utf-8">'+bs.outerHTML+heads+'<style>html,body{margin:0;background:#fff}</style></head><body>'+s+'</body></html>'}
+function doSave(){var html=frameHtml();if(!html)return;
+ var old=document.getElementById('pg-frame');if(old)old.remove();
+ var f=document.createElement('iframe');f.id='pg-frame';f.setAttribute('aria-hidden','true');
+ f.style.cssText='position:absolute;left:-9999px;top:0;width:190mm;height:1400px;border:0;visibility:hidden';
+ f.onload=function(){var w=f.contentWindow,doc=f.contentDocument,s=doc.getElementById('pg-sheet');if(!s)return;
+  var go=function(){var hh=s.scrollHeight;s.style.zoom=Math.min(1,FIT/hh).toFixed(3);
+   setTimeout(function(){try{w.focus();w.print()}catch(e){try{window.print()}catch(e2){}}},120)};
+  (doc.fonts&&doc.fonts.ready?doc.fonts.ready:Promise.resolve()).then(function(){setTimeout(go,150)},go)};
+ document.body.appendChild(f);f.srcdoc=html}
+window.__pgFrameHtml=frameHtml;
+var box=document.getElementById('pg-gatebox'),btn=document.getElementById('pg-save');
+function openGate(){ok=true;setOk();var g=box.querySelector('.gate');g.classList.add('done');
+ if(pending){pending=false;doSave()}}
+ok=getOk();
+btn.addEventListener('click',function(){
+ if(ok){doSave();return}
+ pending=true;box.classList.add('show');try{box.scrollIntoView({block:'nearest'})}catch(e){}});
+document.getElementById('subbtn').addEventListener('click',function(){clicked=Date.now()});
+function back(){if(clicked&&!ok&&Date.now()-clicked>2500)openGate()}
+addEventListener('focus',back);document.addEventListener('visibilitychange',function(){if(!document.hidden)back()});
+window.__pgUnlock=openGate;
+})();</script><script>(function(){function s(){parent.postMessage({h:document.documentElement.scrollHeight},'*')}addEventListener('load',s);new ResizeObserver(s).observe(document.body);setTimeout(s,800)})()</script></body></html>

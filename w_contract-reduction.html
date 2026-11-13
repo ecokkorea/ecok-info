@@ -1,0 +1,461 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+<style>@font-face{font-family:Paperlogy;src:url(fonts/Paperlogy-4Regular.ttf);font-weight:400}@font-face{font-family:Paperlogy;src:url(fonts/Paperlogy-6SemiBold.ttf);font-weight:600}@font-face{font-family:Paperlogy;src:url(fonts/Paperlogy-8ExtraBold.ttf);font-weight:800}
+html,body{margin:0;background:#fff;overflow-x:hidden}body{font-family:Paperlogy,'Malgun Gothic',sans-serif;word-break:keep-all;color:#16212c}img{max-width:100%;height:auto}@media (max-width:600px){table{display:block;overflow-x:auto}}</style><style>/* 스타일은 위젯 안 <style> */
+</style><style>:root{--ink:#16212c;--slate:#4a5763;--line:#d5dce2;--mist:#eef2f5;--blue:#1d4f91;--blue-dark:#163d70}
+.gate{margin-top:0;border:1.5px solid var(--ink);background:#fff;display:grid;grid-template-columns:1fr auto;gap:28px;align-items:center;padding:clamp(22px,3vw,36px)}
+.gate h2{font-size:clamp(24px,2.4vw,32px);font-weight:800;letter-spacing:-.02em;line-height:1.35}
+.gate ol{margin:14px 0 0;padding-left:1.4em;color:var(--slate)}.gate ol li{margin:4px 0}
+.gate .note{margin-top:12px;font-size:16px;color:var(--slate)}
+.subbtn{display:inline-flex;align-items:center;gap:12px;padding:18px 30px;border-radius:10px;background:#c4161c;color:#fff;font-weight:800;font-size:21px;text-decoration:none;white-space:nowrap}
+.subbtn:hover{background:#9f1015}.subbtn svg{width:30px;height:21px;flex:none}
+.gate .ok{display:none;font-weight:800;color:#1b6b3a;font-size:20px}
+.gate.done .ok{display:block}.gate.done .subbtn{background:#fff;color:#c4161c;border:2px solid #c4161c;padding:14px 24px;font-size:18px}
+
+.pg-bar{margin:22px 0 0;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.pg-save{font:800 19px Paperlogy,'Malgun Gothic',sans-serif;padding:15px 28px;border:0;border-radius:10px;background:#1d4f91;color:#fff;cursor:pointer}
+.pg-save:hover{background:#163d70}.pg-hint{font-size:15px;color:#4a5763}
+.pg-gatebox{display:none;margin-top:18px}.pg-gatebox.show{display:block}
+.pg-gatebox .gate{grid-template-columns:1fr}.pg-gatebox .subbtn{justify-self:start}
+#pg-sheet{display:none}
+@media print{
+ @page{size:A4;margin:10mm}
+ html,body{background:#fff!important;overflow:visible!important}
+ body>*:not(#pg-sheet){display:none!important}
+ #pg-sheet{display:block!important;width:190mm;color:#16212c;font-family:Paperlogy,'Malgun Gothic',sans-serif;word-break:keep-all;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+#pg-sheet.pg-fr{display:block}
+#pg-sheet.fuse .pgw>div,#pg-sheet.string .pgw>div{column-count:2;column-gap:14px}
+#pg-sheet.string .pgw .sec{break-inside:avoid}
+#pg-sheet.string .pgw .sec:has(table){column-span:all}
+#pg-sheet.fuse .pgw .sh,#pg-sheet.fuse .pgw .chk{break-inside:avoid}
+#pg-sheet *{box-sizing:border-box}
+#pg-sheet .pg-hd{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #1d4f91;padding-bottom:6px}
+#pg-sheet .pg-hd img{height:26px;width:auto}#pg-sheet .pg-dt{font-size:12px;color:#4a5763}
+#pg-sheet .pg-t{font-size:20px;font-weight:800;margin:10px 0 2px;line-height:1.3}
+#pg-sheet .pg-s{font-size:12px;color:#4a5763;margin:0 0 6px}
+#pg-sheet h2{font-size:14px;font-weight:800;margin:10px 0 4px;color:#1d4f91}
+#pg-sheet table.pg-in{width:100%;border-collapse:collapse;table-layout:fixed;font-size:11.5px}
+#pg-sheet table.pg-in th,#pg-sheet table.pg-in td{border-bottom:1px solid #d5dce2;padding:3px 6px;line-height:1.35;vertical-align:top;word-break:keep-all;overflow-wrap:break-word}
+#pg-sheet table.pg-in th{text-align:left;font-weight:600;color:#4a5763;background:#f4f6f8;width:27%}
+#pg-sheet table.pg-in td{font-weight:800;width:23%}
+#pg-sheet .pgw{max-width:none;margin:0;padding:0;color:#16212c}
+#pg-sheet .pgw .sh{margin-top:6px}
+#pg-sheet .pg-ft{margin-top:10px;border-top:1px solid #d5dce2;padding-top:6px;font-size:12px;display:flex;justify-content:space-between;gap:12px}
+#pg-sheet .pg-ft b{font-weight:800}
+
+#pg-sheet.fuse .pgw *,#pg-sheet.string .pgw *{font-size:10.5px!important;line-height:1.45!important}
+#pg-sheet.fuse .pgw .sh,#pg-sheet.string .pgw .sec h3,#pg-sheet.string .pgw .ekmppt h3{font-size:12px!important}
+#pg-sheet.fuse .pgw .sh{padding:5px 10px!important;margin-top:8px!important;break-after:avoid}
+#pg-sheet.fuse .pgw .sb{padding:5px 8px!important}
+#pg-sheet.fuse .pgw .chk{margin-bottom:4px!important;grid-template-columns:1fr 66px!important}
+#pg-sheet.fuse .pgw .chk .f{padding:4px 8px!important}
+#pg-sheet.fuse .pgw .chk .f .v,#pg-sheet.fuse .pgw .chk .f .s{padding:0 4px!important}
+#pg-sheet.string .pgw .sec{margin-top:8px!important}
+#pg-sheet.string .pgw .calcline{padding:3px 6px!important;margin-bottom:3px!important;gap:4px!important}
+#pg-sheet.string .pgw .verdict{padding:5px 8px!important;margin-top:6px!important}
+</style></head><body><style>
+.ekep{max-width:1200px;margin:0 auto;padding:60px 20px 70px;color:#1a1e24;box-sizing:border-box;word-break:keep-all;overflow-wrap:break-word;background:#fff;font-size:17px;line-height:1.7}
+.ekep *{box-sizing:border-box}
+.ekep .eb{font-size:13px;font-weight:800;letter-spacing:2px;color:#1a7f37}
+.ekep h1{font-size:38px;margin:10px 0 16px;font-weight:800;line-height:1.3}
+.ekep .lead{list-style:none;padding:0;margin:0 0 26px;font-size:18px;line-height:1.8}
+.ekep .lead li{padding-left:22px;position:relative}.ekep .lead li:before{content:"■";position:absolute;left:0;color:#1a7f37;font-size:12px;top:2px}
+.ekep .sheet{border:2px solid #1b2330;border-radius:12px;padding:22px 24px;background:#fff}
+.ekep .sheet>h2{font-size:24px;margin:0 0 4px}
+.ekep .ref{font-size:14.5px;color:#1f4e79;margin:0 0 14px;line-height:1.6}
+.ekep .sh{background:#1f4e79;color:#fff;font-weight:800;font-size:17px;padding:10px 14px;border-radius:8px 8px 0 0;margin-top:18px}
+.ekep .sb{border:1px solid #dfe3e8;border-top:0;border-radius:0 0 8px 8px;padding:12px 14px}
+.ekep .inp{display:grid;grid-template-columns:1fr 1fr;gap:4px 24px}
+.ekep .row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px dashed #edf0f3}
+.ekep .row label{font-size:17px;font-weight:700}
+.ekep .row label small{display:block;font-size:13.5px;color:#555;font-weight:400}
+.ekep .row input,.ekep .row select{padding:9px 10px;border:1px solid #c9ced6;border-radius:6px;font-size:18px;font-family:inherit;background:#fffbe6;color:#1a1e24}
+.ekep .row input{width:160px;text-align:right}
+.ekep .row select{width:330px;max-width:100%}
+.ekep .m12{display:grid;grid-template-columns:repeat(6,1fr);gap:6px 10px;margin:8px 0 4px}
+.ekep .m12 label{font-size:14px;font-weight:700;display:block}
+.ekep .m12 input{width:100%;padding:6px 8px;border:1px solid #c9ced6;border-radius:6px;font-size:16px;text-align:right;background:#fffbe6;font-family:inherit}
+.ekep .big{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0 12px}
+.ekep .big div{background:#f6f8fb;border-radius:10px;padding:16px 12px;text-align:center;min-width:0}
+.ekep .big div.main{background:#1f4e79}
+.ekep .big small{display:block;font-size:14px;color:#555;margin-bottom:4px}
+.ekep .big div.main small{color:#dbe8f5}
+.ekep .big b{font-size:30px;color:#1f4e79;font-variant-numeric:tabular-nums;line-height:1.2}
+.ekep .big div.main b{color:#fff}
+.ekep .big b em{font-style:normal;font-size:16px;margin-left:3px;opacity:.8}
+.ekep table{width:100%;border-collapse:collapse;font-size:15.5px;margin:4px 0 6px}
+.ekep th,.ekep td{padding:8px 8px;border-bottom:1px solid #e3e6ea;text-align:left;vertical-align:top;line-height:1.5}
+.ekep th{background:#f4f6f9;font-size:14px;color:#3a4048}
+.ekep td.n,.ekep th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ekep td.f{color:#3a4048;font-size:15px}
+.ekep tr.sum td{font-weight:800;border-top:2px solid #1b2330;background:#fafbfc}
+.ekep tr.tot td{font-weight:800;font-size:18px;color:#1f4e79;border-top:2px solid #1f4e79;background:#eef4fb}
+.ekep tr.me td{background:#fff6d6}
+.ekep .twrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ekep .svg{width:100%;height:auto;display:block;margin:6px 0 2px}
+.ekep .lg{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:14.5px;color:#3a4048;margin:0 0 8px}
+.ekep .lg i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.ekep .two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.ekep h3.t{font-size:18px;margin:18px 0 6px;color:#1f4e79}
+.ekep .tip{border-left:5px solid #1f4e79;background:#eef4fb;padding:12px 14px;border-radius:0 8px 8px 0;margin:12px 0 0;font-size:16px;line-height:1.75}
+.ekep .alert{border-left:5px solid #c62828;background:#fde8e8;padding:12px 14px;border-radius:0 8px 8px 0;margin:12px 0 0;font-size:16px;line-height:1.75}
+.ekep .under{list-style:none;margin:18px 0 0;padding:14px 16px;border:1px solid #dfe3e8;border-radius:10px;background:#fafbfc;font-size:15.5px;line-height:1.85}
+.ekep .under li{padding-left:16px;position:relative}.ekep .under li:before{content:"-";position:absolute;left:0}
+.ekep .under a{color:#1f4e79;font-weight:800}
+.ekep h2.h{font-size:26px;margin:44px 0 14px}
+.ekep details{border:1px solid #e3e6ea;border-radius:10px;padding:14px 18px;margin:0 0 10px;background:#fff}
+.ekep summary{font-weight:700;cursor:pointer;font-size:17.5px}
+.ekep details p{font-size:16px;line-height:1.8;color:#3a4048;margin:10px 0 0}
+.ekep .law{border:1px solid #dfe3e8;background:#fafbfc;border-radius:10px;padding:16px 20px;margin:28px 0 0;font-size:15px;line-height:1.8;color:#3a4048}
+.ekep .law b{color:#1a1e24}
+.ekep .law ul{margin:6px 0 0;padding-left:18px}
+.ekep .btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin:30px 0 0}
+.ekep .btns a{display:inline-block;font-weight:800;font-size:20px;padding:16px 30px;border-radius:12px;text-decoration:none}
+.ekep .btns a.call{background:#ff7a00;color:#fff!important}
+.ekep .btns a.q{background:#fff;color:#1f4e79!important;border:2px solid #1f4e79}
+.ekep .contact{margin:22px 0 0;font-size:19px;font-weight:800;color:#1b2330;text-align:center}
+.ekep .busy{font-size:15px;color:#555;margin:8px 0 0}
+@media(max-width:860px){.ekep .twrap table{min-width:640px}.ekep .twrap table.mt{min-width:820px}.ekep{padding:40px 14px 50px}.ekep h1{font-size:28px}.ekep .lead{font-size:16px}.ekep .inp{grid-template-columns:1fr}.ekep .big{grid-template-columns:1fr 1fr}.ekep .big b{font-size:24px}.ekep .sheet{padding:16px 12px}.ekep .row{flex-direction:column;align-items:stretch;gap:6px}.ekep .row input,.ekep .row select{width:100%;font-size:17px}.ekep .m12{grid-template-columns:repeat(3,1fr)}.ekep .two{grid-template-columns:1fr}.ekep table{font-size:14px}.ekep th,.ekep td{padding:7px 5px}.ekep .btns a{display:block;width:100%;text-align:center;font-size:18px}.ekep .contact{font-size:16px}}
+@media(max-width:480px){.ekep .sheet{padding:14px 8px}.ekep .big{grid-template-columns:1fr}.ekep table{font-size:13px}.ekep th,.ekep td{padding:6px 4px}.ekep th{font-size:12.5px}.ekep .m12{grid-template-columns:repeat(2,1fr)}}
+
+.ekep .cc-bars{margin:6px 0 4px}
+.ekep .cc-row{display:grid;grid-template-columns:150px 1fr 170px;gap:10px;align-items:center;margin:7px 0}
+.ekep .cc-l{font-weight:700;font-size:15.5px}
+.ekep .cc-tr{background:#eef1f5;border-radius:6px;height:24px;position:relative;overflow:hidden}
+.ekep .cc-b{height:100%;border-radius:6px}
+.ekep .cc-c{background:#9aa6b5}.ekep .cc-f{background:#c9ced6}.ekep .cc-p{background:#e87a00}.ekep .cc-k{background:#1f4e79}.ekep .cc-n{background:#1a7f37}
+.ekep .cc-v{font-variant-numeric:tabular-nums;font-weight:800;font-size:16px;text-align:right}
+.ekep .cc-v small{display:block;font-weight:400;font-size:12.5px;color:#555}
+@media(max-width:860px){.ekep .cc-row{grid-template-columns:1fr;gap:3px}.ekep .cc-v{text-align:left}.ekep .cc-v small{display:inline;margin-left:6px}.ekep .twrap table{min-width:560px}}
+</style>
+<div class="ekep" id="cc_root">
+  <div class="eb">무료 계산 도구</div>
+  <h1>계약전력, 줄여도 될까? 감설 판정 계산기</h1>
+  <ul class="lead">
+    <li>청구서의 계약전력과 최근 최대수요를 넣으면 <b>계약전력을 줄여도 되는지(감설 판정)</b> 먼저 알려 드립니다.</li>
+    <li>줄여도 되는지, <b>얼마까지 안전한지</b>, 너무 낮추면 붙는 <b>초과사용부가금 위험</b>이 얼마인지를 보여 드린 뒤, 기본요금이 얼마나 달라지는지도 알려 드립니다.</li>
+    <li>회원가입 없이 무료. 한전 약관 원문 근거(조항 번호는 아래 각주). 기본요금 자체를 계산하려면 <a href="https://www.ecokkorea.kr/basic-charge-calculator" target="_blank" rel="noopener">.kr 기본요금 계산기</a>로 가세요.</li>
+  </ul>
+
+  <div class="sheet">
+    <h2>입력하면 바로 판정</h2>
+    <p class="ref">노란 칸에 숫자를 넣으면 아래 결과가 바로 바뀝니다. 금액은 부가세·전력산업기반기금 별도입니다. 계약전력·최대수요는 1~100,000 kW, 역률은 0~100%까지 계산하고, 범위를 벗어나면 바꿔서 알려 드립니다.</p>
+
+    <div class="sh">① 우리 건물 청구서</div>
+    <div class="sb"><div class="inp">
+      <div class="row"><label for="cc_t">요금 종류<small>청구서 '계약종별'</small></label>
+        <select id="cc_t"></select></div>
+      <div class="row"><label for="cc_C">계약전력(kW)<small>청구서 '계약전력'</small></label>
+        <input id="cc_C" type="text" inputmode="decimal" value="1,000"></div>
+      <div class="row"><label for="cc_base">이번 달 기본요금(원)<small>청구서 '기본요금' 칸</small></label>
+        <input id="cc_base" type="text" inputmode="numeric" value="5,200,000"></div>
+      <div class="row"><label for="cc_pmax">최근 최대수요(kW)<small>파워플래너 연도별 화면의 가장 큰 값 (모르면 비움)</small></label>
+        <input id="cc_pmax" type="text" inputmode="decimal" value="800"></div>
+      <div class="row"><label for="cc_pf">지상역률(%)<small>청구서 '역률' (모르면 비움, 저압은 20 kW 이상만)</small></label>
+        <input id="cc_pf" type="text" inputmode="decimal" value="95"></div>
+    </div></div>
+
+    <div class="sh">② 얼마나 줄이고 싶은가</div>
+    <div class="sb"><div class="inp">
+      <div class="row"><label for="cc_c2">줄이고 싶은 계약전력(kW)<small>이 값으로 줄여도 되는지 판정</small></label>
+        <input id="cc_c2" type="text" inputmode="decimal" value="900"></div>
+      <div class="row"><label for="cc_tg">낮추고 싶은 최대수요(kW)<small>여름·겨울 평일 낮 피크 목표 (고압)</small></label>
+        <input id="cc_tg" type="text" inputmode="decimal" value="550"></div>
+    </div></div>
+
+    <div id="cc_out">
+      <div class="sh">③ 감설 판정 결과</div>
+      <div class="sb">
+        <div id="cc_msg"></div>
+        <div class="big" id="cc_big"></div>
+        <p class="busy" id="cc_kr">기본요금 자체의 계산(요금적용전력, 연 기본요금)이 궁금하시면 <a href="https://www.ecokkorea.kr/basic-charge-calculator" target="_blank" rel="noopener">.kr 기본요금 계산기</a>를 이용하세요.</p>
+        <h3 class="t">한눈에 보기: 계약전력, 30% 바닥, 최대수요</h3>
+        <div id="cc_bars"></div>
+        <h3 class="t">계약전력별 판정표 (기본요금은 연간)</h3>
+        <div class="twrap" id="cc_t1"></div>
+        <div id="cc_t2wrap"><h3 class="t">최대수요를 낮추면 (고압)</h3>
+        <div class="twrap" id="cc_t2"></div></div>
+        <div id="cc_pfwrap"><h3 class="t">역률 요금 (한 달 · 한 해)</h3>
+        <div class="twrap" id="cc_t3"></div></div>
+        <div id="cc_warn"></div>
+        <p class="busy">이 숫자는 간이 계산입니다. 정식 검토는 한전 15분 사용량 1년치로 합니다.</p>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="h">자주 묻는 질문</h2>
+  <details><summary>계약전력을 줄여도 되는지는 어떻게 판단하나요?</summary><p>세 가지를 봅니다. 첫째, 줄이려는 값이 최근 최대수요보다 낮으면 초과사용부가금이 붙으니 안 됩니다. 둘째, 최근 최대수요에 10% 정도 여유를 둔 값(안전 하한) 아래면 빠듯합니다. 셋째, 그 위라면 줄여도 되고, 기본요금이 실제로 줄어드는지는 아래 규칙으로 따로 봅니다. 고압(최대수요계가 있는 고객)은 지난 12개월 중 12·1·2·7·8·9월과 이번 달의 최대수요 가운데 가장 큰 값(요금적용전력)으로 기본요금을 매기고, 그 값이 계약전력의 30%보다 작으면 30%로 매깁니다. 그래서 최대수요가 계약전력의 30%보다 높으면 계약전력만 줄여서는 기본요금이 줄지 않고, 최대수요 자체를 낮춰야 합니다. 반대로 30% 바닥으로 매겨지고 있다면 계약전력을 줄이는 즉시 줄어듭니다. 저압은 계약전력이 곧 요금적용전력이라 줄이는 만큼 바로 줄지만, 계약전력은 설치한 설비 입력 합계로 정해져 설비가 줄지 않으면 줄일 수 없습니다.</p></details>
+  <details><summary>'최대수요'와 '요금적용전력'은 무엇이 다른가요?</summary><p>최대수요전력은 계량기가 15분 단위로 재서 그달 가장 큰 값이고, 요금적용전력은 그 값들 가운데 기본요금 계산에 실제로 쓰는 값입니다. 요금적용전력은 중간·최대부하시간대(평일 낮)의 최대수요만 대상으로 하고, 공휴일과 밤 시간(22시~08시)의 최대수요는 빠집니다. 파워플래너 화면의 '최대수요'는 이런 구분 없이 모든 시간을 넣은 값이라 청구서의 기본요금으로 거꾸로 계산한 값(기본요금 ÷ 단가)과 다를 수 있습니다. 이 계산기는 청구서 기본요금으로 거꾸로 계산한 값을 기준으로 삼습니다.</p></details>
+  <details><summary>계약전력을 너무 많이 줄이면 어떻게 되나요?</summary><p>최대수요가 계약전력을 넘으면 초과사용부가금이 붙습니다. 고압처럼 최대수요로 요금적용전력을 정하는 고객은 넘은 비율(넘은 kW ÷ 계약전력)에 따라 넘은 kW × 기본요금 단가에 150%(20% 미만), 200%(20~30%), 250%(30~40%), 300%(40~50%), 350%(50~60%), 400%(60% 이상)를 곱한 금액을 더 냅니다. 저압 고객 중 최대수요계가 있는 경우는 넘은 횟수에 따라 2~3회 150%, 4~5회 200%, 6회 이상 250%를 곱합니다. 처음 넘은 달에는 계약전력 증가 안내(예고)만 하고, 3년 안에 다시 넘으면 부과합니다. 또 줄인 뒤 1년 안에 다시 늘리면 줄여 있던 기간의 기본요금을 내야 합니다. 그래서 계약전력은 최근 몇 년의 최대수요에 여유를 둔 값(이 계산기는 10% 여유)보다 낮추지 않는 것이 안전합니다.</p></details>
+  <details><summary>계약전력은 어떻게 줄이나요?</summary><p>두 가지 길이 있습니다. 하나는 사용설비 기준으로 신청하는 것으로, 건물에서 실제 쓰는 설비의 입력 합계에 환산율(처음 75 kW 100%, 다음 75 kW 85%, 다음 75 kW 75%, 다음 75 kW 65%, 300 kW 초과분 60%)을 곱해 다시 정합니다. 다른 하나는 변압기 용량(1 kVA를 1 kW로 계산)을 줄이는 것으로, 쓰지 않는 변압기를 철거하거나 더 작은 것으로 바꿉니다. 어느 쪽이든 한전에 신청해야 하고, 고객이 신청한 방법으로 정합니다.</p></details>
+  <details><summary>역률이 낮으면 기본요금이 더 나오나요?</summary><p>네. 08시~22시의 평균 지상역률이 92%에 못 미치면 1%마다 기본요금의 0.2%를 더 내고(60%까지), 92%를 넘으면 97%까지 1%마다 0.2%를 깎아 줍니다. 그래서 역률이 74%이면 기본요금의 3.6%가 더 붙고, 97%로 맞추면 1%가 줄어듭니다. 콘덴서 설치로 고칠 수 있어 비용이 적게 드는 절감 방법입니다.</p></details>
+  <details><summary>실제 검토를 받으면 무엇이 달라지나요?</summary><p>이 계산기는 청구서 한 장의 숫자로 계산합니다. 실제 검토에서는 한전 15분 사용량 1년치로 피크가 언제 몇 시간 이어지는지 확인하고, 설비 목록과 변압기 구성으로 줄일 수 있는 계약전력 하한을 정하며, 태양광·ESS를 함께 넣었을 때의 효과까지 계산합니다.</p></details>
+
+  <div class="law"><b>각주 (기준일 2026-11-13)</b>
+    <ul>
+      <li>기본요금 단가(원/kW): 한국전력 전기요금표(종합), 표 머리글 '2026년 6월 1일 시행'(산업용(을)·전기자동차충전전력은 2026년 4월 16일 시행, 그 밖의 종별은 2026년 6월 1일 시행, 표 2쪽 주석). 일반용(갑) 저압 6,160, 고압A 선택Ⅰ 7,170·선택Ⅱ 8,230. 산업용(갑) 저압 5,550, 고압A 선택Ⅰ 6,490·선택Ⅱ 7,470. 일반용(을)·산업용(을) 고압A 선택Ⅰ 7,220·선택Ⅱ 8,320·선택Ⅲ 9,810. 요금표가 바뀌면 이 표를 먼저 확인하세요. 약관·시행세칙은 한전 공개 합본(2026년 7월 1일 시행 개정분까지, 2026-11-12 확인)입니다.</li>
+      <li>요금적용전력: 한전 기본공급약관 제68조 ①. 최대수요전력계를 설치한 고객(제38조 ②·③: 고압 이상 고객, 교육용 저압 고객, 대표고객의 변압기 설비를 공동 이용하는 저압 고객 등)은 검침 당월을 포함한 직전 12개월 중 12·1·2·7·8·9월분과 당월분 최대수요전력 가운데 가장 큰 값, 그 값이 계약전력의 30% 미만이면 계약전력의 30%. 같은 조 ②: 그 밖의 고객은 계약전력. 약관 별표3 단서: 요금적용전력은 중간부하시간대와 최대부하시간대의 최대수요전력 중 큰 것을 대상으로 하며, 공휴일의 최대수요전력은 경부하시간대로 계량.</li>
+      <li>최대수요전력: 약관 제2조 10호. 최대수요전력을 계량할 수 있는 전력량계에 의하여 15분 단위로 누적 계산되는 전력. 저압 고객 중 계약전력 20 kW 이상에는 한전이 최대수요전력계를 설치할 수 있으나(제38조 ④, 시행세칙 제24조 ②), 이 경우 기본요금은 제68조 ②에 따라 계약전력으로 매기고 계약전력 초과 여부(제67조의3)를 보는 데 씁니다.</li>
+      <li>계약전력 결정: 약관 제19조(고객이 신청한 사용설비 또는 변압기설비 기준), 제20조(사용설비 입력 합계 × 환산율, 변압기 표시용량 합계 1 kVA = 1 kW). 감소 신청 뒤 1년 안에 다시 늘리면 감소 기간의 기본요금 부담(제14조, 제16조 ①). 초과사용부가금: 약관 제67조의3 ③(제68조 ①로 요금적용전력을 정하는 고객: 초과비율 20% 미만 150%에서 60% 이상 400%까지 × 초과전력 × 기본요금 단가), ①(제68조 ②로 정하는 고객: 저압 최대수요계는 초과 횟수 150~250%, 그 밖은 월 450 kWh/kW 초과 기준), ④(첫 초과 달 예고), 시행세칙 제48조의2(첫 초과 달 안내·무부과, 3년 이내 재초과 시 부과).</li>
+      <li>역률: 약관 제43조 ② 1호. 08~22시 평균 지상역률이 92%에 미달하면 60%까지 1%마다 기본요금의 0.2% 추가, 92%를 초과하면 97%까지 1%마다 0.2% 감액(계약전력 20 kW 이상 저압, 고압 이상 고객). 금액은 1원 미만 버림.</li>
+      <li>계산 방식: 고압은 지난 12개월의 (12·1·2·7·8·9월·당월) 최대 한 값을 요금적용전력으로 보고(약관 제68조 ① 그대로), 달마다 그 값과 계약전력 30% 중 큰 값에 단가를 곱해 12개월을 더합니다. 줄인 직후 몇 달의 특례(시행세칙 제49조 ②)와 전력량요금·기금·부가세는 넣지 않았습니다.</li>
+    </ul>
+    넣지 않은 것: 초과사용부가금 금액(배율만 안내), 줄인 직후 요금적용전력(시행세칙 제49조 ②), 전력량요금, 고압B·C와 교육용·농사용 요금, 선택요금제 비교.
+  </div>
+
+  <div class="btns"><a class="call" href="tel:15552859">계약전력·전기요금 상담 ☎ 1555-2859</a><a target="_top" class="q" href="https://www.ecokkorea.kr/35">전기요금 절감 1차 진단(무료)</a></div>
+  <p class="contact">☎ 1555-2859 · www.ecokkorea.kr · info@ecokkorea.co.kr</p>
+</div>
+
+<script>
+(function(){
+  var out=document.getElementById('cc_out');if(!out||out.getAttribute('data-init'))return;out.setAttribute('data-init','1');
+  var TAR={
+    g_lo :{name:'일반용(갑) 저압',base:6160,hv:false},
+    i_lo :{name:'산업용(갑) 저압',base:5550,hv:false},
+    g_h1 :{name:'일반용(갑) 고압A 선택Ⅰ',base:7170,hv:true},
+    g_h2 :{name:'일반용(갑) 고압A 선택Ⅱ',base:8230,hv:true},
+    i_h1 :{name:'산업용(갑) 고압A 선택Ⅰ',base:6490,hv:true},
+    i_h2 :{name:'산업용(갑) 고압A 선택Ⅱ',base:7470,hv:true},
+    ge_h1:{name:'일반용(을) 고압A 선택Ⅰ',base:7220,hv:true},
+    ge_h2:{name:'일반용(을) 고압A 선택Ⅱ',base:8320,hv:true},
+    ge_h3:{name:'일반용(을) 고압A 선택Ⅲ',base:9810,hv:true},
+    ie_h1:{name:'산업용(을) 고압A 선택Ⅰ',base:7220,hv:true},
+    ie_h2:{name:'산업용(을) 고압A 선택Ⅱ',base:8320,hv:true},
+    ie_h3:{name:'산업용(을) 고압A 선택Ⅲ',base:9810,hv:true}
+  };
+  var ORDER=['g_lo','i_lo','g_h1','g_h2','i_h1','i_h2','ge_h1','ge_h2','ge_h3','ie_h1','ie_h2','ie_h3'];
+  var sel=document.getElementById('cc_t');
+  ORDER.forEach(function(k){var o=document.createElement('option');o.value=k;o.textContent=TAR[k].name+(TAR[k].hv?'':' (최대수요계 없는 저압)');sel.appendChild(o);});
+  sel.value='ie_h2';
+  function $(id){return document.getElementById(id);}
+  function num(id){var v=parseFloat(String($(id).value).replace(/[, ]/g,''));return isFinite(v)?v:NaN;}
+  function fmt(v){return Math.round(v).toLocaleString('ko-KR');}
+  function man(v){return Math.round(v/10000).toLocaleString('ko-KR');}
+  function k1(v){return (Math.round(v*10)/10).toLocaleString('ko-KR');}
+  function tr0(v){return v<0?Math.ceil(v):Math.floor(v);}      // 1원 미만 버림(0 쪽으로)
+  function stepOf(v){return v>=500?100:(v>=100?10:1);}                       // 소용량은 10 kW·1 kW 단위로 올림·내림
+  function ceilS(v,s){s=s||stepOf(v);return Math.ceil(v/s-1e-9)*s;}
+  function floorS(v,s){s=s||stepOf(v);return Math.floor(v/s+1e-9)*s;}
+  var notes=[];
+  var LIM={C:[1,100000],base:[0,5000000000],pmax:[0,100000],pf:[0,100],c2:[1,100000],tg:[1,100000]};
+  var LAB={C:'계약전력',base:'기본요금',pmax:'최근 최대수요',pf:'지상역률',c2:'줄이고 싶은 계약전력',tg:'낮추고 싶은 최대수요'};
+  var UNIT={C:'kW',base:'원',pmax:'kW',pf:'%',c2:'kW',tg:'kW'};
+  function rng(k,id){                                     // 입력을 범위 안으로 맞추고, 바뀐 것은 화면에 알린다
+    var raw=num(id);if(isNaN(raw))return NaN;
+    if(raw<0){notes.push(LAB[k]+': 음수는 쓸 수 없어 비우고 계산했습니다.');return NaN;}
+    if(raw===0){if(k==='C')notes.push(LAB[k]+': 0은 계산할 수 없습니다.');return NaN;}
+    if(raw>LIM[k][1]){notes.push(LAB[k]+': '+fmt(LIM[k][1])+' '+UNIT[k]+'까지만 계산합니다(입력 '+fmt(raw)+' '+UNIT[k]+' → '+fmt(LIM[k][1])+' '+UNIT[k]+').');return LIM[k][1];}
+    if(raw<LIM[k][0]&&LIM[k][0]>0){notes.push(LAB[k]+': '+LIM[k][0]+' '+UNIT[k]+' 이상만 계산합니다.');return LIM[k][0];}
+    return raw;
+  }
+  function saveTxt(v){return v>0.5?man(v)+'만원 줄어듦':(v<-0.5?'<b style="color:#c62828">'+man(-v)+'만원 오름</b>':'0원');}
+  function calc(i){
+    var t=TAR[i.t],rate=t.base,C=i.C,r={ok:false,t:i.t,rate:rate,hv:t.hv};
+    if(!(C>0)){r.err='계약전력(kW)을 넣어 주세요.';return r;}
+    var floor=0.3*C,pmax=(i.pmax>0)?i.pmax:null,base=(i.base>0)?i.base:null;
+    r.C=C;r.floor=floor;r.pmax=pmax;
+    var bill0,Peff=null,fb=false,est=false;
+    if(t.hv){
+      var fromBase=base!==null?base/rate:null;
+      if(fromBase!==null){bill0=fromBase;fb=fromBase<=floor+0.5;Peff=fb?(pmax!==null?Math.min(pmax,floor):null):fromBase;}
+      else if(pmax!==null){bill0=Math.max(pmax,floor);fb=pmax<=floor;est=true;Peff=pmax;}
+      else{r.err='이번 달 기본요금(원) 또는 최근 최대수요(kW)를 넣어 주세요.';return r;}
+    }else{bill0=C;}
+    r.bill0=bill0;r.fb=fb;r.est=est;r.Peff=Peff;
+    r.loBase=null;if(!t.hv&&base!==null)r.loBase=base/rate;
+    r.year0=bill0*rate*12;
+    function billAt(c2,T){        // 고압: max(최대수요, 계약×30%) / 저압: 계약전력
+      if(!t.hv)return c2;
+      var p=(T!==null&&T!==undefined)?T:Peff;
+      if(p===null)return null;
+      return Math.max(p,0.3*c2);
+    }
+    r.billAt=billAt;
+    var Pref=Math.max(pmax||0,(Peff||0));
+    r.Pref=Pref;r.safe=Pref>0?ceilS(Pref*1.1,stepOf(Pref*1.1)):null;
+    r.c2=(i.c2>0)?i.c2:null;
+    if(r.c2!==null){var b2=billAt(r.c2,null);r.bill2=b2;r.save2=(b2===null)?null:(bill0-b2)*rate*12;r.risk2=Pref>0?(r.c2<Pref?'over':(r.c2<r.safe?'thin':'ok')):null;}
+    r.tg=(t.hv&&i.tg>0)?i.tg:null;
+    if(r.tg!==null){var b3=Math.max(r.tg,0.3*C);r.bill3=b3;r.save3=(bill0-b3)*rate*12;
+      var cmax=floorS(r.tg/0.3,stepOf(r.tg/0.3));r.cNeed=cmax;r.cOk=(r.safe===null)?null:(cmax>=r.safe);
+      }
+    var cands={};cands[Math.round(C)]=1;var stc=stepOf(C);[0.9,0.8,0.7,0.6,0.5].forEach(function(f){var c=ceilS(C*f,stc);if(c>0&&c<C)cands[c]=1;});if(r.c2!==null)cands[Math.round(r.c2)]=1;
+    r.cands=Object.keys(cands).map(Number).filter(function(x){return x>0;}).sort(function(a,b){return b-a;}).map(function(c){
+      var b=billAt(c,null);return {c:c,bill:b,save:b===null?null:(bill0-b)*rate*12,risk:Pref>0?(c<Pref?'over':(c<r.safe?'thin':'ok')):null,me:r.c2!==null&&Math.round(r.c2)===c};});
+    if(t.hv&&Peff!==null){
+      var tl={};tl[Math.round(Peff)]=1;[0.95,0.9,0.8,0.7,0.6].forEach(function(f){tl[Math.round(Peff*f)]=1;});if(r.tg!==null)tl[Math.round(r.tg)]=1;
+      r.tcands=Object.keys(tl).map(Number).sort(function(a,b){return b-a;}).map(function(T){var b=Math.max(T,0.3*C);var cm=floorS(T/0.3,stepOf(T/0.3));return {T:T,bill:b,save:(bill0-b)*rate*12,cmax:cm,cok:(r.safe===null)?null:(cm>=r.safe),floor:(T<0.3*C),me:r.tg!==null&&Math.round(r.tg)===T};});
+    }
+    var pf=(i.pf>0)?i.pf:null;
+    r.pfSkip=null;
+    if(pf!==null&&!t.hv&&C<20){r.pfSkip='저압 계약전력 20 kW 미만은 역률 요금 대상이 아닙니다(약관 제43조 ①).';pf=null;}
+    if(pf!==null){var pc;
+      if(pf<92)pc=(92-Math.max(pf,60))*0.2;else pc=-(Math.min(pf,97)-92)*0.2;
+      var bm=(base!==null)?base:bill0*rate;
+      r.pf=pf;r.pfPct=pc;r.pfMonth=tr0(bm*pc/100);r.pfYear=r.pfMonth*12;}
+    function tierMult(x){return x<0.2?1.5:x<0.3?2.0:x<0.4?2.5:x<0.5?3.0:x<0.6?3.5:4.0;}      // 약관 제67조의3 ③ 초과비율별 배율
+    var v={code:null,sur:null,lower:r.safe,need:null};
+    if(t.hv){
+      if(!(Pref>0))v.code='need_peak';
+      else if(r.c2===null)v.code=fb?'state_save':'state_nosave';
+      else if(r.c2>C+0.5)v.code='raise';
+      else if(r.c2<Pref)v.code='risk';
+      else if(r.c2<r.safe)v.code='thin';
+      else v.code=(r.save2>0.5)?'ok_save':'ok_nosave';
+      if(!fb&&Peff!==null)v.need=floor;                                              // 이 값 아래로 최대수요를 낮춰야 기본요금이 줄기 시작
+      if(v.code==='risk'){var ov=Pref-r.c2,ra=ov/r.c2,mu=tierMult(ra);v.sur={over:ov,ratio:ra,mult:mu,month:tr0(ov*rate*mu),basis:'ratio'};}
+    }else{
+      if(r.c2===null)v.code='lo_state';
+      else if(r.c2>C+0.5)v.code='raise';
+      else if(pmax!==null&&r.c2<pmax)v.code='risk';
+      else v.code='lo_ok';
+      if(v.code==='risk'){var ov2=pmax-r.c2;v.sur={over:ov2,ratio:ov2/r.c2,mult:1.5,mult2:2.5,month:tr0(ov2*rate*1.5),month2:tr0(ov2*rate*2.5),basis:'count'};}
+    }
+    r.v=v;
+    r.ok=true;return r;
+  }
+
+  function bar(label,val,max,cls,note){
+    var w=max>0?Math.max(2,Math.round(val/max*100)):0;
+    return '<div class="cc-row"><div class="cc-l">'+label+'</div><div class="cc-tr"><div class="cc-b '+cls+'" style="width:'+w+'%"></div></div><div class="cc-v">'+k1(val)+' kW'+(note?'<small>'+note+'</small>':'')+'</div></div>';
+  }
+  function pfTxt(v){return v>0?fmt(v)+'원 더 냄':v<0?fmt(-v)+'원 깎임':'0원';}
+  function riskTxt(x){return x==='over'?'<span style="color:#c62828;font-weight:800">줄이면 안 됨(초과사용부가금)</span>':x==='thin'?'<span style="color:#b26a00;font-weight:800">빠듯함(여유 10% 미만)</span>':x==='ok'?'줄여도 됨':'';}
+
+  function render(){
+    notes=[];
+    var inp={t:sel.value,C:rng('C','cc_C'),base:rng('base','cc_base'),pmax:rng('pmax','cc_pmax'),pf:rng('pf','cc_pf'),c2:rng('c2','cc_c2'),tg:rng('tg','cc_tg')};
+    var r=calc(inp);
+    out.setAttribute('data-r',JSON.stringify({verdict:r.v||null,notes:notes.length,pfSkip:r.pfSkip||null,loBase:r.loBase||null,ok:r.ok,err:r.err||null,bill0:r.bill0,year0:r.year0,fb:r.fb,Peff:r.Peff,safe:r.safe,save2:r.save2,bill2:r.bill2,save3:r.save3,bill3:r.bill3,cNeed:r.cNeed,pfPct:r.pfPct,pfMonth:r.pfMonth,pfYear:r.pfYear,
+      cands:(r.cands||[]).map(function(c){return [c.c,c.bill,c.save];}),tcands:(r.tcands||[]).map(function(c){return [c.T,c.bill,c.save,c.cmax];})}));
+    var msg=$('cc_msg'),big=$('cc_big'),bars=$('cc_bars'),t1=$('cc_t1'),t2=$('cc_t2'),t3=$('cc_t3'),w2=$('cc_t2wrap'),w3=$('cc_pfwrap'),warn=$('cc_warn');
+    if(!r.ok){msg.innerHTML='<div class="alert">'+r.err+'</div>';warn.innerHTML=notes.map(function(n){return '<div class="tip">'+n+'</div>';}).join('');big.innerHTML=bars.innerHTML=t1.innerHTML=t2.innerHTML=t3.innerHTML='';return;}
+    var t=TAR[inp.t],hv=t.hv;
+    var V=r.v,S=r.safe,F=r.floor,P=r.Pref,mg='';
+    function sur(){if(!V.sur)return '';return V.sur.basis==='ratio'
+        ?' 넘는 kW '+k1(V.sur.over)+', 초과비율 '+Math.round(V.sur.ratio*100)+'% → 배율 '+Math.round(V.sur.mult*100)+'%이면 부과되는 달 한 달 약 '+man(V.sur.month)+'만원입니다(처음 넘은 달은 예고만).'
+        :' 넘는 kW '+k1(V.sur.over)+', 넘은 횟수 2~3회 150%이면 한 달 약 '+man(V.sur.month)+'만원, 6회 이상 250%이면 약 '+man(V.sur.month2)+'만원입니다(처음 넘은 달은 안내만).';}
+    var cls='tip';
+    if(V.code==='need_peak'){mg='<b>판정하려면 최근 최대수요(kW)가 필요합니다.</b> 파워플래너 연도별 화면에서 가장 큰 값을 넣어 주세요. 청구서 기본요금만으로는 30% 바닥에 걸린 건지 알 수 있어도, 얼마까지 안전한지는 알 수 없습니다.';}
+    else if(V.code==='state_save'){mg='<b>줄여도 됩니다.</b> 지금은 계약전력의 30%('+k1(F)+' kW)가 기본요금을 정하고 있어, 줄이면 줄인 만큼 바로 기본요금이 줄어듭니다. 안전한 하한은 <b>'+fmt(S)+' kW</b>(최근 최대수요 '+fmt(P)+' kW + 여유 10%)입니다. 그보다 낮추면 초과사용부가금 위험이 있습니다.';}
+    else if(V.code==='state_nosave'){mg='<b>줄여도 기본요금은 줄지 않습니다.</b> 기본요금은 실제 최대수요(요금적용전력) '+k1(r.bill0)+' kW가 정하고 있고, 이 값이 계약전력의 30%('+k1(F)+' kW)보다 높기 때문입니다. 계약전력은 <b>'+fmt(S)+' kW</b> 아래로만 내리지 않으면 안전합니다. 기본요금을 줄이려면 여름·겨울 평일 낮의 15분 최대수요를 '+k1(F)+' kW 아래로 먼저 낮춰야 합니다.';}
+    else if(V.code==='ok_save'){mg='<b>'+fmt(r.c2)+' kW로 줄여도 됩니다.</b> 최근 최대수요 '+fmt(P)+' kW에 10% 이상 여유가 있고, 기본요금은 연 약 '+man(r.save2)+'만원 줄어듭니다. 초과사용부가금 위험은 지금 자료로는 없습니다.';}
+    else if(V.code==='ok_nosave'){mg='<b>'+fmt(r.c2)+' kW로 줄일 수는 있지만 기본요금은 그대로입니다.</b> 최근 최대수요 '+fmt(P)+' kW에 여유는 충분하지만, 기본요금은 최대수요 '+k1(r.bill0)+' kW가 정하고 있기 때문입니다. 기본요금을 줄이려면 최대수요를 '+k1(F)+' kW 아래로 먼저 낮춰야 합니다.';}
+    else if(V.code==='thin'){cls='alert';mg='<b>빠듯합니다. 조심하세요.</b> '+fmt(r.c2)+' kW는 최근 최대수요 '+fmt(P)+' kW보다는 높지만 여유가 10%가 안 됩니다. 최대수요가 조금만 늘어도 초과사용부가금이 붙습니다. 안전 하한은 '+fmt(S)+' kW입니다.';}
+    else if(V.code==='risk'){cls='alert';mg='<b>줄이면 안 됩니다.</b> '+fmt(r.c2)+' kW는 최근 최대수요 '+fmt(P)+' kW보다 낮아 초과사용부가금이 붙습니다.'+sur()+' 안전 하한은 '+fmt(S)+' kW입니다.';}
+    else if(V.code==='raise'){mg='<b>입력한 계약전력('+fmt(r.c2)+' kW)은 지금보다 큽니다.</b> 줄이는 감설이 아니라 늘리는 증설입니다. 늘리면 기본요금이 오를 수 있고 시설부담금이 새로 들 수 있습니다.';}
+    else if(V.code==='lo_state'){mg='<b>저압은 계약전력이 곧 기본요금 기준이라 줄이면 줄인 만큼 바로 줄어듭니다.</b> 다만 얼마까지 줄일 수 있는지는 설치한 설비의 입력 합계(환산율 적용)가 정하므로(약관 제20조) 설비 목록을 확인해야 합니다. 최대수요계가 있다면 '+(S?'안전 하한은 '+fmt(S)+' kW(최근 최대수요 + 10%)입니다.':'최근 최대수요를 넣으면 안전 하한을 알려 드립니다.')+' 최대수요계를 달거나 ESS로 피크를 깎아도 기본요금은 줄지 않습니다(약관 제68조 ②).';}
+    else if(V.code==='lo_ok'){mg='<b>'+fmt(r.c2)+' kW로 줄이면 기본요금이 연 약 '+man(r.save2)+'만원 줄어듭니다.</b> 줄일 수 있는지는 설비 입력 합계가 허용하는지에 달려 있습니다(설비 목록 확인).';}
+    msg.innerHTML='<div class="'+cls+'">'+mg+'</div>';
+    function bigSave(v){return v>0.5?man(v)+'<em>만원/년 줄어듦</em>':(v<-0.5?'+'+man(-v)+'<em>만원/년 오름</em>':'0<em>원</em>');}
+    var jd={need_peak:'입력 필요',state_save:'줄여도 됨',state_nosave:'효과 없음',ok_save:'줄여도 됨',ok_nosave:'효과 없음',thin:'빠듯함',risk:'줄이면 위험',raise:'증설임',lo_state:'줄이면 줄어듦',lo_ok:'줄여도 됨'}[V.code];
+    var b='<div class="main"><small>감설 판정</small><b>'+jd+'</b></div>';
+    b+='<div class="main"><small>안전한 하한(계약전력)</small><b>'+(S?fmt(S)+'<em>kW</em>':'-')+'</b></div>';
+    var rk=(V.code==='risk')?'있음':(V.code==='thin'?'주의':(V.code==='need_peak'||V.code==='lo_state'&&!S?'-':(V.code==='raise'?'-':'없음')));
+    b+='<div class="main"><small>초과사용부가금 위험</small><b>'+rk+'</b>'+(V.sur?'<small>월 약 '+man(V.sur.month)+'만원'+(V.sur.basis==='ratio'?' (배율 '+Math.round(V.sur.mult*100)+'%)':' 이상')+'</small>':'')+'</div>';
+    if(r.c2!==null&&r.save2!==null)b+='<div><small>'+fmt(r.c2)+' kW로 바꾸면 기본요금</small><b>'+bigSave(r.save2)+'</b></div>';
+    else b+='<div><small>연 기본요금(지금)</small><b>'+man(r.year0)+'<em>만원</em></b></div>';
+    big.innerHTML=b;
+    var mx=Math.max(r.C,r.bill0,r.pmax||0,r.Peff||0)*1.02,h='<div class="cc-bars">';
+    h+=bar('계약전력',r.C,mx,'cc-c','청구서');
+    if(hv)h+=bar('30% 바닥',r.floor,mx,'cc-f','계약전력 × 30%');
+    if(hv&&r.pmax!==null)h+=bar('최근 최대수요',r.pmax,mx,'cc-p','파워플래너(모든 시간)');
+    h+=bar('기본요금 기준',r.bill0,mx,'cc-k',hv?(r.fb?'30% 바닥이 정함':'최대수요가 정함'):'계약전력이 정함');
+    if(r.c2!==null&&r.bill2!==null&&Math.abs(r.bill2-r.bill0)>0.05)h+=bar('줄인 뒤',r.bill2,mx,'cc-n','계약 '+fmt(r.c2)+' kW');
+    h+='</div>';bars.innerHTML=h;
+    var s='<table><thead><tr><th class="n">계약전력</th><th class="n">기본요금 기준</th><th class="n">연 기본요금</th><th class="n">연 절감</th>'+(r.Pref>0?'<th>판정</th>':'')+'</tr></thead><tbody>';
+    r.cands.forEach(function(c){
+      s+='<tr'+(c.me?' class="me"':'')+'><td class="n">'+fmt(c.c)+' kW'+(c.me?' (입력)':'')+'</td><td class="n">'+(c.bill===null?'최대수요 입력 필요':k1(c.bill)+' kW')+'</td><td class="n">'+(c.bill===null?'-':man(c.bill*r.rate*12)+'만원')+'</td><td class="n">'+(c.save===null?'-':saveTxt(c.save))+'</td>'+(r.Pref>0?'<td class="f">'+riskTxt(c.risk)+'</td>':'')+'</tr>';
+    });
+    s+='</tbody></table>';
+    if(hv&&r.safe!==null)s+='<p class="busy">안전선: 최근 최대수요 '+fmt(r.Pref)+' kW에 여유 10%를 더해 '+fmt(r.safe)+' kW (올림)</p>';
+    t1.innerHTML=s;
+    if(hv&&r.tcands){
+      var q='<table><thead><tr><th class="n">낮춘 최대수요</th><th class="n">기본요금 기준</th><th class="n">연 절감</th><th class="n">그때 계약전력 상한</th><th>판단</th></tr></thead><tbody>';
+      r.tcands.forEach(function(c){
+        q+='<tr'+(c.me?' class="me"':'')+'><td class="n">'+fmt(c.T)+' kW'+(c.me?' (입력)':'')+'</td><td class="n">'+k1(c.bill)+' kW</td><td class="n">'+saveTxt(c.save)+'</td><td class="n">'+fmt(c.cmax)+' kW 이하</td><td class="f">'+(c.floor?'계약전력 30%가 요금을 정함. 계약전력도 같이 줄여야 더 줄어듭니다.':(c.cok===false?'최근 최대수요 때문에 계약전력을 그만큼 줄이기 어렵습니다.':'계약전력을 그 이하로 줄이면 이 값까지 내려갑니다.'))+'</td></tr>';
+      });
+      q+='</tbody></table>';t2.innerHTML=q;w2.style.display='';
+    }else{w2.style.display='none';}
+    if(r.pf!==undefined&&r.pf!==null){
+      var lab=r.pfPct>0?'추가 '+r.pfPct.toFixed(1)+'%':r.pfPct<0?'감액 '+Math.abs(r.pfPct).toFixed(1)+'%':'없음';
+      t3.innerHTML='<table><thead><tr><th class="n">지상역률</th><th>적용</th><th class="n">한 달</th><th class="n">한 해</th></tr></thead><tbody><tr class="me"><td class="n">'+k1(r.pf)+'%</td><td>기본요금의 '+lab+'</td><td class="n">'+pfTxt(r.pfMonth)+'</td><td class="n">'+pfTxt(r.pfYear)+'</td>'+'</tr></tbody></table><p class="busy">'+(r.pfPct>0?'콘덴서로 92% 이상으로 올리면 이 추가 요금이 없어집니다.':r.pfPct<0?'이미 92%를 넘어 요금이 깎이고 있습니다(최대 97%까지).':'기준 92%에 맞아 추가·감액이 없습니다.')+'</p>';
+      w3.style.display='';
+    }else{w3.style.display='none';}
+    var wa='';
+    if(r.est)wa+='<div class="tip">기본요금을 비워 두어 최근 최대수요로 대신 계산했습니다. 청구서 기본요금을 넣으면 더 정확합니다.</div>';
+    if(hv&&r.fb&&r.Peff===null)wa+='<div class="tip">청구서가 30% 바닥으로 매겨져 실제 최대수요를 알 수 없습니다. 최근 최대수요(kW)를 넣으면 줄일 수 있는 폭을 계산해 드립니다.</div>';
+    if(hv&&r.tg!==null&&r.save3<-0.5)wa+='<div class="tip">입력한 최대수요 '+fmt(r.tg)+' kW는 지금 기준('+k1(r.bill0)+' kW)보다 높아 기본요금이 오르는 경우입니다.</div>';
+    if(r.pfSkip)wa+='<div class="tip">'+r.pfSkip+'</div>';
+    if(!hv&&r.loBase!==null)wa+='<div class="tip">저압은 기본요금 칸을 요금 계산에 쓰지 않고 계약전력 × 단가로 계산합니다. 입력한 기본요금 ÷ 단가는 '+k1(r.loBase)+' kW로, '+(Math.abs(r.loBase-r.C)<=0.5?'계약전력과 같습니다.':'계약전력('+fmt(r.C)+' kW)과 다릅니다. 청구서를 다시 확인해 주세요.')+' (역률 금액 계산에는 이 값을 씁니다.)</div>';
+    notes.forEach(function(n){wa+='<div class="tip">'+n+'</div>';});
+    warn.innerHTML=wa;
+  }
+  ['cc_t','cc_C','cc_base','cc_pmax','cc_pf','cc_c2','cc_tg'].forEach(function(id){var e=$(id);e.addEventListener('input',render);e.addEventListener('change',render);});
+  render();
+})();
+
+</script>
+
+<div class="pg-bar" id="pg-bar"><button type="button" class="pg-save" id="pg-save">보고서 PDF로 저장</button><span class="pg-hint">A4 한 장, 입력값과 결과 표</span></div><div class="pg-gatebox" id="pg-gatebox"><div class="gate" id="subgate"><div><h2>유튜브 채널을 구독하시면 PDF 보고서가 저장됩니다</h2><ol><li>아래 빨간 단추를 누르면 유튜브 구독 창이 새로 열립니다.</li><li>구독을 마치고 이 창으로 돌아오시면 PDF 저장이 바로 열립니다.</li></ol><p class="note">계산은 구독 없이 무료입니다. 이미 구독 중이시면 같은 단추를 누르고 돌아오시면 됩니다. 한 번 열면 이 브라우저에서는 홈페이지 어디서나 계속 열려 있습니다.</p><p class="ok" role="status">열렸습니다. 구독해 주셔서 고맙습니다.</p></div><a class="subbtn" id="subbtn" href="https://www.youtube.com/channel/UCpRTUvMiZQxXk-7BLJQlUZQ?sub_confirmation=1" target="_blank" rel="noopener"><svg viewBox="0 0 30 21" aria-hidden="true"><rect width="30" height="21" rx="5" fill="#fff"/><path d="M12 6l8 4.5-8 4.5z" fill="#c4161c"/></svg>유튜브 구독하고 PDF 저장</a></div></div><script>(function(){var R=document.getElementById("cc_out"),b=document.getElementById('pg-bar'),g=document.getElementById('pg-gatebox');if(R&&R.parentNode){R.parentNode.insertBefore(b,R.nextSibling);b.parentNode.insertBefore(g,b.nextSibling)}})();(function(){
+var K='ecok_sub_ok',KEY="contract-reduction",ROOT="ekep",FIT=(KEY==='fuse'||KEY==='string')?1005:960,RID="cc_out",CO="☎ 1555-2859 · www.ecokkorea.kr · info@ecokkorea.co.kr",NOTE="참고용 계산, 실제 설계는 현장 조건 확인",ok=false,clicked=0,pending=false;
+function setOk(){try{window.localStorage.setItem(K,'1')}catch(e){}try{document.cookie=K+'=1; max-age=31536000; path=/; SameSite=Lax'}catch(e){}}
+function getOk(){var v=false;try{v=window.localStorage.getItem(K)==='1'}catch(e){}
+ if(!v){try{v=/(?:^|; )ecok_sub_ok=1/.test(document.cookie)}catch(e){}}
+ if(v)setOk();return v}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function rows(){var out=[];document.querySelectorAll('.sheet .row').forEach(function(r){
+ var el=r.querySelector('input,select,output');if(!el)return;
+ var lb=r.querySelector('label');if(!lb)return;var c=lb.cloneNode(true);
+ c.querySelectorAll('small').forEach(function(s){var t=s.textContent.trim();if(t.length<=6)s.replaceWith(document.createTextNode(' ('+t+')'));else s.remove()});
+ var name=c.textContent.replace(/\s+/g,' ').trim(),v;
+ if(el.type==='checkbox')v=el.checked?"예":"아니오";
+ else if(el.tagName==='SELECT')v=el.options[el.selectedIndex]?el.options[el.selectedIndex].text:'';
+ else if(el.tagName==='OUTPUT')v=el.textContent;
+ else v=el.value||"자동";
+ out.push([name,String(v).replace(/\s+/g,' ').trim()])});return out}
+function sheetHtml(){
+ var R=document.getElementById(RID);if(!R)return null;
+ var cl=R.cloneNode(true);cl.removeAttribute('id');cl.querySelectorAll('[id]').forEach(function(n){n.removeAttribute('id')});
+ if(KEY==='string')cl.querySelectorAll('table').forEach(function(t){if(t.rows[0]&&t.rows[0].cells.length>10)t.remove()});
+ var rs=rows(),h='';
+ for(var i=0;i<rs.length;i+=2){var a=rs[i],b=rs[i+1];
+  h+='<tr><th>'+esc(a[0])+'</th><td>'+esc(a[1])+'</td>'+(b?'<th>'+esc(b[0])+'</th><td>'+esc(b[1])+'</td>':'<th></th><td></td>')+'</tr>'}
+ var h1=document.querySelector('h1'),title=h1?h1.textContent.trim():document.title;
+ var d=new Date(),ds=d.getFullYear()+'.'+(d.getMonth()+1)+'.'+d.getDate();
+ var w=document.createElement('div');w.className='pgw '+ROOT;w.appendChild(cl);
+ var extra='';
+ if(KEY==='fire'){var t1=document.getElementById('ft1'),t2=document.getElementById('ft2');
+  if(t1&&t2){var nt=t1.closest('.tw').previousElementSibling,x=document.createElement('div');x.className='pgw '+ROOT;
+   if(nt)x.appendChild(nt.cloneNode(true));[t1,t2].forEach(function(t){var c=t.closest('.tw').cloneNode(true);c.querySelectorAll('[id]').forEach(function(n){n.removeAttribute('id')});x.appendChild(c)});
+   extra='<h2>'+"감지면적 표 (NFTC 203 원문)"+'</h2>'+x.outerHTML}}
+ return '<div id="pg-sheet" class="pg-fr '+KEY+'"><div class="pg-hd"><img src="img/logo.png" alt="'+"에코케이코리아"+'"><span class="pg-dt">'+"계산일 "+ds+'</span></div>'
+  +'<div class="pg-t">'+esc(title)+'</div><p class="pg-s">'+"입력값과 계산 결과"+'</p>'
+  +'<h2>'+"입력값"+'</h2><table class="pg-in"><tbody>'+h+'</tbody></table><h2>'+"계산 결과"+'</h2>'+w.outerHTML+extra
+  +'<div class="pg-ft"><b>'+esc(CO)+'</b><span>'+esc(NOTE)+'</span></div></div>'}
+function frameHtml(){var s=sheetHtml();if(!s)return null;
+ var bs=document.createElement('base');bs.href=document.baseURI;var heads='';document.querySelectorAll('head style').forEach(function(x){heads+=x.outerHTML});
+ return '<!doctype html><html lang="'+"ko"+'"><head><meta charset="utf-8">'+bs.outerHTML+heads+'<style>html,body{margin:0;background:#fff}</style></head><body>'+s+'</body></html>'}
+function doSave(){var html=frameHtml();if(!html)return;
+ var old=document.getElementById('pg-frame');if(old)old.remove();
+ var f=document.createElement('iframe');f.id='pg-frame';f.setAttribute('aria-hidden','true');
+ f.style.cssText='position:absolute;left:-9999px;top:0;width:190mm;height:1400px;border:0;visibility:hidden';
+ f.onload=function(){var w=f.contentWindow,doc=f.contentDocument,s=doc.getElementById('pg-sheet');if(!s)return;
+  var go=function(){var hh=s.scrollHeight;s.style.zoom=Math.min(1,FIT/hh).toFixed(3);
+   setTimeout(function(){try{w.focus();w.print()}catch(e){try{window.print()}catch(e2){}}},120)};
+  (doc.fonts&&doc.fonts.ready?doc.fonts.ready:Promise.resolve()).then(function(){setTimeout(go,150)},go)};
+ document.body.appendChild(f);f.srcdoc=html}
+window.__pgFrameHtml=frameHtml;
+var box=document.getElementById('pg-gatebox'),btn=document.getElementById('pg-save');
+function openGate(){ok=true;setOk();var g=box.querySelector('.gate');g.classList.add('done');
+ if(pending){pending=false;doSave()}}
+ok=getOk();
+btn.addEventListener('click',function(){
+ if(ok){doSave();return}
+ pending=true;box.classList.add('show');try{box.scrollIntoView({block:'nearest'})}catch(e){}});
+document.getElementById('subbtn').addEventListener('click',function(){clicked=Date.now()});
+function back(){if(clicked&&!ok&&Date.now()-clicked>2500)openGate()}
+addEventListener('focus',back);document.addEventListener('visibilitychange',function(){if(!document.hidden)back()});
+window.__pgUnlock=openGate;
+})();</script><script>(function(){function s(){parent.postMessage({h:document.documentElement.scrollHeight},'*')}addEventListener('load',s);new ResizeObserver(s).observe(document.body);setTimeout(s,800)})()</script></body></html>
