@@ -1,0 +1,2 @@
+Constra (Themefisher) theme/css/style.css 1.0.0, MIT, github.com/themefisher/constra-bootstrap 2026-11-13 받음
+Bootstrap 4.5.3 (MIT), jQuery 3.5.1 (MIT): 테마에 든 판 그대로
