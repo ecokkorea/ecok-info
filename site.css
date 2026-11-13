@@ -450,7 +450,7 @@ body.k6{background:#fff}
 .k6-head .k6w{display:flex;align-items:center;gap:24px;padding-top:16px;padding-bottom:16px}
 .k6-logo img{height:38px;width:auto;display:block}
 .k6-info{list-style:none;margin:0 0 0 auto;padding:0;display:flex}
-.k6-info li{padding:0 25px;border-right:1px solid rgba(0,0,0,.1);line-height:1.3}
+.k6-info li{padding:0 25px;border-right:1px solid rgba(0,0,0,.1);line-height:1.3;white-space:nowrap}
 .k6-info li:last-child{border-right:0;padding-right:0}
 .k6-info span{display:block;font-size:16px;color:#3f4b57;margin-bottom:6px}
 .k6-info a,.k6-info b{font-size:19px;font-weight:800;color:#16212c;text-decoration:none}
@@ -489,9 +489,10 @@ body.k6 .k6-burger{display:none;align-items:center;gap:8px;margin:10px 0;backgro
 .k6-copy .k6w{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 24px}
 .k6-copy a{color:#111}
 .k6-bar{display:none}
-@media (max-width:1199px){.k6-menu{gap:26px}.k6-info li{padding:0 16px}}
+@media (max-width:1199px){.k6-menu{gap:26px}.k6-info li{padding:0 14px}.k6-info a,.k6-info b{font-size:17px}}   /* 11-13 992~1199 폭: 전화·면허 번호가 두 줄로 끊기던 것 → 글씨 한 단계 줄여 한 줄 */
 @media (max-width:991px){
  .k6-info{display:none}.k6-mtel{display:block}
+ .k6-tb .k6-tb-l{display:none}.k6-tb .k6-tb-r{white-space:nowrap}   /* 11-13 768~991 폭: 윗줄 왼쪽 문구가 '전기설계 / ·감리' 로 끊기던 것 → 폰처럼 왼쪽 문구 숨김 */
  body.k6 .k6-burger{display:inline-flex}
  .k6-nav .k6w{flex-wrap:wrap}
  .k6-menu{display:none;flex-direction:column;gap:0;width:100%;order:3;padding-bottom:6px}
