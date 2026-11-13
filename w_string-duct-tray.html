@@ -1,0 +1,303 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+<style>@font-face{font-family:Paperlogy;src:url(fonts/Paperlogy-4Regular.ttf);font-weight:400}@font-face{font-family:Paperlogy;src:url(fonts/Paperlogy-6SemiBold.ttf);font-weight:600}@font-face{font-family:Paperlogy;src:url(fonts/Paperlogy-8ExtraBold.ttf);font-weight:800}
+html,body{margin:0;background:#fff;overflow-x:hidden}body{font-family:Paperlogy,'Malgun Gothic',sans-serif;word-break:keep-all;color:#16212c}img{max-width:100%;height:auto}@media (max-width:600px){table{display:block;overflow-x:auto}}</style><style>/* 스타일은 위젯 안 <style> */
+</style><style>:root{--ink:#16212c;--slate:#4a5763;--line:#d5dce2;--mist:#eef2f5;--blue:#1d4f91;--blue-dark:#163d70}
+.gate{margin-top:0;border:1.5px solid var(--ink);background:#fff;display:grid;grid-template-columns:1fr auto;gap:28px;align-items:center;padding:clamp(22px,3vw,36px)}
+.gate h2{font-size:clamp(24px,2.4vw,32px);font-weight:800;letter-spacing:-.02em;line-height:1.35}
+.gate ol{margin:14px 0 0;padding-left:1.4em;color:var(--slate)}.gate ol li{margin:4px 0}
+.gate .note{margin-top:12px;font-size:16px;color:var(--slate)}
+.subbtn{display:inline-flex;align-items:center;gap:12px;padding:18px 30px;border-radius:10px;background:#c4161c;color:#fff;font-weight:800;font-size:21px;text-decoration:none;white-space:nowrap}
+.subbtn:hover{background:#9f1015}.subbtn svg{width:30px;height:21px;flex:none}
+.gate .ok{display:none;font-weight:800;color:#1b6b3a;font-size:20px}
+.gate.done .ok{display:block}.gate.done .subbtn{background:#fff;color:#c4161c;border:2px solid #c4161c;padding:14px 24px;font-size:18px}
+
+.pg-bar{margin:22px 0 0;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.pg-save{font:800 19px Paperlogy,'Malgun Gothic',sans-serif;padding:15px 28px;border:0;border-radius:10px;background:#1d4f91;color:#fff;cursor:pointer}
+.pg-save:hover{background:#163d70}.pg-hint{font-size:15px;color:#4a5763}
+.pg-gatebox{display:none;margin-top:18px}.pg-gatebox.show{display:block}
+.pg-gatebox .gate{grid-template-columns:1fr}.pg-gatebox .subbtn{justify-self:start}
+#pg-sheet{display:none}
+@media print{
+ @page{size:A4;margin:10mm}
+ html,body{background:#fff!important;overflow:visible!important}
+ body>*:not(#pg-sheet){display:none!important}
+ #pg-sheet{display:block!important;width:190mm;color:#16212c;font-family:Paperlogy,'Malgun Gothic',sans-serif;word-break:keep-all;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+#pg-sheet.pg-fr{display:block}
+#pg-sheet.fuse .pgw>div,#pg-sheet.string .pgw>div{column-count:2;column-gap:14px}
+#pg-sheet.string .pgw .sec{break-inside:avoid}
+#pg-sheet.string .pgw .sec:has(table){column-span:all}
+#pg-sheet.fuse .pgw .sh,#pg-sheet.fuse .pgw .chk{break-inside:avoid}
+#pg-sheet *{box-sizing:border-box}
+#pg-sheet .pg-hd{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #1d4f91;padding-bottom:6px}
+#pg-sheet .pg-hd img{height:26px;width:auto}#pg-sheet .pg-dt{font-size:12px;color:#4a5763}
+#pg-sheet .pg-t{font-size:20px;font-weight:800;margin:10px 0 2px;line-height:1.3}
+#pg-sheet .pg-s{font-size:12px;color:#4a5763;margin:0 0 6px}
+#pg-sheet h2{font-size:14px;font-weight:800;margin:10px 0 4px;color:#1d4f91}
+#pg-sheet table.pg-in{width:100%;border-collapse:collapse;table-layout:fixed;font-size:11.5px}
+#pg-sheet table.pg-in th,#pg-sheet table.pg-in td{border-bottom:1px solid #d5dce2;padding:3px 6px;line-height:1.35;vertical-align:top;word-break:keep-all;overflow-wrap:break-word}
+#pg-sheet table.pg-in th{text-align:left;font-weight:600;color:#4a5763;background:#f4f6f8;width:27%}
+#pg-sheet table.pg-in td{font-weight:800;width:23%}
+#pg-sheet .pgw{max-width:none;margin:0;padding:0;color:#16212c}
+#pg-sheet .pgw .sh{margin-top:6px}
+#pg-sheet .pg-ft{margin-top:10px;border-top:1px solid #d5dce2;padding-top:6px;font-size:12px;display:flex;justify-content:space-between;gap:12px}
+#pg-sheet .pg-ft b{font-weight:800}
+
+#pg-sheet.fuse .pgw *,#pg-sheet.string .pgw *{font-size:10.5px!important;line-height:1.45!important}
+#pg-sheet.fuse .pgw .sh,#pg-sheet.string .pgw .sec h3,#pg-sheet.string .pgw .ekmppt h3{font-size:12px!important}
+#pg-sheet.fuse .pgw .sh{padding:5px 10px!important;margin-top:8px!important;break-after:avoid}
+#pg-sheet.fuse .pgw .sb{padding:5px 8px!important}
+#pg-sheet.fuse .pgw .chk{margin-bottom:4px!important;grid-template-columns:1fr 66px!important}
+#pg-sheet.fuse .pgw .chk .f{padding:4px 8px!important}
+#pg-sheet.fuse .pgw .chk .f .v,#pg-sheet.fuse .pgw .chk .f .s{padding:0 4px!important}
+#pg-sheet.string .pgw .sec{margin-top:8px!important}
+#pg-sheet.string .pgw .calcline{padding:3px 6px!important;margin-bottom:3px!important;gap:4px!important}
+#pg-sheet.string .pgw .verdict{padding:5px 8px!important;margin-top:6px!important}
+</style></head><body><style>
+.ekep{max-width:1200px;margin:0 auto;padding:60px 20px 70px;color:#1a1e24;box-sizing:border-box;word-break:keep-all;overflow-wrap:break-word;background:#fff;font-size:17px;line-height:1.7}
+.ekep *{box-sizing:border-box}
+.ekep .eb{font-size:13px;font-weight:800;letter-spacing:2px;color:#1a7f37}
+.ekep h1{font-size:38px;margin:10px 0 16px;font-weight:800;line-height:1.3}
+.ekep .lead{list-style:none;padding:0;margin:0 0 26px;font-size:18px;line-height:1.8}
+.ekep .lead li{padding-left:22px;position:relative}.ekep .lead li:before{content:"■";position:absolute;left:0;color:#1a7f37;font-size:12px;top:2px}
+.ekep .sheet{border:2px solid #1b2330;border-radius:12px;padding:22px 24px;background:#fff}
+.ekep .sheet>h2{font-size:24px;margin:0 0 4px}
+.ekep .ref{font-size:14.5px;color:#1f4e79;margin:0 0 14px;line-height:1.6}
+.ekep .sh{background:#1f4e79;color:#fff;font-weight:800;font-size:17px;padding:10px 14px;border-radius:8px 8px 0 0;margin-top:18px}
+.ekep .sb{border:1px solid #dfe3e8;border-top:0;border-radius:0 0 8px 8px;padding:12px 14px}
+.ekep .inp{display:grid;grid-template-columns:1fr 1fr;gap:4px 24px}
+.ekep .row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px dashed #edf0f3}
+.ekep .row label{font-size:17px;font-weight:700}
+.ekep .row label small{display:block;font-size:13.5px;color:#555;font-weight:400}
+.ekep .row input,.ekep .row select{padding:9px 10px;border:1px solid #c9ced6;border-radius:6px;font-size:18px;font-family:inherit;background:#fffbe6;color:#1a1e24}
+.ekep .row input{width:160px;text-align:right}
+.ekep .row select{width:330px;max-width:100%}
+.ekep .m12{display:grid;grid-template-columns:repeat(6,1fr);gap:6px 10px;margin:8px 0 4px}
+.ekep .m12 label{font-size:14px;font-weight:700;display:block}
+.ekep .m12 input{width:100%;padding:6px 8px;border:1px solid #c9ced6;border-radius:6px;font-size:16px;text-align:right;background:#fffbe6;font-family:inherit}
+.ekep .big{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0 12px}
+.ekep .big div{background:#f6f8fb;border-radius:10px;padding:16px 12px;text-align:center;min-width:0}
+.ekep .big div.main{background:#1f4e79}
+.ekep .big small{display:block;font-size:14px;color:#555;margin-bottom:4px}
+.ekep .big div.main small{color:#dbe8f5}
+.ekep .big b{font-size:30px;color:#1f4e79;font-variant-numeric:tabular-nums;line-height:1.2}
+.ekep .big div.main b{color:#fff}
+.ekep .big b em{font-style:normal;font-size:16px;margin-left:3px;opacity:.8}
+.ekep table{width:100%;border-collapse:collapse;font-size:15.5px;margin:4px 0 6px}
+.ekep th,.ekep td{padding:8px 8px;border-bottom:1px solid #e3e6ea;text-align:left;vertical-align:top;line-height:1.5}
+.ekep th{background:#f4f6f9;font-size:14px;color:#3a4048}
+.ekep td.n,.ekep th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ekep td.f{color:#3a4048;font-size:15px}
+.ekep tr.sum td{font-weight:800;border-top:2px solid #1b2330;background:#fafbfc}
+.ekep tr.tot td{font-weight:800;font-size:18px;color:#1f4e79;border-top:2px solid #1f4e79;background:#eef4fb}
+.ekep tr.me td{background:#fff6d6}
+.ekep .twrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ekep .svg{width:100%;height:auto;display:block;margin:6px 0 2px}
+.ekep .lg{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:14.5px;color:#3a4048;margin:0 0 8px}
+.ekep .lg i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.ekep .two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.ekep h3.t{font-size:18px;margin:18px 0 6px;color:#1f4e79}
+.ekep .tip{border-left:5px solid #1f4e79;background:#eef4fb;padding:12px 14px;border-radius:0 8px 8px 0;margin:12px 0 0;font-size:16px;line-height:1.75}
+.ekep .alert{border-left:5px solid #c62828;background:#fde8e8;padding:12px 14px;border-radius:0 8px 8px 0;margin:12px 0 0;font-size:16px;line-height:1.75}
+.ekep .under{list-style:none;margin:18px 0 0;padding:14px 16px;border:1px solid #dfe3e8;border-radius:10px;background:#fafbfc;font-size:15.5px;line-height:1.85}
+.ekep .under li{padding-left:16px;position:relative}.ekep .under li:before{content:"-";position:absolute;left:0}
+.ekep .under a{color:#1f4e79;font-weight:800}
+.ekep h2.h{font-size:26px;margin:44px 0 14px}
+.ekep details{border:1px solid #e3e6ea;border-radius:10px;padding:14px 18px;margin:0 0 10px;background:#fff}
+.ekep summary{font-weight:700;cursor:pointer;font-size:17.5px}
+.ekep details p{font-size:16px;line-height:1.8;color:#3a4048;margin:10px 0 0}
+.ekep .law{border:1px solid #dfe3e8;background:#fafbfc;border-radius:10px;padding:16px 20px;margin:28px 0 0;font-size:15px;line-height:1.8;color:#3a4048}
+.ekep .law b{color:#1a1e24}
+.ekep .law ul{margin:6px 0 0;padding-left:18px}
+.ekep .btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin:30px 0 0}
+.ekep .btns a{display:inline-block;font-weight:800;font-size:20px;padding:16px 30px;border-radius:12px;text-decoration:none}
+.ekep .btns a.call{background:#ff7a00;color:#fff!important}
+.ekep .btns a.q{background:#fff;color:#1f4e79!important;border:2px solid #1f4e79}
+.ekep .contact{margin:22px 0 0;font-size:19px;font-weight:800;color:#1b2330;text-align:center}
+.ekep .busy{font-size:15px;color:#555;margin:8px 0 0}
+@media(max-width:860px){.ekep .twrap table{min-width:640px}.ekep .twrap table.mt{min-width:820px}.ekep{padding:40px 14px 50px}.ekep h1{font-size:28px}.ekep .lead{font-size:16px}.ekep .inp{grid-template-columns:1fr}.ekep .big{grid-template-columns:1fr 1fr}.ekep .big b{font-size:24px}.ekep .sheet{padding:16px 12px}.ekep .row{flex-direction:column;align-items:stretch;gap:6px}.ekep .row input,.ekep .row select{width:100%;font-size:17px}.ekep .m12{grid-template-columns:repeat(3,1fr)}.ekep .two{grid-template-columns:1fr}.ekep table{font-size:14px}.ekep th,.ekep td{padding:7px 5px}.ekep .btns a{display:block;width:100%;text-align:center;font-size:18px}.ekep .contact{font-size:16px}}
+@media(max-width:480px){.ekep .sheet{padding:14px 8px}.ekep .big{grid-template-columns:1fr}.ekep table{font-size:13px}.ekep th,.ekep td{padding:6px 4px}.ekep th{font-size:12.5px}.ekep .m12{grid-template-columns:repeat(2,1fr)}}
+</style>
+<div class="ekep" id="string-duct-tray-calculator">
+  <div class="eb">PV STRING CABLE · DUCT VS TRAY</div>
+  <h1>태양광 스트링 케이블 덕트 대 트레이 계산기 (DC 케이블 6㎟)</h1>
+  <ul class="lead">
+    <li>모듈 단락전류, 인버터 내장 DC 퓨즈, 주위온도, 덕트 하나에 넣을 회로 수를 넣으면 <b>6㎟ 스트링 케이블이 덕트 안에서 안전공사 검사 기준(퓨즈 정격 ≤ 케이블 허용전류)을 만족하는지</b>, 덕트 한 조에 <b>몇 회로까지 넣을 수 있는지</b>를 보여 드립니다.</li>
+    <li>덕트는 점적률(내부 단면적의 20%)만 맞추면 된다고 알기 쉽지만, 안전공사 검사는 <b>묶음 보정계수를 적용한 케이블 허용전류</b>를 봅니다. 700W급 모듈처럼 단락전류가 큰 경우 6㎟ 덕트는 두세 회로에서 한계가 옵니다. 같은 케이블을 천공 트레이에 한 줄로 놓으면 어떻게 되는지도 함께 비교합니다.</li>
+    <li>회원가입 없이 무료입니다. 숫자는 이 화면 안에서만 계산되고 어디에도 보내지 않습니다.</li>
+  </ul>
+
+  <div class="sheet">
+    <h2>스트링 케이블 허용전류 검토표</h2>
+    <p class="ref">※ 허용전류 I_allow = 기본 허용전류 × 온도 보정계수 × 묶음(집합) 보정계수 · 필요 허용전류 = 퓨즈 정격 In 과 1.25 × Isc 중 큰 값 · 노란 칸만 입력합니다</p>
+
+    <div class="sh">■ 1. 입력</div>
+    <div class="sb"><div class="inp">
+      <div class="row"><label>① 모듈 단락전류 Isc [A]<small>양면 모듈은 후면 이득을 더한 BNPI 값. 모듈 사양서 '단락전류'</small></label><input type="number" id="sd_isc" value="20.54" step="0.01" min="1" inputmode="decimal"></div>
+      <div class="row"><label>② 스트링 DC 퓨즈 정격 In [A]<small>인버터 내장 퓨즈 또는 접속함 퓨즈의 정격전류</small></label><input type="number" id="sd_in" value="35" step="1" min="1" inputmode="numeric"></div>
+      <div class="row"><label>③ 모듈 최대 직렬 퓨즈 [A]<small>모듈 사양서 'Max series fuse rating'</small></label><input type="number" id="sd_ocpr" value="35" step="1" min="1" inputmode="numeric"></div>
+      <div class="row"><label>④ 덕트 주위온도 [℃]<small>옥외 노출·직사광이면 높게. 기중 XLPE 케이블 기준</small></label><select id="sd_t"></select></div>
+      <div class="row"><label>⑤ 덕트 한 조에 넣을 회로 수<small>스트링 1개 = 1회로(+ 선과 − 선 한 쌍)</small></label><input type="number" id="sd_n" value="2" step="1" min="1" max="40" inputmode="numeric"></div>
+      <div class="row"><label>⑥ 전체 스트링 회로 수 (선택)<small>현장 전체 스트링 수. 필요한 덕트 수와 한 덕트로 합칠 때 굵기를 알려 드립니다</small></label><input type="number" id="sd_tot" value="11" step="1" min="0" inputmode="numeric"></div>
+    </div></div>
+
+    <div id="sd_out"></div>
+
+    <ul class="under">
+      <li>식과 숫자 출처: KS C IEC 60364-5-52 표 B.52.3(설치방법 B1 덕트 내 단심케이블 2부하도체: 6㎟ 54A, 10㎟ 75A, 16㎟ 100A / 방법 E 천공 트레이 6㎟ 63A), 표 B.52.14(주위온도 보정), 기중에서 묶거나 수납한 경우의 묶음 보정계수(1회로 1.00 · 2회로 0.80 · 3회로 0.70 …). 트레이 단층 보정 0.72는 당사 안전측 가정값입니다. 판정 항목은 한국전기안전공사 태양광발전설비 검사 기준의 ① 1.5×Isc &lt; In &lt; 2.4×Isc ② In ≤ 모듈 최대 직렬 퓨즈 ③ In ≤ 케이블 허용전류 ④ 1.25×Isc ≤ 케이블 허용전류를 따랐습니다(번호는 이 화면에서 새로 매긴 것).</li>
+      <li>이 값은 간이 계산입니다. 입력 범위를 넘는 값은 자동으로 범위 안으로 맞추고 알려 드립니다. 정식 설계에서는 실제 포설 경로, 덕트 재질과 길이, 햇빛 노출, 케이블 제조사 허용전류표를 반영한 계산서가 필요합니다. → <a href="https://www.ecokkorea.kr/35">설계 검토 상담(무료 1차)</a></li>
+    </ul>
+  </div>
+
+  <h2 class="h">자주 묻는 질문</h2>
+  <details><summary>덕트는 점적률만 맞으면 되는 것 아닌가요?</summary><p>점적률(덕트 단면적의 20% 등)은 케이블이 들어갈 공간 기준입니다. 안전공사 태양광 검사는 여기에 더해 퓨즈 정격이 케이블 허용전류를 넘지 않는지를 봅니다. 덕트에 여러 회로를 밀착해 넣으면 열이 빠지지 않아 묶음 보정계수가 계속 낮아지고, 허용전류가 퓨즈 정격 아래로 내려갈 수 있습니다.</p></details>
+  <details><summary>왜 6㎟ 덕트는 회로 수에 한계가 있나요?</summary><p>6㎟ 케이블의 덕트(B1) 기본 허용전류는 54A입니다. 주위온도 40℃에서 0.91을 곱하면 49.1A이고, 여기에 묶음 보정계수를 곱합니다. 퓨즈 35A 조건이면 필요한 보정계수가 0.71 이상이라 2회로(0.80)까지 만족하고 3회로(0.70)부터 부족합니다.</p></details>
+  <details><summary>트레이는 왜 회로 수 제한이 없나요?</summary><p>천공 트레이에 한 줄로 놓으면 케이블끼리 간격과 공기 순환이 확보되어 단층 보정계수가 회로 수가 늘어도 일정 값 아래로 내려가지 않는다고 봅니다. 이 계산기는 안전측으로 0.72를 씁니다(당사 기준 가정값, 트레이 형식에 따라 달라지므로 실제 형식의 표 값 확인 필요). 6㎟ 트레이(방법 E) 기본 허용전류 63A에 온도 0.91과 0.72를 곱하면 41.3A로, 35A 퓨즈 조건에서 만족합니다. 대신 트레이는 설치비와 시공 방식이 달라집니다.</p></details>
+  <details><summary>덕트를 쓰려면 어떻게 해야 하나요?</summary><p>덕트 한 조에 넣는 회로 수를 한계 이하로 나누어 각 덕트를 인버터까지 따로 포설하거나, 케이블 굵기를 10㎟·16㎟로 올리는 방법이 있습니다. 이 계산기의 결과표가 굵기별 한계 회로 수를 함께 보여 줍니다. 덕트끼리는 붙이지 않고 이격 설치해야 합니다.</p></details>
+  <details><summary>주위온도는 얼마로 넣나요?</summary><p>설계 주위온도로 넣습니다. 옥외 노출 덕트는 직사광으로 내부가 외기보다 더 오를 수 있어 40℃ 이상으로 보는 경우가 많습니다. 값을 올리면 온도 보정계수가 내려가 허용전류가 줄어듭니다.</p></details>
+
+  <div class="law"><b>각주 (기준 확인)</b>
+    <ul>
+      <li>KS C IEC 60364-5-52 표 B.52.3: XLPE 절연 구리 도체, 2부하도체, 설치방법 B1(전선관·덕트 내 단심케이블) 6㎟ 54A · 10㎟ 75A · 16㎟ 100A, 설치방법 E(천공 트레이) 6㎟ 63A. 같은 값을 설계 계산서의 허용전류표와 원문 대조(2026-10-30)로 확인했습니다.</li>
+      <li>표 B.52.14 주위온도 보정(XLPE, 기중): 20℃ 1.08 · 25℃ 1.04 · 30℃ 1.00 · 35℃ 0.96 · 40℃ 0.91 · 45℃ 0.87 · 50℃ 0.82 · 55℃ 0.76 · 60℃ 0.71 · 65℃ 0.65 · 70℃ 0.58.</li>
+      <li>묶음(집합) 보정계수, 기중에서 묶거나 벽면에 설치하거나 수납한 경우: 1회로 1.00 · 2회로 0.80 · 3회로 0.70 · 4회로 0.65 · 6회로 0.57 · 8회로 0.52 · 9회로 0.50 · 12회로 0.45 · 16회로 0.41 · 20회로 0.38. 이 표에 없는 회로 수(5·7·10·11 등)는 바로 위 표 칸의 값(안전측)을 쓰고, 20회로를 넘으면 표 범위 밖입니다.</li>
+      <li>안전공사 검사 기준 판정 항목: ① 1.5 × Isc &lt; In &lt; 2.4 × Isc ② In ≤ 모듈 최대 직렬 퓨즈 ③ DC퓨즈 정격전류 ≤ 스트링 DC케이블 허용전류(감소계수 적용) ④ 1.25 × Isc ≤ 스트링 DC케이블 허용전류. 양면 모듈은 BNPI 단락전류를 씁니다. 검사 기준 문서의 최신판 원문은 이 화면 작성 때 직접 확인하지 못했으므로 현장 검사 전 확인이 필요합니다.</li>
+      <li>트레이 단층 보정계수 0.72는 당사 안전측 가정값입니다. 천공형·래더형·비천공형 등 트레이 형식에 따라 원문 표 값이 다르고 원문 쪽 번호는 직접 확인하지 못했습니다. 묶음 보정계수 표의 원문 표 번호도 확인 중입니다.</li>
+    </ul>
+    넣지 않은 것: 지중 덕트(매설) 보정, 직사광에 의한 덕트 내부 온도 상승 가산, 전압강하, 단락 시 열적 강도, 케이블 제조사별 허용전류표
+  </div>
+
+  <div class="btns"><a class="call" href="tel:15552859">설계·계산서 상담 ☎ 1555-2859</a><a class="q" href="https://www.ecokkorea.kr/35">설계 검토 상담(무료 1차)</a></div>
+  <p class="contact">☎ 1555-2859 · www.ecokkorea.kr · info@ecokkorea.co.kr</p>
+</div>
+<script>
+(function(){
+  var out=document.getElementById('sd_out');if(!out||out.getAttribute('data-init'))return;out.setAttribute('data-init','1');
+  var IB6=54, IB10=75, IB16=100, IBTRAY=63, KTRAY=0.72;           // IEC 60364-5-52 표 B.52.3
+  var TEMPS=[[20,1.08],[25,1.04],[30,1.00],[35,0.96],[40,0.91],[45,0.87],[50,0.82],[55,0.76],[60,0.71],[65,0.65],[70,0.58]];  // 표 B.52.14
+  var NS=[1,2,3,4,6,8,9,12,16,20], KGS=[1.00,0.80,0.70,0.65,0.57,0.52,0.50,0.45,0.41,0.38];
+  var TABLE_N=[1,2,3,4,6,9,12];
+  function kg(n){for(var i=0;i<NS.length;i++){if(NS[i]>=n)return KGS[i];}return 0;}
+  function nmax(base,kt,need){var m=0;for(var i=0;i<NS.length;i++){if(base*kt*KGS[i]>=need)m=NS[i];}return m;}
+  function next(nm){for(var i=0;i<NS.length;i++){if(NS[i]>nm)return NS[i];}return null;}
+  function calc(p){
+    var need=Math.max(p.inn,1.25*p.isc), kt=p.kt, r={};
+    r.need=need; r.n125=1.25*p.isc;
+    r.c1=(p.inn>1.5*p.isc&&p.inn<2.4*p.isc); r.c2=(p.inn<=p.ocpr);
+    r.kg=kg(p.n); r.a6=IB6*kt*r.kg; r.ok6=r.a6>=need;
+    r.nmax6=nmax(IB6,kt,need); r.next6=next(r.nmax6);
+    r.lim=need/(IB6*kt);
+    r.nmax10=nmax(IB10,kt,need); r.nmax16=nmax(IB16,kt,need);
+    r.atray=IBTRAY*kt*KTRAY; r.oktray=r.atray>=need;
+    r.rows=TABLE_N.map(function(n){var k=kg(n);return {n:n,kg:k,a6:IB6*kt*k,a10:IB10*kt*k,a16:IB16*kt*k};});
+    r.tot=p.tot; r.kgtot=kg(p.tot);
+    r.a6n=IB6*kt*r.kgtot; r.a10n=IB10*kt*r.kgtot; r.a16n=IB16*kt*r.kgtot;
+    r.size=(r.a6n>=need)?'6':(r.a10n>=need)?'10':(r.a16n>=need)?'16':'16 초과';
+    r.ducts=(r.nmax6>0&&p.tot>0)?Math.ceil(p.tot/r.nmax6):0;
+    return r;
+  }
+  window.__sdCalc=calc; window.__sdData={IB:[IB6,IB10,IB16,IBTRAY],KTRAY:KTRAY,TEMPS:TEMPS,NS:NS,KGS:KGS};
+  var sel=document.getElementById('sd_t');
+  TEMPS.forEach(function(t){var o=document.createElement('option');o.value=t[1];o.text=t[0]+'℃ (보정계수 '+t[1].toFixed(2)+')';if(t[0]===40)o.selected=true;sel.appendChild(o);});
+  function f(x,d){return (+x).toFixed(d==null?2:d);}
+  function badge(ok){return ok?'<b style="color:#1a7f37">적합</b>':'<b style="color:#c62828">부적합</b>';}
+  var LIM={isc:[1,60],inn:[1,200],ocpr:[1,200],n:[1,40],tot:[0,500]}, notes=[];
+  function clamp(v,k,name){var lo=LIM[k][0],hi=LIM[k][1];if(!(v>=lo)){notes.push(name+'은(는) '+lo+' 이상으로 맞췄습니다.');return lo;}if(v>hi){notes.push(name+'은(는) '+hi+' 이하로 맞췄습니다.');return hi;}return v;}
+  function read(){
+    notes=[];
+    var isc=clamp(+document.getElementById('sd_isc').value||0,'isc','단락전류'), inn=clamp(+document.getElementById('sd_in').value||0,'inn','퓨즈 정격'), ocpr=clamp(+document.getElementById('sd_ocpr').value||0,'ocpr','모듈 최대 직렬 퓨즈');
+    var n=clamp(Math.floor(+document.getElementById('sd_n').value||0),'n','덕트 회로 수'), tot=clamp(Math.floor(+document.getElementById('sd_tot').value||0),'tot','전체 회로 수');
+    return {isc:isc,inn:inn,ocpr:ocpr,kt:+sel.value,n:n,tot:tot};
+  }
+  function render(){
+    var p=read();
+    var r=calc(p), h=notes.length?'<p class="alert">'+notes.join(' ')+'</p>':'';
+    h+='<div class="sh">■ 2. 결과</div><div class="sb">';
+    h+='<div class="big"><div class="main"><small>덕트 한 조 6㎟ 한계 회로 수</small><b>'+(r.nmax6>0?r.nmax6:'0')+'<em>회로</em></b></div>';
+    h+='<div><small>필요 허용전류</small><b>'+f(r.need)+'<em>A</em></b></div>';
+    h+='<div><small>입력 '+p.n+'회로 허용전류</small><b>'+(r.kg>0?f(r.a6)+'<em>A</em>':'표 밖')+'</b></div>';
+    h+='<div><small>트레이(단층) 허용전류</small><b>'+f(r.atray)+'<em>A</em></b></div></div>';
+    h+='<h3 class="t">검사 판정 항목</h3><div class="twrap"><table><tr><th>항목</th><th class="n">값</th><th>판정</th></tr>';
+    h+='<tr><td>① 1.5×Isc &lt; In &lt; 2.4×Isc</td><td class="n">'+f(1.5*p.isc)+' &lt; '+p.inn+' &lt; '+f(2.4*p.isc)+'</td><td>'+badge(r.c1)+'</td></tr>';
+    h+='<tr><td>② In ≤ 모듈 최대 직렬 퓨즈</td><td class="n">'+p.inn+' ≤ '+p.ocpr+'</td><td>'+badge(r.c2)+'</td></tr>';
+    h+='<tr><td>③④ 덕트 '+p.n+'회로: 허용전류 ≥ max(In, 1.25×Isc)</td><td class="n">'+(r.kg>0?f(r.a6)+(r.ok6?' ≥ ':' &lt; ')+f(r.need):'20회로 초과(표 밖)')+'</td><td>'+badge(r.ok6)+'</td></tr>';
+    h+='<tr><td>③④ 트레이 단층 6㎟(방법 E)</td><td class="n">'+f(r.atray)+(r.oktray?' ≥ ':' &lt; ')+f(r.need)+'</td><td>'+badge(r.oktray)+'</td></tr></table></div>';
+    h+='<h3 class="t">덕트 한 조에 넣는 회로 수별 허용전류</h3><div class="twrap"><table class="mt"><tr><th class="n">회로 수</th><th class="n">묶음 계수 k_g</th><th class="n">6㎟ [A]</th><th>6㎟</th><th class="n">10㎟ [A]</th><th>10㎟</th><th class="n">16㎟ [A]</th><th>16㎟</th></tr>';
+    r.rows.forEach(function(x){h+='<tr'+(x.n===p.n?' class="me"':'')+'><td class="n">'+x.n+'</td><td class="n">'+f(x.kg)+'</td><td class="n">'+f(x.a6)+'</td><td>'+badge(x.a6>=r.need)+'</td><td class="n">'+f(x.a10)+'</td><td>'+badge(x.a10>=r.need)+'</td><td class="n">'+f(x.a16)+'</td><td>'+badge(x.a16>=r.need)+'</td></tr>';});
+    h+='</table></div>';
+    h+='<p class="busy">한계 묶음 계수 = '+f(r.need)+' ÷ (54 × '+f(p.kt)+') = '+f(r.lim,3)+'. 덕트 한 조 한계 회로 수: 6㎟ '+r.nmax6+'회로 · 10㎟ '+r.nmax10+'회로 · 16㎟ '+r.nmax16+'회로'+(r.next6?' (6㎟는 '+r.next6+'회로부터 부적합)':'')+'.</p>';
+    if(p.tot>0){
+      h+='<h3 class="t">전체 '+p.tot+'회로 설계 안내</h3>';
+      if(r.nmax6>0){h+='<p class="tip">6㎟를 유지하려면 덕트를 <b>최소 '+r.ducts+'조</b>로 나누고 한 조에 '+r.nmax6+'회로 이하로 넣어야 합니다. 덕트끼리는 붙이지 않고 이격 설치합니다.</p>';}
+      else{h+='<p class="alert">6㎟는 덕트에 1회로도 넣을 수 없는 조건입니다. 굵기를 올리거나 트레이를 검토해야 합니다.</p>';}
+      h+='<p class="tip">전체 '+p.tot+'회로를 한 덕트에 합치면 묶음 계수 '+f(r.kgtot)+'로 6㎟ '+f(r.a6n)+'A · 10㎟ '+f(r.a10n)+'A · 16㎟ '+f(r.a16n)+'A, 필요 '+f(r.need)+'A 대비 '+(r.size==='16 초과'?'16㎟로도 부족합니다.':'만족하는 최소 굵기는 <b>'+r.size+'㎟</b>입니다.')+'</p>';
+    }
+    h+='<p class="busy">이 숫자는 간이 값입니다. 정식 계산서는 문의해 주세요. ☎ 1555-2859</p></div>';
+    out.innerHTML=h;
+  }
+  ['sd_isc','sd_in','sd_ocpr','sd_t','sd_n','sd_tot'].forEach(function(id){var e=document.getElementById(id);e.addEventListener('input',render);e.addEventListener('change',render);});
+  render();
+})();
+</script>
+
+<div class="pg-bar" id="pg-bar"><button type="button" class="pg-save" id="pg-save">보고서 PDF로 저장</button><span class="pg-hint">A4 한 장, 입력값과 결과 표</span></div><div class="pg-gatebox" id="pg-gatebox"><div class="gate" id="subgate"><div><h2>유튜브 채널을 구독하시면 PDF 보고서가 저장됩니다</h2><ol><li>아래 빨간 단추를 누르면 유튜브 구독 창이 새로 열립니다.</li><li>구독을 마치고 이 창으로 돌아오시면 PDF 저장이 바로 열립니다.</li></ol><p class="note">계산은 구독 없이 무료입니다. 이미 구독 중이시면 같은 단추를 누르고 돌아오시면 됩니다. 한 번 열면 이 브라우저에서는 홈페이지 어디서나 계속 열려 있습니다.</p><p class="ok" role="status">열렸습니다. 구독해 주셔서 고맙습니다.</p></div><a class="subbtn" id="subbtn" href="https://www.youtube.com/channel/UCpRTUvMiZQxXk-7BLJQlUZQ?sub_confirmation=1" target="_blank" rel="noopener"><svg viewBox="0 0 30 21" aria-hidden="true"><rect width="30" height="21" rx="5" fill="#fff"/><path d="M12 6l8 4.5-8 4.5z" fill="#c4161c"/></svg>유튜브 구독하고 PDF 저장</a></div></div><script>(function(){var R=document.getElementById("sd_out"),b=document.getElementById('pg-bar'),g=document.getElementById('pg-gatebox');if(R&&R.parentNode){R.parentNode.insertBefore(b,R.nextSibling);b.parentNode.insertBefore(g,b.nextSibling)}})();(function(){
+var K='ecok_sub_ok',KEY="string-duct-tray",ROOT="ekep",FIT=(KEY==='fuse'||KEY==='string')?1005:960,RID="sd_out",CO="☎ 1555-2859 · www.ecokkorea.kr · info@ecokkorea.co.kr",NOTE="참고용 계산, 실제 설계는 현장 조건 확인",ok=false,clicked=0,pending=false;
+function setOk(){try{window.localStorage.setItem(K,'1')}catch(e){}try{document.cookie=K+'=1; max-age=31536000; path=/; SameSite=Lax'}catch(e){}}
+function getOk(){var v=false;try{v=window.localStorage.getItem(K)==='1'}catch(e){}
+ if(!v){try{v=/(?:^|; )ecok_sub_ok=1/.test(document.cookie)}catch(e){}}
+ if(v)setOk();return v}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function rows(){var out=[];document.querySelectorAll('.sheet .row').forEach(function(r){
+ var el=r.querySelector('input,select,output');if(!el)return;
+ var lb=r.querySelector('label');if(!lb)return;var c=lb.cloneNode(true);
+ c.querySelectorAll('small').forEach(function(s){var t=s.textContent.trim();if(t.length<=6)s.replaceWith(document.createTextNode(' ('+t+')'));else s.remove()});
+ var name=c.textContent.replace(/\s+/g,' ').trim(),v;
+ if(el.type==='checkbox')v=el.checked?"예":"아니오";
+ else if(el.tagName==='SELECT')v=el.options[el.selectedIndex]?el.options[el.selectedIndex].text:'';
+ else if(el.tagName==='OUTPUT')v=el.textContent;
+ else v=el.value||"자동";
+ out.push([name,String(v).replace(/\s+/g,' ').trim()])});return out}
+function sheetHtml(){
+ var R=document.getElementById(RID);if(!R)return null;
+ var cl=R.cloneNode(true);cl.removeAttribute('id');cl.querySelectorAll('[id]').forEach(function(n){n.removeAttribute('id')});
+ if(KEY==='string')cl.querySelectorAll('table').forEach(function(t){if(t.rows[0]&&t.rows[0].cells.length>10)t.remove()});
+ var rs=rows(),h='';
+ for(var i=0;i<rs.length;i+=2){var a=rs[i],b=rs[i+1];
+  h+='<tr><th>'+esc(a[0])+'</th><td>'+esc(a[1])+'</td>'+(b?'<th>'+esc(b[0])+'</th><td>'+esc(b[1])+'</td>':'<th></th><td></td>')+'</tr>'}
+ var h1=document.querySelector('h1'),title=h1?h1.textContent.trim():document.title;
+ var d=new Date(),ds=d.getFullYear()+'.'+(d.getMonth()+1)+'.'+d.getDate();
+ var w=document.createElement('div');w.className='pgw '+ROOT;w.appendChild(cl);
+ var extra='';
+ if(KEY==='fire'){var t1=document.getElementById('ft1'),t2=document.getElementById('ft2');
+  if(t1&&t2){var nt=t1.closest('.tw').previousElementSibling,x=document.createElement('div');x.className='pgw '+ROOT;
+   if(nt)x.appendChild(nt.cloneNode(true));[t1,t2].forEach(function(t){var c=t.closest('.tw').cloneNode(true);c.querySelectorAll('[id]').forEach(function(n){n.removeAttribute('id')});x.appendChild(c)});
+   extra='<h2>'+"감지면적 표 (NFTC 203 원문)"+'</h2>'+x.outerHTML}}
+ return '<div id="pg-sheet" class="pg-fr '+KEY+'"><div class="pg-hd"><img src="img/logo.png" alt="'+"에코케이코리아"+'"><span class="pg-dt">'+"계산일 "+ds+'</span></div>'
+  +'<div class="pg-t">'+esc(title)+'</div><p class="pg-s">'+"입력값과 계산 결과"+'</p>'
+  +'<h2>'+"입력값"+'</h2><table class="pg-in"><tbody>'+h+'</tbody></table><h2>'+"계산 결과"+'</h2>'+w.outerHTML+extra
+  +'<div class="pg-ft"><b>'+esc(CO)+'</b><span>'+esc(NOTE)+'</span></div></div>'}
+function frameHtml(){var s=sheetHtml();if(!s)return null;
+ var bs=document.createElement('base');bs.href=document.baseURI;var heads='';document.querySelectorAll('head style').forEach(function(x){heads+=x.outerHTML});
+ return '<!doctype html><html lang="'+"ko"+'"><head><meta charset="utf-8">'+bs.outerHTML+heads+'<style>html,body{margin:0;background:#fff}</style></head><body>'+s+'</body></html>'}
+function doSave(){var html=frameHtml();if(!html)return;
+ var old=document.getElementById('pg-frame');if(old)old.remove();
+ var f=document.createElement('iframe');f.id='pg-frame';f.setAttribute('aria-hidden','true');
+ f.style.cssText='position:absolute;left:-9999px;top:0;width:190mm;height:1400px;border:0;visibility:hidden';
+ f.onload=function(){var w=f.contentWindow,doc=f.contentDocument,s=doc.getElementById('pg-sheet');if(!s)return;
+  var go=function(){var hh=s.scrollHeight;s.style.zoom=Math.min(1,FIT/hh).toFixed(3);
+   setTimeout(function(){try{w.focus();w.print()}catch(e){try{window.print()}catch(e2){}}},120)};
+  (doc.fonts&&doc.fonts.ready?doc.fonts.ready:Promise.resolve()).then(function(){setTimeout(go,150)},go)};
+ document.body.appendChild(f);f.srcdoc=html}
+window.__pgFrameHtml=frameHtml;
+var box=document.getElementById('pg-gatebox'),btn=document.getElementById('pg-save');
+function openGate(){ok=true;setOk();var g=box.querySelector('.gate');g.classList.add('done');
+ if(pending){pending=false;doSave()}}
+ok=getOk();
+btn.addEventListener('click',function(){
+ if(ok){doSave();return}
+ pending=true;box.classList.add('show');try{box.scrollIntoView({block:'nearest'})}catch(e){}});
+document.getElementById('subbtn').addEventListener('click',function(){clicked=Date.now()});
+function back(){if(clicked&&!ok&&Date.now()-clicked>2500)openGate()}
+addEventListener('focus',back);document.addEventListener('visibilitychange',function(){if(!document.hidden)back()});
+window.__pgUnlock=openGate;
+})();</script><script>(function(){function s(){parent.postMessage({h:document.documentElement.scrollHeight},'*')}addEventListener('load',s);new ResizeObserver(s).observe(document.body);setTimeout(s,800)})()</script></body></html>

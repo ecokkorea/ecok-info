@@ -1,0 +1,479 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+<style>@font-face{font-family:Paperlogy;src:url(fonts/Paperlogy-4Regular.ttf);font-weight:400}@font-face{font-family:Paperlogy;src:url(fonts/Paperlogy-6SemiBold.ttf);font-weight:600}@font-face{font-family:Paperlogy;src:url(fonts/Paperlogy-8ExtraBold.ttf);font-weight:800}
+html,body{margin:0;background:#fff;overflow-x:hidden}body{font-family:Paperlogy,'Malgun Gothic',sans-serif;word-break:keep-all;color:#16212c}img{max-width:100%;height:auto}@media (max-width:600px){table{display:block;overflow-x:auto}}</style><style>/* 스타일은 위젯 안 <style> */
+</style><style>:root{--ink:#16212c;--slate:#4a5763;--line:#d5dce2;--mist:#eef2f5;--blue:#1d4f91;--blue-dark:#163d70}
+.gate{margin-top:0;border:1.5px solid var(--ink);background:#fff;display:grid;grid-template-columns:1fr auto;gap:28px;align-items:center;padding:clamp(22px,3vw,36px)}
+.gate h2{font-size:clamp(24px,2.4vw,32px);font-weight:800;letter-spacing:-.02em;line-height:1.35}
+.gate ol{margin:14px 0 0;padding-left:1.4em;color:var(--slate)}.gate ol li{margin:4px 0}
+.gate .note{margin-top:12px;font-size:16px;color:var(--slate)}
+.subbtn{display:inline-flex;align-items:center;gap:12px;padding:18px 30px;border-radius:10px;background:#c4161c;color:#fff;font-weight:800;font-size:21px;text-decoration:none;white-space:nowrap}
+.subbtn:hover{background:#9f1015}.subbtn svg{width:30px;height:21px;flex:none}
+.gate .ok{display:none;font-weight:800;color:#1b6b3a;font-size:20px}
+.gate.done .ok{display:block}.gate.done .subbtn{background:#fff;color:#c4161c;border:2px solid #c4161c;padding:14px 24px;font-size:18px}
+
+.pg-bar{margin:22px 0 0;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.pg-save{font:800 19px Paperlogy,'Malgun Gothic',sans-serif;padding:15px 28px;border:0;border-radius:10px;background:#1d4f91;color:#fff;cursor:pointer}
+.pg-save:hover{background:#163d70}.pg-hint{font-size:15px;color:#4a5763}
+.pg-gatebox{display:none;margin-top:18px}.pg-gatebox.show{display:block}
+.pg-gatebox .gate{grid-template-columns:1fr}.pg-gatebox .subbtn{justify-self:start}
+#pg-sheet{display:none}
+@media print{
+ @page{size:A4;margin:10mm}
+ html,body{background:#fff!important;overflow:visible!important}
+ body>*:not(#pg-sheet){display:none!important}
+ #pg-sheet{display:block!important;width:190mm;color:#16212c;font-family:Paperlogy,'Malgun Gothic',sans-serif;word-break:keep-all;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+#pg-sheet.pg-fr{display:block}
+#pg-sheet.fuse .pgw>div,#pg-sheet.string .pgw>div{column-count:2;column-gap:14px}
+#pg-sheet.string .pgw .sec{break-inside:avoid}
+#pg-sheet.string .pgw .sec:has(table){column-span:all}
+#pg-sheet.fuse .pgw .sh,#pg-sheet.fuse .pgw .chk{break-inside:avoid}
+#pg-sheet *{box-sizing:border-box}
+#pg-sheet .pg-hd{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #1d4f91;padding-bottom:6px}
+#pg-sheet .pg-hd img{height:26px;width:auto}#pg-sheet .pg-dt{font-size:12px;color:#4a5763}
+#pg-sheet .pg-t{font-size:20px;font-weight:800;margin:10px 0 2px;line-height:1.3}
+#pg-sheet .pg-s{font-size:12px;color:#4a5763;margin:0 0 6px}
+#pg-sheet h2{font-size:14px;font-weight:800;margin:10px 0 4px;color:#1d4f91}
+#pg-sheet table.pg-in{width:100%;border-collapse:collapse;table-layout:fixed;font-size:11.5px}
+#pg-sheet table.pg-in th,#pg-sheet table.pg-in td{border-bottom:1px solid #d5dce2;padding:3px 6px;line-height:1.35;vertical-align:top;word-break:keep-all;overflow-wrap:break-word}
+#pg-sheet table.pg-in th{text-align:left;font-weight:600;color:#4a5763;background:#f4f6f8;width:27%}
+#pg-sheet table.pg-in td{font-weight:800;width:23%}
+#pg-sheet .pgw{max-width:none;margin:0;padding:0;color:#16212c}
+#pg-sheet .pgw .sh{margin-top:6px}
+#pg-sheet .pg-ft{margin-top:10px;border-top:1px solid #d5dce2;padding-top:6px;font-size:12px;display:flex;justify-content:space-between;gap:12px}
+#pg-sheet .pg-ft b{font-weight:800}
+
+#pg-sheet.fuse .pgw *,#pg-sheet.string .pgw *{font-size:10.5px!important;line-height:1.45!important}
+#pg-sheet.fuse .pgw .sh,#pg-sheet.string .pgw .sec h3,#pg-sheet.string .pgw .ekmppt h3{font-size:12px!important}
+#pg-sheet.fuse .pgw .sh{padding:5px 10px!important;margin-top:8px!important;break-after:avoid}
+#pg-sheet.fuse .pgw .sb{padding:5px 8px!important}
+#pg-sheet.fuse .pgw .chk{margin-bottom:4px!important;grid-template-columns:1fr 66px!important}
+#pg-sheet.fuse .pgw .chk .f{padding:4px 8px!important}
+#pg-sheet.fuse .pgw .chk .f .v,#pg-sheet.fuse .pgw .chk .f .s{padding:0 4px!important}
+#pg-sheet.string .pgw .sec{margin-top:8px!important}
+#pg-sheet.string .pgw .calcline{padding:3px 6px!important;margin-bottom:3px!important;gap:4px!important}
+#pg-sheet.string .pgw .verdict{padding:5px 8px!important;margin-top:6px!important}
+</style></head><body><style>
+.ekep{max-width:1200px;margin:0 auto;padding:60px 20px 70px;color:#1a1e24;box-sizing:border-box;word-break:keep-all;overflow-wrap:break-word;background:#fff;font-size:17px;line-height:1.7}
+.ekep *{box-sizing:border-box}
+.ekep .eb{font-size:13px;font-weight:800;letter-spacing:2px;color:#1a7f37}
+.ekep h1{font-size:38px;margin:10px 0 16px;font-weight:800;line-height:1.3}
+.ekep .lead{list-style:none;padding:0;margin:0 0 26px;font-size:18px;line-height:1.8}
+.ekep .lead li{padding-left:22px;position:relative}.ekep .lead li:before{content:"■";position:absolute;left:0;color:#1a7f37;font-size:12px;top:2px}
+.ekep .sheet{border:2px solid #1b2330;border-radius:12px;padding:22px 24px;background:#fff}
+.ekep .sheet>h2{font-size:24px;margin:0 0 4px}
+.ekep .ref{font-size:14.5px;color:#1f4e79;margin:0 0 14px;line-height:1.6}
+.ekep .sh{background:#1f4e79;color:#fff;font-weight:800;font-size:17px;padding:10px 14px;border-radius:8px 8px 0 0;margin-top:18px}
+.ekep .sb{border:1px solid #dfe3e8;border-top:0;border-radius:0 0 8px 8px;padding:12px 14px}
+.ekep .inp{display:grid;grid-template-columns:1fr 1fr;gap:4px 24px}
+.ekep .row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px dashed #edf0f3}
+.ekep .row label{font-size:17px;font-weight:700}
+.ekep .row label small{display:block;font-size:13.5px;color:#555;font-weight:400}
+.ekep .row input,.ekep .row select{padding:9px 10px;border:1px solid #c9ced6;border-radius:6px;font-size:18px;font-family:inherit;background:#fffbe6;color:#1a1e24}
+.ekep .row input{width:160px;text-align:right}
+.ekep .row select{width:330px;max-width:100%}
+.ekep .m12{display:grid;grid-template-columns:repeat(6,1fr);gap:6px 10px;margin:8px 0 4px}
+.ekep .m12 label{font-size:14px;font-weight:700;display:block}
+.ekep .m12 input{width:100%;padding:6px 8px;border:1px solid #c9ced6;border-radius:6px;font-size:16px;text-align:right;background:#fffbe6;font-family:inherit}
+.ekep .big{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0 12px}
+.ekep .big div{background:#f6f8fb;border-radius:10px;padding:16px 12px;text-align:center;min-width:0}
+.ekep .big div.main{background:#1f4e79}
+.ekep .big small{display:block;font-size:14px;color:#555;margin-bottom:4px}
+.ekep .big div.main small{color:#dbe8f5}
+.ekep .big b{font-size:30px;color:#1f4e79;font-variant-numeric:tabular-nums;line-height:1.2}
+.ekep .big div.main b{color:#fff}
+.ekep .big b em{font-style:normal;font-size:16px;margin-left:3px;opacity:.8}
+.ekep table{width:100%;border-collapse:collapse;font-size:15.5px;margin:4px 0 6px}
+.ekep th,.ekep td{padding:8px 8px;border-bottom:1px solid #e3e6ea;text-align:left;vertical-align:top;line-height:1.5}
+.ekep th{background:#f4f6f9;font-size:14px;color:#3a4048}
+.ekep td.n,.ekep th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ekep td.f{color:#3a4048;font-size:15px}
+.ekep tr.sum td{font-weight:800;border-top:2px solid #1b2330;background:#fafbfc}
+.ekep tr.tot td{font-weight:800;font-size:18px;color:#1f4e79;border-top:2px solid #1f4e79;background:#eef4fb}
+.ekep tr.me td{background:#fff6d6}
+.ekep .twrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ekep .svg{width:100%;height:auto;display:block;margin:6px 0 2px}
+.ekep .lg{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:14.5px;color:#3a4048;margin:0 0 8px}
+.ekep .lg i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.ekep .two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.ekep h3.t{font-size:18px;margin:18px 0 6px;color:#1f4e79}
+.ekep .tip{border-left:5px solid #1f4e79;background:#eef4fb;padding:12px 14px;border-radius:0 8px 8px 0;margin:12px 0 0;font-size:16px;line-height:1.75}
+.ekep .alert{border-left:5px solid #c62828;background:#fde8e8;padding:12px 14px;border-radius:0 8px 8px 0;margin:12px 0 0;font-size:16px;line-height:1.75}
+.ekep .under{list-style:none;margin:18px 0 0;padding:14px 16px;border:1px solid #dfe3e8;border-radius:10px;background:#fafbfc;font-size:15.5px;line-height:1.85}
+.ekep .under li{padding-left:16px;position:relative}.ekep .under li:before{content:"-";position:absolute;left:0}
+.ekep .under a{color:#1f4e79;font-weight:800}
+.ekep h2.h{font-size:26px;margin:44px 0 14px}
+.ekep details{border:1px solid #e3e6ea;border-radius:10px;padding:14px 18px;margin:0 0 10px;background:#fff}
+.ekep summary{font-weight:700;cursor:pointer;font-size:17.5px}
+.ekep details p{font-size:16px;line-height:1.8;color:#3a4048;margin:10px 0 0}
+.ekep .law{border:1px solid #dfe3e8;background:#fafbfc;border-radius:10px;padding:16px 20px;margin:28px 0 0;font-size:15px;line-height:1.8;color:#3a4048}
+.ekep .law b{color:#1a1e24}
+.ekep .law ul{margin:6px 0 0;padding-left:18px}
+.ekep .btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin:30px 0 0}
+.ekep .btns a{display:inline-block;font-weight:800;font-size:20px;padding:16px 30px;border-radius:12px;text-decoration:none}
+.ekep .btns a.call{background:#ff7a00;color:#fff!important}
+.ekep .btns a.q{background:#fff;color:#1f4e79!important;border:2px solid #1f4e79}
+.ekep .contact{margin:22px 0 0;font-size:19px;font-weight:800;color:#1b2330;text-align:center}
+.ekep .busy{font-size:15px;color:#555;margin:8px 0 0}
+@media(max-width:860px){.ekep .twrap table{min-width:640px}.ekep .twrap table.mt{min-width:820px}.ekep{padding:40px 14px 50px}.ekep h1{font-size:28px}.ekep .lead{font-size:16px}.ekep .inp{grid-template-columns:1fr}.ekep .big{grid-template-columns:1fr 1fr}.ekep .big b{font-size:24px}.ekep .sheet{padding:16px 12px}.ekep .row{flex-direction:column;align-items:stretch;gap:6px}.ekep .row input,.ekep .row select{width:100%;font-size:17px}.ekep .m12{grid-template-columns:repeat(3,1fr)}.ekep .two{grid-template-columns:1fr}.ekep table{font-size:14px}.ekep th,.ekep td{padding:7px 5px}.ekep .btns a{display:block;width:100%;text-align:center;font-size:18px}.ekep .contact{font-size:16px}}
+@media(max-width:480px){.ekep .sheet{padding:14px 8px}.ekep .big{grid-template-columns:1fr}.ekep table{font-size:13px}.ekep th,.ekep td{padding:6px 4px}.ekep th{font-size:12.5px}.ekep .m12{grid-template-columns:repeat(2,1fr)}}
+
+.ekep .segbox{border:1px solid #dfe3e8;border-radius:10px;padding:10px 14px 6px;margin:0 0 12px;background:#fcfcfd}
+.ekep .seghd{font-weight:800;color:#1f4e79;font-size:17px;margin:0 0 4px}
+.ekep button.mini{font-family:inherit;font-size:16px;font-weight:700;border:1px solid #1f4e79;color:#1f4e79;background:#fff;border-radius:8px;padding:9px 16px;cursor:pointer}
+.ekep sup{font-size:.7em}
+</style>
+<div class="ekep" id="rainwater-calculator">
+  <div class="eb">RAINWATER · DRAINAGE · SOLAR SITE</div>
+  <h1>태양광 부지 우수유출량·배수로(측구·흄관) 용량 계산기</h1>
+  <ul class="lead">
+    <li>부지 면적, 유출계수, 지역과 설계빈도를 넣으면 <b>구간별 우수유출량</b>(합리식)과 <b>U형 측구·흄관이 그 물을 버티는지</b>(매닝식 통수량·유속)를 구간마다 확인하고, 통과하는 <b>가장 작은 규격</b>까지 알려 드립니다.</li>
+    <li>강우강도는 시·군별 확률강우량(환경부 홍수량 산정 표준지침 지점별 값)과, 60분 미만은 그 시·군 하수도정비기본계획 식 또는 기상청 관측 연최대 빈도해석에서 뽑은 값입니다. 계산 방식은 설계 실무의 수리계산서(구간별 도달시간·강우강도·통수량)와 같습니다.</li>
+    <li>회원가입 없이 무료입니다. 숫자는 이 화면 안에서만 계산되고 어디에도 보내지 않습니다. 정식 계산서와 허가 서류는 문의해 주세요.</li>
+  </ul>
+
+  <div class="sheet">
+    <h2>우수유출량·배수로 용량 계산표</h2>
+    <p class="ref">※ 우수유출량 Q = C·I·A / 360 (A: 유역면적 ha, I: 강우강도 mm/hr, Q: ㎥/s) · 통수량은 매닝식 V = (1/n)·R<sup>2/3</sup>·S<sup>1/2</sup> · 도달시간 = 유입시간 + 구간 유하시간 · 노란 칸만 입력합니다</p>
+
+    <div class="sh">■ 1. 비가 오는 조건</div>
+    <div class="sb"><div class="inp">
+      <div class="row"><label>① 지역<small>부지가 있는 시·군. 목록에 없으면 '직접 입력'</small></label><select id="rw_reg"></select></div>
+      <div class="row"><label>② 설계빈도<small>침사지·저류지(임시) 30년 이상, 배수관·암거는 보통 30~50년, 허가 부서 요구에 따름</small></label><select id="rw_T"><option value="30">30년 빈도</option><option value="50">50년 빈도</option><option value="100" selected>100년 빈도</option></select></div>
+      <div class="row"><label>③ 유입시간 [분]<small>빗물이 구간 시작 측구까지 흘러드는 시간. 부지가 작으면 5분이 보통</small></label><input type="number" id="rw_tin" value="5" step="1" min="1" inputmode="decimal"></div>
+      <div class="row" id="rw_direct_row" style="display:none"><label>④ 강우강도 직접 입력 [mm/hr]<small>설계서·기상 자료에서 받은 값. 모든 도달시간에 같은 값으로 씁니다</small></label><input type="number" id="rw_idir" value="200" step="5" min="1" inputmode="decimal"></div>
+      <div class="row"><label>⑤ 유속 한도 최소 [m/s]<small>우수관로 0.8 (퇴적 방지)</small></label><input type="number" id="rw_vmin" value="0.8" step="0.1" min="0" inputmode="decimal"></div>
+      <div class="row"><label>⑥ 유속 한도 최대 [m/s]<small>우수관로 3.0, 횡단배수(지방) 2.5</small></label><input type="number" id="rw_vmax" value="3.0" step="0.1" min="0.5" inputmode="decimal"></div>
+      <div class="row"><label>⑦ U형 측구 통수 높이 [H의 배]<small>물이 찰 수 있는 높이. 설계 실무는 보통 0.8H(여유 20%)</small></label><input type="number" id="rw_ratio" value="0.8" step="0.05" min="0.5" max="1" inputmode="decimal"></div>
+    </div>
+    <p class="tip" id="rw_rainnote"></p>
+    </div>
+
+    <div class="sh">■ 2. 구간별 입력 <span style="font-weight:400;font-size:14px">(위쪽 구간에서 물이 이어 흐르면 '앞 구간에서 이어짐'을 켭니다)</span></div>
+    <div class="sb">
+      <div id="rw_segs"></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px"><button type="button" id="rw_add" class="mini">+ 구간 추가</button><button type="button" id="rw_del" class="mini">마지막 구간 지우기</button></div>
+      <div id="rw_notes"></div><p class="busy">유출계수 C 참고(도로배수시설 설계기준 KDS 44 40 00 표 2.6-1): 포장면 0.9 · 가파른 산지·법면 0.8 · 논 0.8 · 완만한 산지 0.7 · 완만한 경작지 0.7 · 잡지 0.6 · 평평한 경작지 0.5 · 수림 0.3. <b>태양광 모듈 설치면의 국내 공식 값은 없습니다</b>(기준과 지침에 태양광 항목이 없음). 보통 잡지 0.6 이상으로 보수적으로 잡고, 허가 부서 의견을 따릅니다.</p>
+    </div>
+
+    <div id="rw_out"></div>
+
+    <div class="sh">■ 4. 개발 전·후 첨두유출량 증가 (부지 전체)</div>
+    <div class="sb"><div class="inp">
+      <div class="row"><label>부지 면적 [㎡]<small>개발하는 전체 면적</small></label><input type="number" id="dv_A" value="20000" step="100" min="1" inputmode="numeric"></div>
+      <div class="row"><label>개발 전 유출계수 C<small>임야 0.3~0.7, 밭 0.5~0.7, 잡지 0.6</small></label><input type="number" id="dv_C0" value="0.6" step="0.05" min="0.05" max="1" inputmode="decimal"></div>
+      <div class="row"><label>개발 후 유출계수 C<small>정지·모듈·배수 반영 평균값</small></label><input type="number" id="dv_C1" value="0.75" step="0.05" min="0.05" max="1" inputmode="decimal"></div>
+      <div class="row"><label>도달시간 [분]<small>부지 가장 먼 곳에서 방류점까지, 개발 전·후 같게 어림</small></label><input type="number" id="dv_tc" value="10" step="1" min="1" inputmode="decimal"></div>
+    </div>
+    <div id="dv_out"></div></div>
+
+    <ul class="under">
+      <li>강우강도 출처: 60분 이상은 환경부 홍수량 산정 표준지침(2019.7) 지점별 확률강우량(수자원관리종합정보시스템 WAMIS), 60분 미만은 시·군 하수도정비기본계획의 강우강도식 또는 기상청 종관기상관측 연최대 10분·60분 강우량 빈도해석(위 지역 안내 참조). 5분 값은 10분 아래로 식을 늘려 구한 값입니다.</li>
+      <li>식과 한도: 합리식은 KDS 44 40 00 식 (2.6-1)을 면적 ha 단위로 바꾼 꼴, 매닝식은 같은 기준 식 (2.7-1), 우수관로 유속 0.8~3.0 m/s는 KDS 61 40 00, 조도계수는 KDS 44 40 00 표 2.7-1(콘크리트 개수로 0.013~0.015, 관 0.013).</li>
+      <li>간이 값입니다. 실제 설계는 현장 측량으로 유역을 나누고, 외부 유입수·하류 수로 통수능·침사지 용량을 함께 검토합니다. → 문의: ☎ 1555-2859 · info@ecokkorea.co.kr</li>
+    </ul>
+  </div>
+
+  <h2 class="h">자주 묻는 질문</h2>
+  <details><summary>합리식이 무엇이고 왜 이 식을 쓰나요?</summary><p>우수유출량 Q = C × I × A ÷ 360 (A는 ha, I는 mm/hr)입니다. 유역이 4 ㎢보다 작은 소규모 배수시설 설계에 쓰는 표준 식으로, 도로배수시설 설계기준(KDS 44 40 00)이 정한 식을 면적 단위만 ha로 바꾼 꼴입니다. 태양광 부지는 면적이 작아 합리식으로 측구·관로 용량을 정합니다.</p></details>
+  <details><summary>강우강도는 왜 도달시간에 따라 달라지나요?</summary><p>비가 오래 올수록 시간당 비의 양(강우강도)은 줄어듭니다. 유역 끝의 빗물이 구간 끝에 모이는 시간(도달시간)만큼의 강우를 쓰므로, 도달시간이 짧은 작은 유역은 더 센 비로 계산합니다. 이 계산기는 구간마다 유입시간과 위 구간에서 흘러온 시간을 더해 도달시간을 구하고, 그 시간에 해당하는 강우강도를 표에서 고릅니다. 도달시간보다 길지 않은 지속시간 가운데 가장 긴 값을 써서 약간 안전 쪽으로 잡습니다.</p></details>
+  <details><summary>5분·10분 강우강도는 믿을 수 있나요?</summary><p>환경부 지점별 확률강우량은 60분 이상만 줍니다. 60분 미만은 시·군 하수도정비기본계획의 강우강도식이 있으면 그 식으로, 없으면 가까운 기상청 관측소의 연최대 10분·60분 강우량으로 빈도해석해 구합니다. 5분 값은 이 식을 10분 아래로 늘린 값이라 가장 불확실하고, 지역마다 10~30%까지 차이가 날 수 있습니다. 허가 서류에는 해당 시·군이 받는 기준을 확인하세요.</p></details>
+  <details><summary>모듈 아래 땅의 유출계수는 얼마로 잡나요?</summary><p>국내 기준과 지침에 태양광 모듈 설치면의 공식 유출계수가 없습니다. 모듈이 비를 가로막지만 땅은 그대로 투수하는 면이 대부분이라 잡지 0.6 안팎으로 잡는 설계가 많고, 정지로 다진 면이나 비탈면은 0.8까지 올립니다. 허가 부서가 값을 정해 주는 경우가 있으니 확인한 값을 쓰세요.</p></details>
+  <details><summary>U형 측구와 흄관 어느 쪽 규격을 고르나요?</summary><p>구간마다 규격을 하나 골라 넣으면 통수량과 유속을 확인합니다. 표의 '통과 최소 규격' 열은 정사각 U형(0.3, 0.4, 0.5, 0.6, 0.8, 1.0 m)과 흄관(300 ~ 1,200 mm) 가운데 우수량을 버티고 유속이 한도 안에 들어오는 가장 작은 규격입니다. 위 구간을 그 규격으로 바꿨다고 보고 아래 구간 도달시간을 다시 계산합니다. 물이 모자라면 구배를 키우거나 규격을 올립니다.</p></details>
+  <details><summary>유속이 너무 크거나 작으면 어떻게 하나요?</summary><p>우수관로 유속은 0.8~3.0 m/s가 기준입니다. 느리면 흙이 쌓이므로 구배를 키우거나 규격을 줄이고, 3.0 m/s를 넘으면 세굴 위험이 있어 낙차공이나 감세 시설을 둡니다. 급경사 측구는 단차를 두어 구배를 나누는 방식이 흔합니다.</p></details>
+
+  <div class="law"><b>각주 (기준일 2026-11-13)</b>
+    <ul>
+      <li>합리식: 도로배수시설 설계기준 KDS 44 40 00(2026-10-02) 식 (2.6-1) Q = (1/3.6)·C·I·A (A ㎢, I mm/hr)를 A를 ha로 바꾼 Q = C·I·A / 360으로 사용. 유출계수는 같은 기준 표 2.6-1.</li>
+      <li>매닝식·조도계수: KDS 44 40 00 식 (2.7-1), 표 2.7-1. 우수관로 유속 최소 0.8·최대 3.0 m/s: 하수도설계기준 KDS 61 40 00(2025-10-01) 1.3.</li>
+      <li>확률강우량: 홍수량 산정 표준지침(환경부, 2019.7) 지역빈도해석 결과를 WAMIS(map.wamis.go.kr)가 제공하는 지점별 값, 강우자료 2017년까지. 국토교통부 한국확률강우량정보(k-idf.re.kr)는 2020-06-17 서비스를 종료했습니다.</li>
+      <li>60분 미만: 시·군 하수도정비기본계획(변경) 강우강도식(General형) 또는 기상청 종관기상관측(ASOS) 연최대 10분·60분 강우량의 Gumbel(확률가중모멘트법) 빈도해석에 60분 이상 값을 이어 맞춘 General형. 결측이 긴 해는 뺐고, 5분 값은 식을 10분 아래로 연장한 값입니다.</li>
+      <li>통수 높이 0.8H, 흄관 만관 기준 통수: 설계 수리계산서의 일반 관행. 측구 규격 후보는 정사각 단면(B = H)으로 단순화했습니다.</li>
+    </ul>
+    넣지 않은 것: 하류 수로 통수능 검토, 외부 유입수 산정, 침사지·저류지 용량, 역류·배수위 영향, 비탈면 도수로의 단차 계산, 맨홀 손실.
+  </div>
+
+  <div class="btns"><a class="call" href="tel:15552859">토목·배수 상담 ☎ 1555-2859</a><a class="q" href="mailto:info@ecokkorea.co.kr?subject=%ED%86%A0%EB%AA%A9%C2%B7%EB%B0%B0%EC%88%98%20%EA%B2%80%ED%86%A0%20%EB%AC%B8%EC%9D%98">토목·배수 검토 문의(이메일)</a></div>
+  <p class="contact">☎ 1555-2859 · www.ecokkorea.kr · info@ecokkorea.co.kr</p>
+</div>
+
+<script>
+(function(){
+var RAIN=[{"이름":"창원시 북면","지점":"창녕군(청암리)","값":{"5":{"30":207.0,"50":218.9,"100":236.4},"10":{"30":161.7,"50":172.0,"100":187.1},"15":{"30":137.0,"50":146.0,"100":159.2},"20":{"30":120.7,"50":128.8,"100":140.6},"30":{"30":99.9,"50":106.6,"100":116.4},"40":{"30":86.7,"50":92.5,"100":100.9},"50":{"30":77.4,"50":82.5,"100":90.0},"60":{"30":70.4,"50":75.0,"100":80.9},"90":{"30":57.7,"50":61.6,"100":66.6},"120":{"30":50.1,"50":53.5,"100":58.0},"180":{"30":43.2,"50":46.5,"100":50.8},"360":{"30":28.7,"50":31.1,"100":34.2}},"짧은길":"기상청 밀양 관측소 연최대 강우량 빈도해석(1973~2025년 53해, Gumbel 분포)에 60분 이상 환경부 값을 이어 맞춘 식","식연장":true},{"이름":"고창군 해리면","지점":"고창군","값":{"5":{"30":204.1,"50":217.8,"100":237.2},"10":{"30":171.3,"50":181.8,"100":196.3},"15":{"30":150.6,"50":159.6,"100":171.7},"20":{"30":135.7,"50":143.8,"100":154.7},"30":{"30":115.3,"50":122.2,"100":131.6},"40":{"30":101.4,"50":107.7,"100":116.2},"50":{"30":91.3,"50":97.1,"100":105.0},"60":{"30":83.4,"50":88.9,"100":96.0},"90":{"30":70.8,"50":75.8,"100":82.4},"120":{"30":63.0,"50":67.7,"100":74.0},"180":{"30":52.0,"50":56.2,"100":62.0},"360":{"30":33.1,"50":36.0,"100":40.0}},"짧은길":"기상청 정읍 관측소 연최대 강우량 빈도해석(1973~2025년 53해, Gumbel 분포)에 60분 이상 환경부 값을 이어 맞춘 식","식연장":true},{"이름":"김천시 감천면","지점":"김천시(부곡동)","값":{"5":{"30":172.2,"50":195.4,"100":219.7},"10":{"30":141.4,"50":151.3,"100":165.1},"15":{"30":122.5,"50":127.6,"100":137.4},"20":{"30":109.3,"50":112.1,"100":119.9},"30":{"30":91.5,"50":92.3,"100":98.1},"40":{"30":79.7,"50":79.9,"100":84.6},"50":{"30":71.2,"50":71.1,"100":75.3},"60":{"30":54.3,"50":57.5,"100":61.4},"90":{"30":42.9,"50":45.6,"100":49.1},"120":{"30":36.3,"50":38.8,"100":42.0},"180":{"30":29.3,"50":31.7,"100":35.0},"360":{"30":19.7,"50":21.2,"100":23.2}},"짧은길":"시·군 하수도정비기본계획 강우강도식(김천시 하수도정비기본계획(변경), 보고서 2022.8)","식연장":true},{"이름":"나주시","지점":"나주시(봉황초교)","값":{"5":{"30":177.7,"50":189.0,"100":204.3},"10":{"30":155.1,"50":165.5,"100":179.4},"15":{"30":139.1,"50":148.7,"100":161.6},"20":{"30":126.8,"50":135.8,"100":147.8},"30":{"30":108.8,"50":116.8,"100":127.4},"40":{"30":96.0,"50":103.2,"100":112.8},"50":{"30":86.4,"50":92.9,"100":101.7},"60":{"30":65.5,"50":69.8,"100":75.4},"90":{"30":54.3,"50":58.2,"100":63.3},"120":{"30":47.5,"50":51.1,"100":55.9},"180":{"30":40.1,"50":43.4,"100":47.8},"360":{"30":29.3,"50":31.9,"100":35.5}},"짧은길":"기상청 광주 관측소 연최대 강우량 빈도해석(1961~2025년 65해, Gumbel 분포)에 60분 이상 환경부 값을 이어 맞춘 식","식연장":true},{"이름":"안성시 공도읍","지점":"안성시(삼암리)","값":{"5":{"30":149.7,"50":159.4,"100":172.8},"10":{"30":137.6,"50":147.2,"100":160.4},"15":{"30":128.2,"50":137.5,"100":150.4},"20":{"30":120.5,"50":129.4,"100":142.1},"30":{"30":108.2,"50":116.6,"100":128.7},"40":{"30":98.8,"50":106.6,"100":118.2},"50":{"30":91.2,"50":98.6,"100":109.7},"60":{"30":75.8,"50":81.2,"100":88.1},"90":{"30":64.6,"50":69.6,"100":76.3},"120":{"30":57.6,"50":62.5,"100":69.0},"180":{"30":47.1,"50":51.5,"100":57.4},"360":{"30":31.4,"50":34.4,"100":38.4}},"짧은길":"시·군 하수도정비기본계획 강우강도식(안성시 하수도정비기본계획(전체변경), 보고서 2025.12)","식연장":true},{"이름":"강진군","지점":"강진군(석교교)","값":{"5":{"30":189.6,"50":203.4,"100":222.2},"10":{"30":153.9,"50":165.1,"100":180.2},"15":{"30":133.9,"50":143.7,"100":156.8},"20":{"30":120.4,"50":129.2,"100":141.0},"30":{"30":102.7,"50":110.2,"100":120.4},"40":{"30":91.1,"50":97.8,"100":106.9},"50":{"30":82.7,"50":88.9,"100":97.2},"60":{"30":70.7,"50":75.4,"100":81.4},"90":{"30":57.3,"50":61.4,"100":66.7},"120":{"30":49.4,"50":53.0,"100":58.0},"180":{"30":39.9,"50":43.1,"100":47.5},"360":{"30":28.4,"50":30.9,"100":34.4}},"짧은길":"기상청 장흥 관측소 연최대 강우량 빈도해석(1973~2025년 53해, Gumbel 분포)에 60분 이상 환경부 값을 이어 맞춘 식","식연장":true},{"이름":"해남군","지점":"해남","값":{"5":{"30":192.3,"50":208.9,"100":232.4},"10":{"30":153.0,"50":164.4,"100":179.9},"15":{"30":131.6,"50":141.0,"100":153.6},"20":{"30":117.5,"50":125.8,"100":136.8},"30":{"30":99.2,"50":106.3,"100":115.7},"40":{"30":87.5,"50":93.9,"100":102.5},"50":{"30":79.1,"50":85.1,"100":93.1},"60":{"30":70.6,"50":75.2,"100":81.2},"90":{"30":58.8,"50":63.5,"100":69.7},"120":{"30":51.6,"50":56.2,"100":62.6},"180":{"30":42.9,"50":47.2,"100":53.2},"360":{"30":32.0,"50":35.8,"100":41.3}},"짧은길":"기상청 해남 관측소 연최대 강우량 빈도해석(1973~2025년 53해, Gumbel 분포)에 60분 이상 환경부 값을 이어 맞춘 식","식연장":true},{"이름":"영암군","지점":"영암군(도포중교)","값":{"5":{"30":189.6,"50":203.4,"100":222.2},"10":{"30":153.9,"50":165.1,"100":180.2},"15":{"30":133.9,"50":143.7,"100":156.8},"20":{"30":120.4,"50":129.2,"100":141.0},"30":{"30":102.7,"50":110.2,"100":120.4},"40":{"30":91.1,"50":97.8,"100":106.9},"50":{"30":82.7,"50":88.9,"100":97.2},"60":{"30":64.1,"50":68.3,"100":73.8},"90":{"30":53.6,"50":57.4,"100":62.4},"120":{"30":47.2,"50":50.8,"100":55.5},"180":{"30":39.3,"50":42.4,"100":46.8},"360":{"30":27.9,"50":30.4,"100":33.8}},"짧은길":"기상청 장흥 관측소 연최대 강우량 빈도해석(1973~2025년 53해, Gumbel 분포)에 60분 이상 환경부 값을 이어 맞춘 식","식연장":true},{"이름":"고흥군","지점":"고흥","값":{"5":{"30":157.4,"50":167.0,"100":180.0},"10":{"30":147.7,"50":157.5,"100":170.8},"15":{"30":139.2,"50":149.1,"100":162.5},"20":{"30":131.8,"50":141.6,"100":154.9},"30":{"30":119.3,"50":128.7,"100":141.4},"40":{"30":109.0,"50":118.0,"100":130.1},"50":{"30":100.5,"50":109.0,"100":120.4},"60":{"30":87.6,"50":93.8,"100":102.1},"90":{"30":72.7,"50":78.3,"100":86.0},"120":{"30":63.7,"50":69.0,"100":76.2},"180":{"30":51.5,"50":55.7,"100":61.4},"360":{"30":35.0,"50":37.7,"100":41.4}},"짧은길":"기상청 고흥 관측소 연최대 강우량 빈도해석(1972~2025년 54해, Gumbel 분포)에 60분 이상 환경부 값을 이어 맞춘 식","식연장":true},{"이름":"곡성군","지점":"곡성군(고달교)","값":{"5":{"30":179.9,"50":192.1,"100":208.4},"10":{"30":162.1,"50":173.8,"100":189.5},"15":{"30":147.7,"50":158.8,"100":173.8},"20":{"30":135.7,"50":146.3,"100":160.5},"30":{"30":117.0,"50":126.4,"100":139.1},"40":{"30":102.9,"50":111.4,"100":122.8},"50":{"30":91.9,"50":99.6,"100":109.9},"60":{"30":62.1,"50":66.5,"100":72.4},"90":{"30":52.1,"50":56.1,"100":61.6},"120":{"30":46.0,"50":49.8,"100":55.0},"180":{"30":37.0,"50":40.0,"100":44.2},"360":{"30":24.8,"50":26.7,"100":29.3}},"짧은길":"기상청 남원 관측소 연최대 강우량 빈도해석(1973~2025년 53해, Gumbel 분포)에 60분 이상 환경부 값을 이어 맞춘 식","식연장":true}];
+var $=function(id){return document.getElementById(id)};
+var EPS=1e-9;
+function fmt(x,d){if(x===null||x===undefined||isNaN(x))return "-";return Number(x).toLocaleString("ko-KR",{minimumFractionDigits:d,maximumFractionDigits:d})}
+var NOTES=[];
+function num(id,def){var v=parseFloat($(id).value);return isNaN(v)?def:v}
+
+function rd(v,def,lo,hi,label,unit){
+  var x=parseFloat(v);
+  if(isNaN(x)){NOTES.push(label+": 비어 있어 "+fmt(def,3).replace(/\.?0+$/,"")+unit+" 로 계산했습니다.");return def}
+  if(x<lo){NOTES.push(label+": "+x+unit+" 은 너무 작아 "+lo+unit+" 로 계산했습니다.");return lo}
+  if(x>hi){NOTES.push(label+": "+x+unit+" 은 너무 커서 "+hi+unit+" 로 계산했습니다.");return hi}
+  return x;
+}
+
+
+function circSec(D,h){
+  h=Math.min(Math.max(h,1e-9),D);
+  var th=2*Math.acos(1-2*h/D);
+  return [D*D/8*(th-Math.sin(th)), D*th/2];
+}
+function rectSec(B,h){return [B*h,B+2*h]}
+function secOf(p,h){return p.kind==="circ"?circSec(p.D/1000,h):rectSec(p.B,h)}
+function flowAt(p,h,S){
+  var s=secOf(p,h),A=s[0],P=s[1],V=(1/p.n)*Math.pow(A/P,2/3)*Math.sqrt(S);
+  return {A:A,P:P,V:V,Q:A*V};
+}
+function fullDepth(p,ratio){return p.kind==="circ"?p.D/1000:p.H*ratio}
+function solveDepth(p,Q,S,hmax){
+  if(flowAt(p,hmax,S).Q<Q)return null;
+  var lo=1e-6,hi=hmax;
+  for(var i=0;i<80;i++){var mid=(lo+hi)/2;if(flowAt(p,mid,S).Q<Q)lo=mid;else hi=mid}
+  return hi;
+}
+function pickI(tbl,tc){
+  var use=null;
+  for(var k=0;k<tbl.length;k++){if(tbl[k].t<=tc+1e-9)use=tbl[k]}
+  return use||tbl[0];
+}
+
+
+function runChain(segs,cond){
+  var out=[];
+  for(var i=0;i<segs.length;i++){
+    var p=segs[i];
+    var ownA=p.A_m2/10000,ownCA=ownA*p.C;
+    var up=(p.conn&&i>0)?out[i-1]:null;
+    var A=ownA+(up?up.A:0),CA=ownCA+(up?up.CA:0);
+    var C=A>0?CA/A:0;
+    var t0=Math.max(cond.tin,up?up.tc:cond.tin);
+    var pi=pickI(cond.tbl,t0);
+    var Q=C*pi.i*A/360;
+    var S=p.S_permil/1000;
+    var hf=fullDepth(p,cond.ratio);
+    var f=flowAt(p,hf,S);
+    var h=solveDepth(p,Q,S,hf);
+    var Vr=null,Ar=null,tflow,zero=(Q<=1e-12);
+    if(zero){tflow=p.L/f.V/60}
+    else if(h===null){tflow=p.L/f.V/60}else{var fr=flowAt(p,h,S);Vr=fr.V;Ar=fr.A;tflow=p.L/Vr/60}
+    var okQ=f.Q>=Q;
+    var vchk=(Vr===null)?f.V:Vr;
+    var okV=zero?false:(vchk>=cond.vmin&&vchk<=cond.vmax);
+    out.push({A:A,CA:CA,C:C,own:ownA,t0:t0,dur:pi.t,I:pi.i,Q:Q,Vf:f.V,Qf:f.Q,h:h,Vr:Vr,tflow:tflow,tc:t0+tflow,okQ:okQ,okV:okV,hf:hf,zero:zero});
+  }
+  return out;
+}
+var CAND_U=[0.3,0.4,0.5,0.6,0.8,1.0],CAND_D=[300,450,600,800,1000,1200];
+function recommend(segs,cond){
+  var cur=segs.map(function(p){return Object.assign({},p)});
+  var rec=[];
+  for(var k=0;k<segs.length;k++){
+    var kind=segs[k].kind,list=(kind==="circ")?CAND_D:CAND_U,found=null;
+    for(var c=0;c<list.length;c++){
+      if(kind==="circ")cur[k].D=list[c];else{cur[k].B=list[c];cur[k].H=list[c]}
+      var r=runChain(cur.slice(0,k+1),cond)[k];
+      if(r.okQ&&r.Vr!==null&&r.okV){found=list[c];break}
+    }
+    if(found===null){
+      var big=list[list.length-1];if(kind==="circ")cur[k].D=big;else{cur[k].B=big;cur[k].H=big}
+      rec.push(null);
+    }else rec.push(found);
+  }
+  return rec;
+}
+
+
+function regionTable(){
+  var key=$("rw_reg").value;
+  if(key==="direct"){var I=rd($("rw_idir").value,200,1,1000,"강우강도"," mm/hr");return [{t:5,i:I}]}
+  var r=null;for(var k=0;k<RAIN.length;k++){if(RAIN[k].이름===key)r=RAIN[k]}
+  var T=$("rw_T").value,tbl=[];
+  Object.keys(r.값).map(Number).sort(function(a,b){return a-b}).forEach(function(t){var v=r.값[String(t)][T];if(v!==null&&v!==undefined)tbl.push({t:t,i:v})});
+  return tbl;
+}
+function regionNote(){
+  var key=$("rw_reg").value,box=$("rw_rainnote");
+  $("rw_direct_row").style.display=(key==="direct")?"flex":"none";
+  if(key==="direct"){box.innerHTML="강우강도를 직접 넣은 값으로 모든 도달시간을 계산합니다. 출처를 계산 근거에 적어 두세요.";return}
+  var r=null;for(var k=0;k<RAIN.length;k++){if(RAIN[k].이름===key)r=RAIN[k]}
+  var T=$("rw_T").value,v=r.값;
+  var s="<b>"+r.이름+"</b> 강우강도 ("+T+"년 빈도, mm/hr): 5분 "+fmt(v["5"][T],1)+" · 10분 "+fmt(v["10"][T],1)+" · 30분 "+fmt(v["30"][T],1)+" · 60분 "+fmt(v["60"][T],1)+" · 120분 "+fmt(v["120"][T],1)+".<br>60분 이상: 환경부 지점 '"+r.지점+"'. 60분 미만: "+r.짧은길+"."+(r.식연장?" 5분 값은 식을 10분 아래로 늘린 값입니다.":"");
+  var a=v["50"][T],b=v["60"][T];
+  if(a>0&&b<a*0.9)s+="<br>60분 앞뒤에서 출처가 바뀌어 값이 끊깁니다(50분 "+fmt(a,1)+" → 60분 "+fmt(b,1)+", "+fmt((b/a-1)*100,0)+"%). 도달시간이 이 근처이면 결과가 크게 달라질 수 있습니다.";
+  else s+="<br>60분 앞뒤에서 출처가 바뀌어 값이 조금 끊길 수 있습니다.";
+  box.innerHTML=s;
+}
+var segN=0;
+function segHTML(i,d){
+  d=d||{};
+  var id=function(n){return "s"+i+"_"+n};
+  return '<div class="segbox" data-i="'+i+'"><div class="seghd">구간 '+(i+1)+'</div><div class="inp">'
+   +'<div class="row"><label>유역 면적 [㎡]<small>이 구간 측구가 직접 받는 면적</small></label><input type="number" id="'+id("A")+'" value="'+(d.A!==undefined?d.A:5000)+'" step="100" min="0" inputmode="numeric"></div>'
+   +'<div class="row"><label>유출계수 C<small>법면 0.8 · 잡지 0.6 · 포장 0.9</small></label><input type="number" id="'+id("C")+'" value="'+(d.C!==undefined?d.C:0.6)+'" step="0.05" min="0.05" max="1" inputmode="decimal"></div>'
+   +'<div class="row"><label>연장 [m]</label><input type="number" id="'+id("L")+'" value="'+(d.L!==undefined?d.L:60)+'" step="1" min="1" inputmode="decimal"></div>'
+   +'<div class="row"><label>구배 [‰]<small>1‰ = 1 m당 1 mm. 20‰ = 2%</small></label><input type="number" id="'+id("S")+'" value="'+(d.S!==undefined?d.S:20)+'" step="1" min="1" inputmode="decimal"></div>'
+   +'<div class="row"><label>단면 종류</label><select id="'+id("K")+'"><option value="u"'+(d.K==="circ"?"":" selected")+'>U형 측구 (사각)</option><option value="circ"'+(d.K==="circ"?" selected":"")+'>흄관 (원형)</option></select></div>'
+   +'<div class="row" data-f="u"><label>폭 B [m]</label><input type="number" id="'+id("B")+'" value="'+(d.B!==undefined?d.B:0.4)+'" step="0.1" min="0.1" inputmode="decimal"></div>'
+   +'<div class="row" data-f="u"><label>높이 H [m]</label><input type="number" id="'+id("H")+'" value="'+(d.H!==undefined?d.H:0.4)+'" step="0.1" min="0.1" inputmode="decimal"></div>'
+   +'<div class="row" data-f="c" style="display:none"><label>관경 D [mm]</label><input type="number" id="'+id("D")+'" value="'+(d.D!==undefined?d.D:600)+'" step="50" min="100" inputmode="numeric"></div>'
+   +'<div class="row"><label>조도계수 n<small>콘크리트 측구 0.015, 콘크리트관 0.013</small></label><input type="number" id="'+id("N")+'" value="'+(d.N!==undefined?d.N:0.015)+'" step="0.001" min="0.008" max="0.05" inputmode="decimal"></div>'
+   +'<div class="row"><label>앞 구간에서 이어짐<small>켜면 앞 구간 유량이 더해집니다</small></label><select id="'+id("J")+'"><option value="0"'+(d.J?"":" selected")+'>아니오</option><option value="1"'+(d.J?" selected":"")+'>예</option></select></div>'
+   +'</div></div>';
+}
+function addSeg(d){
+  var host=$("rw_segs"),div=document.createElement("div");div.innerHTML=segHTML(segN,d);
+  var el=div.firstChild;host.appendChild(el);segN++;
+  var sel=el.querySelector("select[id$=_K]");
+  sel.addEventListener("change",function(){syncKind(el);calc()});
+  el.querySelectorAll("input,select").forEach(function(x){x.addEventListener("input",calc);x.addEventListener("change",calc)});
+  syncKind(el);
+}
+function syncKind(el){
+  var circ=el.querySelector("select[id$=_K]").value==="circ";
+  el.querySelectorAll('[data-f="u"]').forEach(function(x){x.style.display=circ?"none":"flex"});
+  el.querySelectorAll('[data-f="c"]').forEach(function(x){x.style.display=circ?"flex":"none"});
+  var n=el.querySelector("input[id$=_N]");
+  if(circ&&Math.abs(parseFloat(n.value)-0.015)<1e-9)n.value="0.013";
+  if(!circ&&Math.abs(parseFloat(n.value)-0.013)<1e-9)n.value="0.015";
+}
+function readSegs(){
+  var segs=[];
+  document.querySelectorAll(".segbox").forEach(function(el,i){
+    var g=function(n){return el.querySelector("[id$=_"+n+"]")};
+    var circ=g("K").value==="circ",nm="구간 "+(i+1)+" ";
+    segs.push({A_m2:rd(g("A").value,0,0,100000000,nm+"유역 면적","㎡"),C:rd(g("C").value,0.6,0.05,1,nm+"유출계수",""),
+      L:rd(g("L").value,10,1,5000,nm+"연장"," m"),S_permil:rd(g("S").value,10,0.1,1000,nm+"구배","‰"),
+      kind:circ?"circ":"u",B:rd(g("B").value,0.4,0.1,5,nm+"폭 B"," m"),H:rd(g("H").value,0.4,0.1,5,nm+"높이 H"," m"),D:rd(g("D").value,300,100,3000,nm+"관경 D"," mm"),
+      n:rd(g("N").value,0.015,0.008,0.05,nm+"조도계수 n",""),conn:(i>0&&g("J").value==="1")});
+  });
+  return segs;
+}
+function readCond(){
+  var tin=rd($("rw_tin").value,5,1,120,"유입시간"," 분"),vmin=rd($("rw_vmin").value,0.8,0,10,"유속 한도 최소"," m/s"),vmax=rd($("rw_vmax").value,3.0,0.3,15,"유속 한도 최대"," m/s");
+  var ratio=rd($("rw_ratio").value,0.8,0.5,1,"U형 통수 높이 비율","배");
+  if(vmin>=vmax){NOTES.push("유속 한도: 최소("+vmin+")가 최대("+vmax+") 이상이라 최소를 "+Math.max(0,Math.round((vmax-0.1)*10)/10)+" m/s 로 낮춰 계산했습니다.");vmin=Math.max(0,Math.round((vmax-0.1)*10)/10)}
+  return {tin:tin,tbl:regionTable(),vmin:vmin,vmax:vmax,ratio:ratio};
+}
+function specText(p){return p.kind==="circ"?("흄관 D"+fmt(p.D,0)):("U형 "+fmt(p.B,2)+"×"+fmt(p.H,2))}
+function recText(p,r){if(r===null)return "후보 안에 없음";return p.kind==="circ"?("흄관 D"+fmt(r,0)):("U형 "+fmt(r,1)+"×"+fmt(r,1))}
+function calc(){
+  NOTES=[];
+  regionNote();
+  var segs=readSegs(),cond=readCond();
+  if(!segs.length){$("rw_out").innerHTML="";return}
+  var res=runChain(segs,cond),rec=recommend(segs,cond);
+  var last=res[res.length-1],totalA=res.reduce(function(a,r,i){return a+r.own},0);
+  var allOK=res.every(function(r){return r.okQ&&r.okV});
+  var h='<div class="sh">■ 3. 결과</div><div class="sb">';
+  h+='<div class="big"><div><small>총 유역면적</small><b>'+fmt(totalA*10000,0)+'<em>㎡</em></b></div>'
+   +'<div><small>마지막 구간 우수량</small><b>'+fmt(last.Q,3)+'<em>㎥/s</em></b></div>'
+   +'<div><small>마지막 구간 강우강도</small><b>'+fmt(last.I,1)+'<em>mm/hr</em></b></div>'
+   +'<div class="main"><small>입력 규격 판정</small><b>'+(allOK?"모두 통과":"확인 필요")+'</b></div></div>';
+  h+='<div class="twrap"><table class="mt"><thead><tr><th>구간</th><th class="n">누가 면적<br>[ha]</th><th class="n">평균 C</th><th class="n">도달시간<br>[분]</th><th class="n">강우강도<br>[mm/hr]</th><th class="n">우수량<br>[㎥/s]</th><th>입력 규격</th><th class="n">만관 통수량<br>[㎥/s]</th><th class="n">실제 유속<br>[m/s]</th><th class="n">실제 수심<br>[m]</th><th>판정</th><th>통과 최소 규격</th></tr></thead><tbody>';
+  res.forEach(function(r,i){
+    var p=segs[i];
+    var vtxt=r.zero?"-":((r.Vr===null)?(fmt(r.Vf,2)+"(만관)"):fmt(r.Vr,2));
+    var vv=(r.Vr===null)?r.Vf:r.Vr,judge=[];
+    if(r.zero){judge.push("유역 면적 0: 면적을 넣거나 앞 구간에서 이어짐을 켜세요")}
+    else{
+    if(!r.okQ)judge.push("통수 부족");
+    if(vv<cond.vmin)judge.push("유속 느림");
+    if(vv>cond.vmax)judge.push("유속 빠름");
+    }
+    h+='<tr'+((r.okQ&&r.okV)?'':' class="me"')+'><td>'+(i+1)+(p.conn?" (이어짐)":"")+'</td><td class="n">'+fmt(r.A,4)+'</td><td class="n">'+fmt(r.C,2)+'</td><td class="n">'+fmt(r.t0,2)+'</td><td class="n">'+fmt(r.I,1)+'</td><td class="n">'+fmt(r.Q,3)+'</td><td>'+specText(p)+'</td><td class="n">'+fmt(r.Qf,3)+'</td><td class="n">'+vtxt+'</td><td class="n">'+(r.zero?"-":(r.h===null?"만관 초과":fmt(r.h,3)))+'</td><td>'+(judge.length?judge.join(", "):"O.K")+'</td><td>'+recText(p,rec[i])+'</td></tr>';
+  });
+  h+='</tbody></table></div>';
+  h+='<p class="tip">우수량이 만관 통수량보다 작아야 통과하고, 실제 유속은 ⑤~⑥의 한도 안에 있어야 합니다. 노랑 줄은 확인이 필요한 구간입니다. 통과 최소 규격은 위 구간이 그 규격이라 보고 아래 구간 도달시간을 다시 계산한 값입니다. 구간 사이 합류나 하류 수로 통수능은 이 계산에 들어 있지 않습니다.</p></div>';
+  $("rw_out").innerHTML=h;
+  devCalc();
+  var nb=$("rw_notes");
+  nb.innerHTML=NOTES.length?('<div class="alert"><b>입력 범위 알림</b><br>'+NOTES.join('<br>')+'</div>'):'';
+}
+function devCalc(){
+  var cond=readCond(),tbl=cond.tbl;
+  var A=rd($("dv_A").value,20000,1,100000000,"부지 면적","㎡")/10000,C0=rd($("dv_C0").value,0.6,0.05,1,"개발 전 유출계수",""),C1=rd($("dv_C1").value,0.75,0.05,1,"개발 후 유출계수",""),tc=rd($("dv_tc").value,10,1,1440,"도달시간"," 분");
+  var pi=pickI(tbl,tc),Q0=C0*pi.i*A/360,Q1=C1*pi.i*A/360;
+  var h='<div class="big"><div><small>개발 전 첨두유출량</small><b>'+fmt(Q0,3)+'<em>㎥/s</em></b></div><div><small>개발 후 첨두유출량</small><b>'+fmt(Q1,3)+'<em>㎥/s</em></b></div><div><small>증가량</small><b>'+fmt(Q1-Q0,3)+'<em>㎥/s</em></b></div><div class="main"><small>증가율</small><b>'+(Q0>0?fmt((Q1/Q0-1)*100,1):"-")+'<em>%</em></b></div></div>';
+  h+='<p class="tip">강우강도 '+fmt(pi.i,1)+' mm/hr (도달시간 '+fmt(tc,1)+'분 → 지속시간 '+pi.t+'분 값). 침사지 겸 저류지는 개발 후 첨두방류량이 개발 전 첨두홍수량 이하가 되도록 정하는 것이 원칙입니다(재해영향평가 실무지침). 저류 용량 산정은 정식 계산서에서 합니다.</p>';
+  $("dv_out").innerHTML=h;
+}
+function init(){
+  var sel=$("rw_reg"),s="";
+  RAIN.forEach(function(r){s+='<option value="'+r.이름+'">'+r.이름+'</option>'});
+  s+='<option value="direct">직접 입력</option>';
+  sel.innerHTML=s;
+  addSeg({A:5000,C:0.6,L:60,S:20,K:"u",B:0.4,H:0.4,N:0.015,J:false});
+  addSeg({A:3000,C:0.6,L:50,S:15,K:"u",B:0.5,H:0.5,N:0.015,J:true});
+  ["rw_reg","rw_T","rw_tin","rw_idir","rw_vmin","rw_vmax","rw_ratio","dv_A","dv_C0","dv_C1","dv_tc"].forEach(function(id){$(id).addEventListener("input",calc);$(id).addEventListener("change",calc)});
+  $("rw_add").addEventListener("click",function(){if(document.querySelectorAll(".segbox").length>=8)return;addSeg({A:3000,C:0.6,L:50,S:15,K:"u",B:0.5,H:0.5,N:0.015,J:true});calc()});
+  $("rw_del").addEventListener("click",function(){var b=document.querySelectorAll(".segbox");if(b.length<=1)return;b[b.length-1].remove();segN--;calc()});
+  calc();
+}
+window.__rw={runChain:runChain,recommend:recommend,pickI:pickI,RAIN:RAIN};
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
+})();
+</script>
+
+<div class="pg-bar" id="pg-bar"><button type="button" class="pg-save" id="pg-save">보고서 PDF로 저장</button><span class="pg-hint">A4 한 장, 입력값과 결과 표</span></div><div class="pg-gatebox" id="pg-gatebox"><div class="gate" id="subgate"><div><h2>유튜브 채널을 구독하시면 PDF 보고서가 저장됩니다</h2><ol><li>아래 빨간 단추를 누르면 유튜브 구독 창이 새로 열립니다.</li><li>구독을 마치고 이 창으로 돌아오시면 PDF 저장이 바로 열립니다.</li></ol><p class="note">계산은 구독 없이 무료입니다. 이미 구독 중이시면 같은 단추를 누르고 돌아오시면 됩니다. 한 번 열면 이 브라우저에서는 홈페이지 어디서나 계속 열려 있습니다.</p><p class="ok" role="status">열렸습니다. 구독해 주셔서 고맙습니다.</p></div><a class="subbtn" id="subbtn" href="https://www.youtube.com/channel/UCpRTUvMiZQxXk-7BLJQlUZQ?sub_confirmation=1" target="_blank" rel="noopener"><svg viewBox="0 0 30 21" aria-hidden="true"><rect width="30" height="21" rx="5" fill="#fff"/><path d="M12 6l8 4.5-8 4.5z" fill="#c4161c"/></svg>유튜브 구독하고 PDF 저장</a></div></div><script>(function(){var R=document.getElementById("rw_out"),b=document.getElementById('pg-bar'),g=document.getElementById('pg-gatebox');if(R&&R.parentNode){R.parentNode.insertBefore(b,R.nextSibling);b.parentNode.insertBefore(g,b.nextSibling)}})();(function(){
+var K='ecok_sub_ok',KEY="rainwater",ROOT="ekep",FIT=(KEY==='fuse'||KEY==='string')?1005:960,RID="rw_out",CO="☎ 1555-2859 · www.ecokkorea.kr · info@ecokkorea.co.kr",NOTE="참고용 계산, 실제 설계는 현장 조건 확인",ok=false,clicked=0,pending=false;
+function setOk(){try{window.localStorage.setItem(K,'1')}catch(e){}try{document.cookie=K+'=1; max-age=31536000; path=/; SameSite=Lax'}catch(e){}}
+function getOk(){var v=false;try{v=window.localStorage.getItem(K)==='1'}catch(e){}
+ if(!v){try{v=/(?:^|; )ecok_sub_ok=1/.test(document.cookie)}catch(e){}}
+ if(v)setOk();return v}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function rows(){var out=[];document.querySelectorAll('.sheet .row').forEach(function(r){
+ var el=r.querySelector('input,select,output');if(!el)return;
+ var lb=r.querySelector('label');if(!lb)return;var c=lb.cloneNode(true);
+ c.querySelectorAll('small').forEach(function(s){var t=s.textContent.trim();if(t.length<=6)s.replaceWith(document.createTextNode(' ('+t+')'));else s.remove()});
+ var name=c.textContent.replace(/\s+/g,' ').trim(),v;
+ if(el.type==='checkbox')v=el.checked?"예":"아니오";
+ else if(el.tagName==='SELECT')v=el.options[el.selectedIndex]?el.options[el.selectedIndex].text:'';
+ else if(el.tagName==='OUTPUT')v=el.textContent;
+ else v=el.value||"자동";
+ out.push([name,String(v).replace(/\s+/g,' ').trim()])});return out}
+function sheetHtml(){
+ var R=document.getElementById(RID);if(!R)return null;
+ var cl=R.cloneNode(true);cl.removeAttribute('id');cl.querySelectorAll('[id]').forEach(function(n){n.removeAttribute('id')});
+ if(KEY==='string')cl.querySelectorAll('table').forEach(function(t){if(t.rows[0]&&t.rows[0].cells.length>10)t.remove()});
+ var rs=rows(),h='';
+ for(var i=0;i<rs.length;i+=2){var a=rs[i],b=rs[i+1];
+  h+='<tr><th>'+esc(a[0])+'</th><td>'+esc(a[1])+'</td>'+(b?'<th>'+esc(b[0])+'</th><td>'+esc(b[1])+'</td>':'<th></th><td></td>')+'</tr>'}
+ var h1=document.querySelector('h1'),title=h1?h1.textContent.trim():document.title;
+ var d=new Date(),ds=d.getFullYear()+'.'+(d.getMonth()+1)+'.'+d.getDate();
+ var w=document.createElement('div');w.className='pgw '+ROOT;w.appendChild(cl);
+ var extra='';
+ if(KEY==='fire'){var t1=document.getElementById('ft1'),t2=document.getElementById('ft2');
+  if(t1&&t2){var nt=t1.closest('.tw').previousElementSibling,x=document.createElement('div');x.className='pgw '+ROOT;
+   if(nt)x.appendChild(nt.cloneNode(true));[t1,t2].forEach(function(t){var c=t.closest('.tw').cloneNode(true);c.querySelectorAll('[id]').forEach(function(n){n.removeAttribute('id')});x.appendChild(c)});
+   extra='<h2>'+"감지면적 표 (NFTC 203 원문)"+'</h2>'+x.outerHTML}}
+ return '<div id="pg-sheet" class="pg-fr '+KEY+'"><div class="pg-hd"><img src="img/logo.png" alt="'+"에코케이코리아"+'"><span class="pg-dt">'+"계산일 "+ds+'</span></div>'
+  +'<div class="pg-t">'+esc(title)+'</div><p class="pg-s">'+"입력값과 계산 결과"+'</p>'
+  +'<h2>'+"입력값"+'</h2><table class="pg-in"><tbody>'+h+'</tbody></table><h2>'+"계산 결과"+'</h2>'+w.outerHTML+extra
+  +'<div class="pg-ft"><b>'+esc(CO)+'</b><span>'+esc(NOTE)+'</span></div></div>'}
+function frameHtml(){var s=sheetHtml();if(!s)return null;
+ var bs=document.createElement('base');bs.href=document.baseURI;var heads='';document.querySelectorAll('head style').forEach(function(x){heads+=x.outerHTML});
+ return '<!doctype html><html lang="'+"ko"+'"><head><meta charset="utf-8">'+bs.outerHTML+heads+'<style>html,body{margin:0;background:#fff}</style></head><body>'+s+'</body></html>'}
+function doSave(){var html=frameHtml();if(!html)return;
+ var old=document.getElementById('pg-frame');if(old)old.remove();
+ var f=document.createElement('iframe');f.id='pg-frame';f.setAttribute('aria-hidden','true');
+ f.style.cssText='position:absolute;left:-9999px;top:0;width:190mm;height:1400px;border:0;visibility:hidden';
+ f.onload=function(){var w=f.contentWindow,doc=f.contentDocument,s=doc.getElementById('pg-sheet');if(!s)return;
+  var go=function(){var hh=s.scrollHeight;s.style.zoom=Math.min(1,FIT/hh).toFixed(3);
+   setTimeout(function(){try{w.focus();w.print()}catch(e){try{window.print()}catch(e2){}}},120)};
+  (doc.fonts&&doc.fonts.ready?doc.fonts.ready:Promise.resolve()).then(function(){setTimeout(go,150)},go)};
+ document.body.appendChild(f);f.srcdoc=html}
+window.__pgFrameHtml=frameHtml;
+var box=document.getElementById('pg-gatebox'),btn=document.getElementById('pg-save');
+function openGate(){ok=true;setOk();var g=box.querySelector('.gate');g.classList.add('done');
+ if(pending){pending=false;doSave()}}
+ok=getOk();
+btn.addEventListener('click',function(){
+ if(ok){doSave();return}
+ pending=true;box.classList.add('show');try{box.scrollIntoView({block:'nearest'})}catch(e){}});
+document.getElementById('subbtn').addEventListener('click',function(){clicked=Date.now()});
+function back(){if(clicked&&!ok&&Date.now()-clicked>2500)openGate()}
+addEventListener('focus',back);document.addEventListener('visibilitychange',function(){if(!document.hidden)back()});
+window.__pgUnlock=openGate;
+})();</script><script>(function(){function s(){parent.postMessage({h:document.documentElement.scrollHeight},'*')}addEventListener('load',s);new ResizeObserver(s).observe(document.body);setTimeout(s,800)})()</script></body></html>

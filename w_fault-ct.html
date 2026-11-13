@@ -1,0 +1,337 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+<style>@font-face{font-family:Paperlogy;src:url(fonts/Paperlogy-4Regular.ttf);font-weight:400}@font-face{font-family:Paperlogy;src:url(fonts/Paperlogy-6SemiBold.ttf);font-weight:600}@font-face{font-family:Paperlogy;src:url(fonts/Paperlogy-8ExtraBold.ttf);font-weight:800}
+html,body{margin:0;background:#fff;overflow-x:hidden}body{font-family:Paperlogy,'Malgun Gothic',sans-serif;word-break:keep-all;color:#16212c}img{max-width:100%;height:auto}@media (max-width:600px){table{display:block;overflow-x:auto}}</style><style>/* 스타일은 위젯 안 <style> */
+</style><style>:root{--ink:#16212c;--slate:#4a5763;--line:#d5dce2;--mist:#eef2f5;--blue:#1d4f91;--blue-dark:#163d70}
+.gate{margin-top:0;border:1.5px solid var(--ink);background:#fff;display:grid;grid-template-columns:1fr auto;gap:28px;align-items:center;padding:clamp(22px,3vw,36px)}
+.gate h2{font-size:clamp(24px,2.4vw,32px);font-weight:800;letter-spacing:-.02em;line-height:1.35}
+.gate ol{margin:14px 0 0;padding-left:1.4em;color:var(--slate)}.gate ol li{margin:4px 0}
+.gate .note{margin-top:12px;font-size:16px;color:var(--slate)}
+.subbtn{display:inline-flex;align-items:center;gap:12px;padding:18px 30px;border-radius:10px;background:#c4161c;color:#fff;font-weight:800;font-size:21px;text-decoration:none;white-space:nowrap}
+.subbtn:hover{background:#9f1015}.subbtn svg{width:30px;height:21px;flex:none}
+.gate .ok{display:none;font-weight:800;color:#1b6b3a;font-size:20px}
+.gate.done .ok{display:block}.gate.done .subbtn{background:#fff;color:#c4161c;border:2px solid #c4161c;padding:14px 24px;font-size:18px}
+
+.pg-bar{margin:22px 0 0;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.pg-save{font:800 19px Paperlogy,'Malgun Gothic',sans-serif;padding:15px 28px;border:0;border-radius:10px;background:#1d4f91;color:#fff;cursor:pointer}
+.pg-save:hover{background:#163d70}.pg-hint{font-size:15px;color:#4a5763}
+.pg-gatebox{display:none;margin-top:18px}.pg-gatebox.show{display:block}
+.pg-gatebox .gate{grid-template-columns:1fr}.pg-gatebox .subbtn{justify-self:start}
+#pg-sheet{display:none}
+@media print{
+ @page{size:A4;margin:10mm}
+ html,body{background:#fff!important;overflow:visible!important}
+ body>*:not(#pg-sheet){display:none!important}
+ #pg-sheet{display:block!important;width:190mm;color:#16212c;font-family:Paperlogy,'Malgun Gothic',sans-serif;word-break:keep-all;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+#pg-sheet.pg-fr{display:block}
+#pg-sheet.fuse .pgw>div,#pg-sheet.string .pgw>div{column-count:2;column-gap:14px}
+#pg-sheet.string .pgw .sec{break-inside:avoid}
+#pg-sheet.string .pgw .sec:has(table){column-span:all}
+#pg-sheet.fuse .pgw .sh,#pg-sheet.fuse .pgw .chk{break-inside:avoid}
+#pg-sheet *{box-sizing:border-box}
+#pg-sheet .pg-hd{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #1d4f91;padding-bottom:6px}
+#pg-sheet .pg-hd img{height:26px;width:auto}#pg-sheet .pg-dt{font-size:12px;color:#4a5763}
+#pg-sheet .pg-t{font-size:20px;font-weight:800;margin:10px 0 2px;line-height:1.3}
+#pg-sheet .pg-s{font-size:12px;color:#4a5763;margin:0 0 6px}
+#pg-sheet h2{font-size:14px;font-weight:800;margin:10px 0 4px;color:#1d4f91}
+#pg-sheet table.pg-in{width:100%;border-collapse:collapse;table-layout:fixed;font-size:11.5px}
+#pg-sheet table.pg-in th,#pg-sheet table.pg-in td{border-bottom:1px solid #d5dce2;padding:3px 6px;line-height:1.35;vertical-align:top;word-break:keep-all;overflow-wrap:break-word}
+#pg-sheet table.pg-in th{text-align:left;font-weight:600;color:#4a5763;background:#f4f6f8;width:27%}
+#pg-sheet table.pg-in td{font-weight:800;width:23%}
+#pg-sheet .pgw{max-width:none;margin:0;padding:0;color:#16212c}
+#pg-sheet .pgw .sh{margin-top:6px}
+#pg-sheet .pg-ft{margin-top:10px;border-top:1px solid #d5dce2;padding-top:6px;font-size:12px;display:flex;justify-content:space-between;gap:12px}
+#pg-sheet .pg-ft b{font-weight:800}
+
+#pg-sheet.fuse .pgw *,#pg-sheet.string .pgw *{font-size:10.5px!important;line-height:1.45!important}
+#pg-sheet.fuse .pgw .sh,#pg-sheet.string .pgw .sec h3,#pg-sheet.string .pgw .ekmppt h3{font-size:12px!important}
+#pg-sheet.fuse .pgw .sh{padding:5px 10px!important;margin-top:8px!important;break-after:avoid}
+#pg-sheet.fuse .pgw .sb{padding:5px 8px!important}
+#pg-sheet.fuse .pgw .chk{margin-bottom:4px!important;grid-template-columns:1fr 66px!important}
+#pg-sheet.fuse .pgw .chk .f{padding:4px 8px!important}
+#pg-sheet.fuse .pgw .chk .f .v,#pg-sheet.fuse .pgw .chk .f .s{padding:0 4px!important}
+#pg-sheet.string .pgw .sec{margin-top:8px!important}
+#pg-sheet.string .pgw .calcline{padding:3px 6px!important;margin-bottom:3px!important;gap:4px!important}
+#pg-sheet.string .pgw .verdict{padding:5px 8px!important;margin-top:6px!important}
+</style></head><body><style>
+.ekfc{max-width:1200px;margin:0 auto;padding:60px 20px 70px;color:#1a1e24;box-sizing:border-box;word-break:keep-all;overflow-wrap:break-word;background:#fff;font-size:17px;line-height:1.7}
+.ekfc *{box-sizing:border-box}
+.ekfc .eb{font-size:13px;font-weight:800;letter-spacing:2px;color:#1a7f37}
+.ekfc h1{font-size:38px;margin:10px 0 16px;font-weight:800;line-height:1.3}
+.ekfc .lead{list-style:none;padding:0;margin:0 0 26px;font-size:18px;line-height:1.8}
+.ekfc .lead li{padding-left:22px;position:relative}.ekfc .lead li:before{content:"■";position:absolute;left:0;color:#1a7f37;font-size:12px;top:2px}
+.ekfc .sheet{border:2px solid #1b2330;border-radius:12px;padding:22px 24px;background:#fff}
+.ekfc .sheet>h2{font-size:24px;margin:0 0 4px}
+.ekfc .ref{font-size:14.5px;color:#1f4e79;margin:0 0 14px;line-height:1.6}
+.ekfc .sh{background:#1f4e79;color:#fff;font-weight:800;font-size:17px;padding:10px 14px;border-radius:8px 8px 0 0;margin-top:18px}
+.ekfc .sb{border:1px solid #dfe3e8;border-top:0;border-radius:0 0 8px 8px;padding:12px 14px}
+.ekfc .inp{display:grid;grid-template-columns:1fr 1fr;gap:4px 24px}
+.ekfc .row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px dashed #edf0f3}
+.ekfc .row label{font-size:17px;font-weight:700}
+.ekfc .row label small{display:block;font-size:13.5px;color:#555;font-weight:400}
+.ekfc .row input,.ekfc .row select{padding:9px 10px;border:1px solid #c9ced6;border-radius:6px;font-size:18px;font-family:inherit;background:#fffbe6;color:#1a1e24}
+.ekfc .row input{width:160px;text-align:right}
+.ekfc .row select{width:330px;max-width:100%}
+.ekfc .m12{display:grid;grid-template-columns:repeat(6,1fr);gap:6px 10px;margin:8px 0 4px}
+.ekfc .m12 label{font-size:14px;font-weight:700;display:block}
+.ekfc .m12 input{width:100%;padding:6px 8px;border:1px solid #c9ced6;border-radius:6px;font-size:16px;text-align:right;background:#fffbe6;font-family:inherit}
+.ekfc .big{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0 12px}
+.ekfc .big div{background:#f6f8fb;border-radius:10px;padding:16px 12px;text-align:center;min-width:0}
+.ekfc .big div.main{background:#1f4e79}
+.ekfc .big small{display:block;font-size:14px;color:#555;margin-bottom:4px}
+.ekfc .big div.main small{color:#dbe8f5}
+.ekfc .big b{font-size:30px;color:#1f4e79;font-variant-numeric:tabular-nums;line-height:1.2}
+.ekfc .big div.main b{color:#fff}
+.ekfc .big b em{font-style:normal;font-size:16px;margin-left:3px;opacity:.8}
+.ekfc table{width:100%;border-collapse:collapse;font-size:15.5px;margin:4px 0 6px}
+.ekfc th,.ekfc td{padding:8px 8px;border-bottom:1px solid #e3e6ea;text-align:left;vertical-align:top;line-height:1.5}
+.ekfc th{background:#f4f6f9;font-size:14px;color:#3a4048}
+.ekfc td.n,.ekfc th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ekfc td.f{color:#3a4048;font-size:15px}
+.ekfc tr.sum td{font-weight:800;border-top:2px solid #1b2330;background:#fafbfc}
+.ekfc tr.tot td{font-weight:800;font-size:18px;color:#1f4e79;border-top:2px solid #1f4e79;background:#eef4fb}
+.ekfc tr.me td{background:#fff6d6}
+.ekfc .twrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ekfc .svg{width:100%;height:auto;display:block;margin:6px 0 2px}
+.ekfc .lg{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:14.5px;color:#3a4048;margin:0 0 8px}
+.ekfc .lg i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.ekfc .two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.ekfc h3.t{font-size:18px;margin:18px 0 6px;color:#1f4e79}
+.ekfc .tip{border-left:5px solid #1f4e79;background:#eef4fb;padding:12px 14px;border-radius:0 8px 8px 0;margin:12px 0 0;font-size:16px;line-height:1.75}
+.ekfc .alert{border-left:5px solid #c62828;background:#fde8e8;padding:12px 14px;border-radius:0 8px 8px 0;margin:12px 0 0;font-size:16px;line-height:1.75}
+.ekfc .under{list-style:none;margin:18px 0 0;padding:14px 16px;border:1px solid #dfe3e8;border-radius:10px;background:#fafbfc;font-size:15.5px;line-height:1.85}
+.ekfc .under li{padding-left:16px;position:relative}.ekfc .under li:before{content:"-";position:absolute;left:0}
+.ekfc .under a{color:#1f4e79;font-weight:800}
+.ekfc h2.h{font-size:26px;margin:44px 0 14px}
+.ekfc details{border:1px solid #e3e6ea;border-radius:10px;padding:14px 18px;margin:0 0 10px;background:#fff}
+.ekfc summary{font-weight:700;cursor:pointer;font-size:17.5px}
+.ekfc details p{font-size:16px;line-height:1.8;color:#3a4048;margin:10px 0 0}
+.ekfc .law{border:1px solid #dfe3e8;background:#fafbfc;border-radius:10px;padding:16px 20px;margin:28px 0 0;font-size:15px;line-height:1.8;color:#3a4048}
+.ekfc .law b{color:#1a1e24}
+.ekfc .law ul{margin:6px 0 0;padding-left:18px}
+.ekfc .btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin:30px 0 0}
+.ekfc .btns a{display:inline-block;font-weight:800;font-size:20px;padding:16px 30px;border-radius:12px;text-decoration:none}
+.ekfc .btns a.call{background:#ff7a00;color:#fff!important}
+.ekfc .btns a.q{background:#fff;color:#1f4e79!important;border:2px solid #1f4e79}
+.ekfc .contact{margin:22px 0 0;font-size:19px;font-weight:800;color:#1b2330;text-align:center}
+.ekfc .busy{font-size:15px;color:#555;margin:8px 0 0}
+@media(max-width:860px){.ekfc .twrap table{min-width:640px}.ekfc .twrap table.mt{min-width:820px}.ekfc{padding:40px 14px 50px}.ekfc h1{font-size:28px}.ekfc .lead{font-size:16px}.ekfc .inp{grid-template-columns:1fr}.ekfc .big{grid-template-columns:1fr 1fr}.ekfc .big b{font-size:24px}.ekfc .sheet{padding:16px 12px}.ekfc .row{flex-direction:column;align-items:stretch;gap:6px}.ekfc .row input,.ekfc .row select{width:100%;font-size:17px}.ekfc .m12{grid-template-columns:repeat(3,1fr)}.ekfc .two{grid-template-columns:1fr}.ekfc table{font-size:14px}.ekfc th,.ekfc td{padding:7px 5px}.ekfc .btns a{display:block;width:100%;text-align:center;font-size:18px}.ekfc .contact{font-size:16px}}
+@media(max-width:480px){.ekfc .sheet{padding:14px 8px}.ekfc .big{grid-template-columns:1fr}.ekfc table{font-size:13px}.ekfc th,.ekfc td{padding:6px 4px}.ekfc th{font-size:12.5px}.ekfc .m12{grid-template-columns:repeat(2,1fr)}}
+
+.ekfc .note{font-size:14.5px;color:#555;margin:6px 0 0;line-height:1.7}
+.ekfc td.ok{color:#1a7f37;font-weight:800}.ekfc td.ng{color:#c62828;font-weight:800}
+</style>
+<div class="ekfc" id="fault-ct-calculator">
+  <div class="eb">SHORT-CIRCUIT · CT</div>
+  <h1>단락전류·CT비 간이 계산기 (22.9 kV 수전·태양광 변압기)</h1>
+  <ul class="lead">
+    <li>변압기 용량·%Z, 한전 쪽 단락전류(또는 일반값), 저압 전압을 넣으면 <b>22.9 kV 모선과 저압 모선의 3상 단락전류(최대·최소)</b>와 <b>1선지락전류</b>, 변압기 정격전류를 보여 드립니다.</li>
+    <li>이어서 <b>보호용 CT(5P20) 후보별로 정격전류·포화 시작 전류·계기용 변성기(MOF) 과전류강도</b>를 따져 알맞은 CT비를 골라 드립니다. 계산 식은 보호계전기 정정서에 쓰는 IEC 60909 단락계산과 CT 포화 검토 식 그대로입니다.</li>
+    <li>회원가입 없이 무료입니다. 숫자는 이 화면 안에서만 계산되고 어디에도 보내지 않습니다. 한전 회신값이 없으면 일반값으로 계산하며, 실제 값은 한전 회신으로 바뀝니다.</li>
+  </ul>
+
+  <div class="sheet">
+    <h2>단락전류·CT비 계산표</h2>
+    <p class="ref">※ 100 MVA 기준 %임피던스로 계산합니다. 노란 칸이 입력, 아래 표가 결과입니다.</p>
+
+    <div class="sh">① 한전 쪽 (전원)</div>
+    <div class="sb inp">
+      <div class="row"><label for="fc_src">전원 값을 어떻게 아시나요?<small>한전 회신(단락전류 kA)이 있으면 그 값을 쓰세요</small></label>
+        <select id="fc_src"><option value="typ">한전 회신 없음 (일반값 사용)</option><option value="ka" selected>한전 단락전류(kA) 회신 있음</option></select></div>
+      <div class="row"><label for="fc_ka">22.9 kV 전원 3상 단락전류 (kA)<small>한전 변전소 모선 기준</small></label><input id="fc_ka" type="number" step="0.1" value="12.5"></div>
+      <div class="row"><label for="fc_r1">선로 정상분 %R (100 MVA)<small>변전소에서 수전점까지 합계, 모르면 0</small></label><input id="fc_r1" type="number" step="0.01" value="0"></div>
+      <div class="row"><label for="fc_x1">선로 정상분 %X</label><input id="fc_x1" type="number" step="0.01" value="0"></div>
+      <div class="row"><label for="fc_r0">선로 영상분 %R</label><input id="fc_r0" type="number" step="0.01" value="0"></div>
+      <div class="row"><label for="fc_x0">선로 영상분 %X</label><input id="fc_x0" type="number" step="0.01" value="0"></div>
+    </div>
+
+    <div class="sh">② 변압기</div>
+    <div class="sb inp">
+      <div class="row"><label for="fc_kva">변압기 용량 (kVA)</label><input id="fc_kva" type="number" step="1" value="1500"></div>
+      <div class="row"><label for="fc_z">변압기 %Z<small>명판 값</small></label><input id="fc_z" type="number" step="0.1" value="6.0"></div>
+      <div class="row"><label for="fc_xr">변압기 X/R<small>모르면 0 (1,000 kVA 이하 5, 초과 6)</small></label><input id="fc_xr" type="number" step="0.1" value="0"></div>
+      <div class="row"><label for="fc_v2">저압 쪽 전압</label><select id="fc_v2"><option value="0.22">220 V</option><option value="0.38" selected>380 V</option><option value="0.44">440 V</option></select></div>
+    </div>
+
+    <div class="sh">③ 보호용 CT (22.9 kV 쪽)</div>
+    <div class="sb inp">
+      <div class="row"><label for="fc_va">CT 정격부담 (VA)</label><input id="fc_va" type="number" step="1" value="15"></div>
+      <div class="row"><label for="fc_alf">과전류정수 (5P 뒤 숫자)</label><input id="fc_alf" type="number" step="1" value="20"></div>
+      <div class="row"><label for="fc_rct">CT 2차 권선저항 (Ω)<small>시험성적서 값, 모르면 0.1</small></label><input id="fc_rct" type="number" step="0.01" value="0.1"></div>
+      <div class="row"><label for="fc_rva">계전기 소비 (VA)</label><input id="fc_rva" type="number" step="0.1" value="0.5"></div>
+      <div class="row"><label for="fc_lead">CT에서 계전기까지 배선 (m)</label><input id="fc_lead" type="number" step="1" value="5"></div>
+    </div>
+
+    <div id="fc_out">
+    <h3 class="t">결과 요약</h3>
+    <div class="big" id="fc_big"></div>
+    <h3 class="t">모선별 고장전류</h3>
+    <div class="twrap"><table id="fc_tab"></table></div>
+    <h3 class="t">보호용 CT비 후보</h3>
+    <div class="twrap"><table id="fc_ct"></table></div>
+    <div class="tip" id="fc_tip"></div>
+    <div class="alert" id="fc_warn" style="display:none"></div>
+    </div>
+    <p class="note">계산 가정: ① 한전 단락전류(kA) 회신값에는 전압계수 1.1을 곱해 '최대'로 보여 드립니다(12.5 kA 회신이면 약 13.75 kA). ② 한전 kA 회신만 넣으면 영상분을 정상분과 같게 두므로 22.9 kV 모선 1선지락은 3상과 비슷하게 나옵니다. 실제 선로 영상분은 더 커서 지락전류가 작아지니 참고로만 보세요. ③ '한전 회신 없음'은 154/22.9 kV 변전소 한 곳의 회신 예(%Z 0.146 + j33.6, 영상 j48.3, 100 MVA 기준)를 일반값으로 쓴 것입니다.</p>
+    <p class="note">이 숫자는 간이 값입니다. 정식 단락계산서와 보호계전기 정정서는 한전 회신, 선로 선종·거리, 변압기 시험성적서로 다시 계산해 드립니다.</p>
+  </div>
+
+  <h2 class="h">자주 묻는 질문</h2>
+  <details><summary>최대 단락전류와 최소 단락전류는 어디에 쓰나요?</summary><p>최대값은 차단기 차단용량, CT·MOF 강도, 계전기 순시 정정의 상한을 정할 때, 최소값은 계전기가 끝 지점의 작은 고장도 감지하는지 확인할 때 씁니다. 최대는 전압계수 c 를 크게(1.1), 최소는 작게(고압 1.0, 저압 0.95) 잡고, 최소에는 선로 저항을 80 ℃로 환산해 넣습니다.</p></details>
+  <details><summary>한전 단락전류를 모르면 어떻게 하나요?</summary><p>'한전 회신 없음'을 고르면 154/22.9 kV 변전소 모선의 변전소 한 곳의 회신 예(%Z 0.146 + j33.6, 100 MVA 기준)로 계산합니다. 선로 임피던스를 0으로 두면 고장전류가 크게 나오는 쪽입니다. 정식 계산에는 한전의 변전소 모선 %Z와 선로 임피던스 회신이 필요합니다.</p></details>
+  <details><summary>CT비는 어떤 기준으로 고르나요?</summary><p>세 가지를 모두 만족하는 가장 작은 비를 추천합니다. ① CT 1차 정격이 변압기 1차 정격전류 이상, ② 포화 시작 전류(실부담 과전류정수 × CT 1차)가 22.9 kV 최대 단락전류 이상, ③ 계기용 변성기(MOF) 과전류강도 75배 이내(최대 단락전류 ÷ CT 1차 ≤ 75). 포화 시작이 모자라도 순시 정정이 포화 전에 동작하면 보호는 되므로, 표의 각 칸을 보고 판단하세요.</p></details>
+  <details><summary>1선지락전류는 변압기 결선에 따라 다르지 않나요?</summary><p>이 간이 계산기는 22.9 kV 델타, 저압 Y 접지(Dyn)인 가장 흔한 결선만 다룹니다. 22.9 kV 모선의 지락은 한전 선로 영상 임피던스로, 저압 쪽 지락은 변압기 영상 임피던스로 계산합니다. 3권선·Y접지 변압기, 접지저항(NGR)이 있는 설비는 정식 계산이 필요합니다.</p></details>
+
+  <div class="law"><b>각주 (계산 기준)</b>
+    <ul>
+      <li>KS C IEC 60909-0 단락전류 계산 방식(원문 최신판과의 대조는 하지 않았습니다): 3상 Ik = c·Un/(√3·|Z1|), 1선지락 Ik1 = 3·c·Un/(√3·|2·Z1 + Z0|), 변압기 보정계수 K_T = 0.95·c_max/(1 + 0.6·x_T). 전압계수 c: 최대 1.1, 최소 고압 1.0·저압 0.95.</li>
+      <li>CT 포화 검토: 실부담 과전류정수 ALF' = ALF × (Rct + Rb) ÷ (Rct + R배선 + R계전기), 포화 시작 전류 = ALF' × CT 1차. 배선 저항은 KIV 4㎟ 도체의 20 ℃ 값 4.61 Ω/km를 75 ℃로 환산해 쓰고(왕복 길이), 계전기 부담 Ω = VA ÷ 25입니다.</li>
+      <li>MOF 과전류강도 75배: 당사 검토 기준입니다(한전 규정 조항 번호는 확인하지 못했으며, 150배 MOF 적용은 한전과 협의). 표준 CT 비 열은 일반 제조 시리즈이며, 표준 규격 원문 대조는 하지 않았습니다.</li>
+    </ul>
+    넣지 않은 것: 발전기·인버터 기여전류, 풍력, 3권선·Y접지 변압기, 중성점 접지저항, 케이블·모선 임피던스, 비대칭 첨두전류, CT 열적강도·여자특성.
+  </div>
+
+  <div class="btns"><a class="call" href="tel:15552859">정정서 상담 ☎ 1555-2859</a><a class="q" href="mailto:info@ecokkorea.co.kr">정식 단락계산서 문의</a></div>
+  <p class="contact">☎ 1555-2859 · www.ecokkorea.kr · info@ecokkorea.co.kr</p>
+</div>
+<script>
+(function(){
+  var SQ3=Math.sqrt(3),BASE=100,CMAX_HV=1.1,CMIN_HV=1.0,CMAX_LV=1.1,CMIN_LV=0.95,TEMP=80,V1=22.9;
+  var CTS=[5,10,15,20,30,40,50,75,100,150,200,300,400,600,800,1000,1200];
+  function C(r,x){return{r:r,x:x}}
+  function add(a,b){return C(a.r+b.r,a.x+b.x)}
+  function mul(a,k){return C(a.r*k,a.x*k)}
+  function ab(a){return Math.sqrt(a.r*a.r+a.x*a.x)}
+  function calc(p){
+    var ib1=BASE*1e3/(SQ3*V1),ib2=BASE*1e3/(SQ3*p.v2);
+    var zb1,zb0;
+    if(p.src==='ka'){var zs=100*ib1/(p.ka*1000);zb1=C(0,zs);zb0=C(0,zs);}
+    else{zb1=C(0.146,33.596);zb0=C(0,48.324);}
+    var zl1=C(p.r1,p.x1),zl0=C(p.r0,p.x0),rt=1+0.004*(TEMP-20);
+    var zs1=add(zb1,zl1),zs0=add(zb0,zl0);
+    var zs1m=add(zb1,C(zl1.r*rt,zl1.x)),zs0m=add(zb0,C(zl0.r*rt,zl0.x));
+    var xr=p.xr||(p.kva<=1000?5:6);
+    var r=p.z/Math.sqrt(1+xr*xr),x=r*xr,k=BASE*1000/p.kva;
+    var zt=mul(C(r,x),k),kt=0.95*CMAX_LV/(1+0.6*(x/100));
+    var hv={};
+    hv.ik_max=CMAX_HV*ib1*100/ab(zs1);hv.ik_min=CMIN_HV*ib1*100/ab(zs1m);
+    hv.ig_max=3*CMAX_HV*ib1*100/ab(add(mul(zs1,2),zs0));
+    hv.ig_min=3*CMIN_HV*ib1*100/ab(add(mul(zs1m,2),zs0m));
+    var z2=add(zs1,mul(zt,kt)),z2m=add(zs1m,zt);
+    var lv={};
+    lv.ik_max=CMAX_LV*ib2*100/ab(z2);lv.ik_min=CMIN_LV*ib2*100/ab(z2m);
+    var z0kt=mul(zt,kt);
+    lv.ig_max=3*CMAX_LV*ib2*100/ab(add(mul(z2,2),z0kt));
+    lv.ig_min=3*CMIN_LV*ib2*100/ab(add(mul(z2m,2),zt));
+    lv.ref_max=lv.ik_max*p.v2/V1;
+    var ifl_hv=p.kva/(SQ3*V1),ifl_lv=p.kva/(SQ3*p.v2);
+    var rlead=2*p.lead/1000*4.61*(1+0.00393*55),rrel=p.rva/25,rb=p.va/25;
+    var alf=p.alf*(p.rct+rb)/(p.rct+rlead+rrel);
+    var cts=CTS.map(function(n){var sat=alf*n,mof=hv.ik_max/n;
+      return{n:n,rated:n>=ifl_hv,sat:sat,satok:sat>=hv.ik_max,mof:mof,mofok:mof<=75};});
+    var pick=null;for(var i=0;i<cts.length;i++){var c=cts[i];if(c.rated&&c.satok&&c.mofok){pick=c.n;break;}}
+    return{hv:hv,lv:lv,ifl_hv:ifl_hv,ifl_lv:ifl_lv,alf_eff:alf,cts:cts,pick:pick};
+  }
+  window.fcCalc=calc;
+  function $(i){return document.getElementById(i)}
+  function n(v){return Math.round(v).toLocaleString('ko-KR')}
+  function d(v,k){return v.toLocaleString('ko-KR',{minimumFractionDigits:k,maximumFractionDigits:k})}
+  function num(i,def){var v=parseFloat($(i).value);return isFinite(v)?v:def}
+  var MSG=[];
+  function lim(i,def,lo,hi,label){var v=parseFloat($(i).value);if(!isFinite(v)){v=def;}
+    if(v<lo){MSG.push(label+'은(는) '+lo+' 이상만 계산해 '+lo+'로 두었습니다.');v=lo;}
+    if(v>hi){MSG.push(label+'은(는) '+hi+' 이하만 계산해 '+hi+'로 두었습니다.');v=hi;}
+    return v}
+  function read(){MSG=[];
+    var p={src:$('fc_src').value,ka:lim('fc_ka',12.5,0.1,100,'전원 단락전류'),r1:lim('fc_r1',0,0,100000,'선로 정상분 %R'),x1:lim('fc_x1',0,0,100000,'선로 정상분 %X'),r0:lim('fc_r0',0,0,100000,'선로 영상분 %R'),x0:lim('fc_x0',0,0,100000,'선로 영상분 %X'),
+    kva:lim('fc_kva',1500,10,100000,'변압기 용량'),z:lim('fc_z',6,0.5,30,'변압기 %Z'),xr:lim('fc_xr',0,0,50,'변압기 X/R'),v2:parseFloat($('fc_v2').value),
+    va:lim('fc_va',15,1,200,'CT 정격부담'),alf:lim('fc_alf',20,5,50,'과전류정수'),rct:lim('fc_rct',0.1,0,50,'CT 권선저항'),rva:lim('fc_rva',0.5,0,100,'계전기 소비'),lead:lim('fc_lead',5,0,2000,'배선 길이')};
+    if(p.rct+2*p.lead/1000*4.61*(1+0.00393*55)+p.rva/25<=0){p.rct=0.01;MSG.push('CT 권선저항, 배선, 계전기 소비가 모두 0이면 계산할 수 없어 권선저항을 0.01 Ω으로 두었습니다.');}
+    return p}
+  function kA(v){return d(v/1000,2)}
+  function run(){
+    var p=read(),o=calc(p);
+    $('fc_ka').disabled=(p.src!=='ka');
+    var w=$('fc_warn');if(MSG.length){w.style.display='block';w.innerHTML=MSG.join('<br>');}else{w.style.display='none';w.innerHTML='';}
+    $('fc_big').innerHTML=
+      '<div class="main"><small>22.9 kV 모선 3상 단락(최대)</small><b id="o_hv3">'+kA(o.hv.ik_max)+'<em>kA</em></b></div>'+
+      '<div><small>22.9 kV 모선 3상 단락(최소)</small><b id="o_hv3m">'+kA(o.hv.ik_min)+'<em>kA</em></b></div>'+
+      '<div class="main"><small>저압 모선 3상 단락(최대)</small><b id="o_lv3">'+kA(o.lv.ik_max)+'<em>kA</em></b></div>'+
+      '<div><small>변압기 1차 정격전류</small><b id="o_ifl">'+d(o.ifl_hv,1)+'<em>A</em></b></div>';
+    $('fc_tab').innerHTML='<tr><th>고장 위치</th><th class="n">3상 최대 (A)</th><th class="n">3상 최소 (A)</th><th class="n">1선지락 최대 (A)</th><th class="n">1선지락 최소 (A)</th></tr>'+
+      '<tr><td>22.9 kV 모선</td><td class="n" id="t_hv3">'+n(o.hv.ik_max)+'</td><td class="n" id="t_hv3m">'+n(o.hv.ik_min)+'</td><td class="n" id="t_hvg">'+n(o.hv.ig_max)+'</td><td class="n" id="t_hvgm">'+n(o.hv.ig_min)+'</td></tr>'+
+      '<tr><td>저압 모선 ('+Math.round(p.v2*1000)+' V)</td><td class="n" id="t_lv3">'+n(o.lv.ik_max)+'</td><td class="n" id="t_lv3m">'+n(o.lv.ik_min)+'</td><td class="n" id="t_lvg">'+n(o.lv.ig_max)+'</td><td class="n" id="t_lvgm">'+n(o.lv.ig_min)+'</td></tr>'+
+      '<tr><td colspan="5" class="f">저압 3상 최대를 22.9 kV 쪽으로 환산하면 '+n(o.lv.ref_max)+' A, 변압기 2차 정격전류는 '+n(o.ifl_lv)+' A입니다.</td></tr>';
+    var h='<tr><th class="n">CT비</th><th>정격전류 ≥ '+d(o.ifl_hv,1)+' A</th><th class="n">포화 시작 (A)</th><th>포화 시작 ≥ '+n(o.hv.ik_max)+' A</th><th class="n">MOF 배수</th><th>75배 이내</th></tr>';
+    o.cts.forEach(function(c){
+      var me=(c.n===o.pick)?' class="me"':'';
+      h+='<tr'+me+'><td class="n">'+c.n+'/5'+(c.n===o.pick?' (추천)':'')+'</td><td class="'+(c.rated?'ok':'ng')+'">'+(c.rated?'적합':'부족')+'</td><td class="n">'+n(c.sat)+'</td><td class="'+(c.satok?'ok':'ng')+'">'+(c.satok?'적합':'포화')+'</td><td class="n">'+d(c.mof,0)+'</td><td class="'+(c.mofok?'ok':'ng')+'">'+(c.mofok?'적합':'초과')+'</td></tr>';});
+    $('fc_ct').innerHTML=h;
+    $('fc_tip').innerHTML=(o.pick?'<b>추천 CT비: '+o.pick+'/5 (5P'+p.alf+', '+p.va+' VA)</b>. 실제 부담으로 보면 과전류정수가 '+d(o.alf_eff,1)+'로 계산되어 포화 시작 전류는 '+n(o.alf_eff*o.pick)+' A입니다. ':'<b>표의 CT비 가운데 세 조건을 모두 만족하는 것이 없습니다.</b> 정격부담이나 과전류정수를 올리거나 150배 MOF 적용을 한전과 협의해야 합니다. ')+'실부담 과전류정수 '+d(o.alf_eff,1)+'(정격 '+p.alf+'), 22.9 kV 최대 단락 '+n(o.hv.ik_max)+' A.';
+  }
+  ['fc_src','fc_ka','fc_r1','fc_x1','fc_r0','fc_x0','fc_kva','fc_z','fc_xr','fc_v2','fc_va','fc_alf','fc_rct','fc_rva','fc_lead'].forEach(function(i){$(i).addEventListener('input',run);$(i).addEventListener('change',run);});
+  window.fcRun=run;run();
+})();
+</script>
+
+<div class="pg-bar" id="pg-bar"><button type="button" class="pg-save" id="pg-save">보고서 PDF로 저장</button><span class="pg-hint">A4 한 장, 입력값과 결과 표</span></div><div class="pg-gatebox" id="pg-gatebox"><div class="gate" id="subgate"><div><h2>유튜브 채널을 구독하시면 PDF 보고서가 저장됩니다</h2><ol><li>아래 빨간 단추를 누르면 유튜브 구독 창이 새로 열립니다.</li><li>구독을 마치고 이 창으로 돌아오시면 PDF 저장이 바로 열립니다.</li></ol><p class="note">계산은 구독 없이 무료입니다. 이미 구독 중이시면 같은 단추를 누르고 돌아오시면 됩니다. 한 번 열면 이 브라우저에서는 홈페이지 어디서나 계속 열려 있습니다.</p><p class="ok" role="status">열렸습니다. 구독해 주셔서 고맙습니다.</p></div><a class="subbtn" id="subbtn" href="https://www.youtube.com/channel/UCpRTUvMiZQxXk-7BLJQlUZQ?sub_confirmation=1" target="_blank" rel="noopener"><svg viewBox="0 0 30 21" aria-hidden="true"><rect width="30" height="21" rx="5" fill="#fff"/><path d="M12 6l8 4.5-8 4.5z" fill="#c4161c"/></svg>유튜브 구독하고 PDF 저장</a></div></div><script>(function(){var R=document.getElementById("fc_out"),b=document.getElementById('pg-bar'),g=document.getElementById('pg-gatebox');if(R&&R.parentNode){R.parentNode.insertBefore(b,R.nextSibling);b.parentNode.insertBefore(g,b.nextSibling)}})();(function(){
+var K='ecok_sub_ok',KEY="fault-ct",ROOT="ekfc",FIT=(KEY==='fuse'||KEY==='string')?1005:960,RID="fc_out",CO="☎ 1555-2859 · www.ecokkorea.kr · info@ecokkorea.co.kr",NOTE="참고용 계산, 실제 설계는 현장 조건 확인",ok=false,clicked=0,pending=false;
+function setOk(){try{window.localStorage.setItem(K,'1')}catch(e){}try{document.cookie=K+'=1; max-age=31536000; path=/; SameSite=Lax'}catch(e){}}
+function getOk(){var v=false;try{v=window.localStorage.getItem(K)==='1'}catch(e){}
+ if(!v){try{v=/(?:^|; )ecok_sub_ok=1/.test(document.cookie)}catch(e){}}
+ if(v)setOk();return v}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function rows(){var out=[];document.querySelectorAll('.sheet .row').forEach(function(r){
+ var el=r.querySelector('input,select,output');if(!el)return;
+ var lb=r.querySelector('label');if(!lb)return;var c=lb.cloneNode(true);
+ c.querySelectorAll('small').forEach(function(s){var t=s.textContent.trim();if(t.length<=6)s.replaceWith(document.createTextNode(' ('+t+')'));else s.remove()});
+ var name=c.textContent.replace(/\s+/g,' ').trim(),v;
+ if(el.type==='checkbox')v=el.checked?"예":"아니오";
+ else if(el.tagName==='SELECT')v=el.options[el.selectedIndex]?el.options[el.selectedIndex].text:'';
+ else if(el.tagName==='OUTPUT')v=el.textContent;
+ else v=el.value||"자동";
+ out.push([name,String(v).replace(/\s+/g,' ').trim()])});return out}
+function sheetHtml(){
+ var R=document.getElementById(RID);if(!R)return null;
+ var cl=R.cloneNode(true);cl.removeAttribute('id');cl.querySelectorAll('[id]').forEach(function(n){n.removeAttribute('id')});
+ if(KEY==='string')cl.querySelectorAll('table').forEach(function(t){if(t.rows[0]&&t.rows[0].cells.length>10)t.remove()});
+ var rs=rows(),h='';
+ for(var i=0;i<rs.length;i+=2){var a=rs[i],b=rs[i+1];
+  h+='<tr><th>'+esc(a[0])+'</th><td>'+esc(a[1])+'</td>'+(b?'<th>'+esc(b[0])+'</th><td>'+esc(b[1])+'</td>':'<th></th><td></td>')+'</tr>'}
+ var h1=document.querySelector('h1'),title=h1?h1.textContent.trim():document.title;
+ var d=new Date(),ds=d.getFullYear()+'.'+(d.getMonth()+1)+'.'+d.getDate();
+ var w=document.createElement('div');w.className='pgw '+ROOT;w.appendChild(cl);
+ var extra='';
+ if(KEY==='fire'){var t1=document.getElementById('ft1'),t2=document.getElementById('ft2');
+  if(t1&&t2){var nt=t1.closest('.tw').previousElementSibling,x=document.createElement('div');x.className='pgw '+ROOT;
+   if(nt)x.appendChild(nt.cloneNode(true));[t1,t2].forEach(function(t){var c=t.closest('.tw').cloneNode(true);c.querySelectorAll('[id]').forEach(function(n){n.removeAttribute('id')});x.appendChild(c)});
+   extra='<h2>'+"감지면적 표 (NFTC 203 원문)"+'</h2>'+x.outerHTML}}
+ return '<div id="pg-sheet" class="pg-fr '+KEY+'"><div class="pg-hd"><img src="img/logo.png" alt="'+"에코케이코리아"+'"><span class="pg-dt">'+"계산일 "+ds+'</span></div>'
+  +'<div class="pg-t">'+esc(title)+'</div><p class="pg-s">'+"입력값과 계산 결과"+'</p>'
+  +'<h2>'+"입력값"+'</h2><table class="pg-in"><tbody>'+h+'</tbody></table><h2>'+"계산 결과"+'</h2>'+w.outerHTML+extra
+  +'<div class="pg-ft"><b>'+esc(CO)+'</b><span>'+esc(NOTE)+'</span></div></div>'}
+function frameHtml(){var s=sheetHtml();if(!s)return null;
+ var bs=document.createElement('base');bs.href=document.baseURI;var heads='';document.querySelectorAll('head style').forEach(function(x){heads+=x.outerHTML});
+ return '<!doctype html><html lang="'+"ko"+'"><head><meta charset="utf-8">'+bs.outerHTML+heads+'<style>html,body{margin:0;background:#fff}</style></head><body>'+s+'</body></html>'}
+function doSave(){var html=frameHtml();if(!html)return;
+ var old=document.getElementById('pg-frame');if(old)old.remove();
+ var f=document.createElement('iframe');f.id='pg-frame';f.setAttribute('aria-hidden','true');
+ f.style.cssText='position:absolute;left:-9999px;top:0;width:190mm;height:1400px;border:0;visibility:hidden';
+ f.onload=function(){var w=f.contentWindow,doc=f.contentDocument,s=doc.getElementById('pg-sheet');if(!s)return;
+  var go=function(){var hh=s.scrollHeight;s.style.zoom=Math.min(1,FIT/hh).toFixed(3);
+   setTimeout(function(){try{w.focus();w.print()}catch(e){try{window.print()}catch(e2){}}},120)};
+  (doc.fonts&&doc.fonts.ready?doc.fonts.ready:Promise.resolve()).then(function(){setTimeout(go,150)},go)};
+ document.body.appendChild(f);f.srcdoc=html}
+window.__pgFrameHtml=frameHtml;
+var box=document.getElementById('pg-gatebox'),btn=document.getElementById('pg-save');
+function openGate(){ok=true;setOk();var g=box.querySelector('.gate');g.classList.add('done');
+ if(pending){pending=false;doSave()}}
+ok=getOk();
+btn.addEventListener('click',function(){
+ if(ok){doSave();return}
+ pending=true;box.classList.add('show');try{box.scrollIntoView({block:'nearest'})}catch(e){}});
+document.getElementById('subbtn').addEventListener('click',function(){clicked=Date.now()});
+function back(){if(clicked&&!ok&&Date.now()-clicked>2500)openGate()}
+addEventListener('focus',back);document.addEventListener('visibilitychange',function(){if(!document.hidden)back()});
+window.__pgUnlock=openGate;
+})();</script><script>(function(){function s(){parent.postMessage({h:document.documentElement.scrollHeight},'*')}addEventListener('load',s);new ResizeObserver(s).observe(document.body);setTimeout(s,800)})()</script></body></html>
