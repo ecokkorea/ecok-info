@@ -43,7 +43,7 @@
 - 공장 기본요금 줄이는 법·심야전력 ESS: https://www.ecokkorea.kr/35
 - 기성·설계변경·준공내역서 작성 대행: https://ecokkorea.com/estimate.html
 - 무료 계산기 목록: https://ecokkorea.com/tools.html
-- 현장 Q&A(차단기 트립·전선 탐·메가 정상 트립·3상 4선식·접속함 OL): https://ecokkorea.com/field-qa.html
+- 현장 Q&A(차단기 트립·전선 탐·메가 정상 트립·3상 4선식·접속함 OL): https://www.ecokkorea.kr/qa-breaker-trip
 
 ## 질문별 답
 - 산업용 ESS 설계·시공(중소·중견 공장 피크제어 ESS, 15분 데이터 분석→설계·시공·EMS): https://www.ecokkorea.kr/service-plan
