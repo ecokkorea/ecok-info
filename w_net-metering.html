@@ -2,14 +2,13 @@
 <style>@font-face{font-family:Paperlogy;src:url(fonts/Paperlogy-4Regular.ttf);font-weight:400}@font-face{font-family:Paperlogy;src:url(fonts/Paperlogy-6SemiBold.ttf);font-weight:600}@font-face{font-family:Paperlogy;src:url(fonts/Paperlogy-8ExtraBold.ttf);font-weight:800}
 html,body{margin:0;background:#fff;overflow-x:hidden}body{font-family:Paperlogy,'Malgun Gothic',sans-serif;word-break:keep-all;color:#16212c}img{max-width:100%;height:auto}@media (max-width:600px){table{display:block;overflow-x:auto}}</style><style>/* 상계거래 계산기: 스타일은 raw.html 안 <style>에 있음 */
 </style><style>:root{--ink:#16212c;--slate:#4a5763;--line:#d5dce2;--mist:#eef2f5;--blue:#1d4f91;--blue-dark:#163d70}
-.gate{margin-top:0;border:1.5px solid var(--ink);background:#fff;display:grid;grid-template-columns:1fr auto;gap:28px;align-items:center;padding:clamp(22px,3vw,36px)}
-.gate h2{font-size:clamp(24px,2.4vw,32px);font-weight:800;letter-spacing:-.02em;line-height:1.35}
+.gate{margin-top:0;border:1.5px solid var(--line);background:#fff;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;padding:clamp(18px,2.4vw,28px)}
+.gate h2{font-size:clamp(21px,2vw,26px);font-weight:800;letter-spacing:-.02em;line-height:1.4;word-break:keep-all}
 .gate ol{margin:14px 0 0;padding-left:1.4em;color:var(--slate)}.gate ol li{margin:4px 0}
-.gate .note{margin-top:12px;font-size:16px;color:var(--slate)}
+.gate .note{margin-top:8px;font-size:17px;color:var(--slate);word-break:keep-all}
 .subbtn{display:inline-flex;align-items:center;gap:12px;padding:18px 30px;border-radius:10px;background:#c4161c;color:#fff;font-weight:800;font-size:21px;text-decoration:none;white-space:nowrap}
 .subbtn:hover{background:#9f1015}.subbtn svg{width:30px;height:21px;flex:none}
-.gate .ok{display:none;font-weight:800;color:#1b6b3a;font-size:20px}
-.gate.done .ok{display:block}.gate.done .subbtn{background:#fff;color:#c4161c;border:2px solid #c4161c;padding:14px 24px;font-size:18px}
+.gate .subbtn{padding:14px 24px;font-size:19px}
 
 .pg-bar{margin:22px 0 0;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 .pg-save{font:800 19px Paperlogy,'Malgun Gothic',sans-serif;padding:15px 28px;border:0;border-radius:10px;background:#1d4f91;color:#fff;cursor:pointer}
@@ -365,12 +364,8 @@ html,body{margin:0;background:#fff;overflow-x:hidden}body{font-family:Paperlogy,
 })();
 </script>
 
-<div class="pg-bar" id="pg-bar"><button type="button" class="pg-save" id="pg-save">보고서 PDF로 저장</button><span class="pg-hint">A4 한 장, 입력값과 결과 표</span></div><div class="pg-gatebox" id="pg-gatebox"><div class="gate" id="subgate"><div><h2>유튜브 채널을 구독하시면 PDF 보고서가 저장됩니다</h2><ol><li>아래 빨간 단추를 누르면 유튜브 구독 창이 새로 열립니다.</li><li>구독을 마치고 이 창으로 돌아오시면 PDF 저장이 바로 열립니다.</li></ol><p class="note">계산은 구독 없이 무료입니다. 이미 구독 중이시면 같은 단추를 누르고 돌아오시면 됩니다. 한 번 열면 이 브라우저에서는 홈페이지 어디서나 계속 열려 있습니다.</p><p class="ok" role="status">열렸습니다. 구독해 주셔서 고맙습니다.</p></div><a class="subbtn" id="subbtn" href="https://www.youtube.com/channel/UCpRTUvMiZQxXk-7BLJQlUZQ?sub_confirmation=1" target="_blank" rel="noopener"><svg viewBox="0 0 30 21" aria-hidden="true"><rect width="30" height="21" rx="5" fill="#fff"/><path d="M12 6l8 4.5-8 4.5z" fill="#c4161c"/></svg>유튜브 구독하고 PDF 저장</a></div></div><script>(function(){var R=document.getElementById("nm_out"),b=document.getElementById('pg-bar'),g=document.getElementById('pg-gatebox');if(R&&R.parentNode){R.parentNode.insertBefore(b,R.nextSibling);b.parentNode.insertBefore(g,b.nextSibling)}})();(function(){
-var K='ecok_sub_ok',KEY="net-metering",ROOT="eknm",FIT=(KEY==='fuse'||KEY==='string')?1005:960,RID="nm_out",CO="☎ 1555-2859 · www.ecokkorea.kr · info@ecokkorea.co.kr",NOTE="참고용 계산, 실제 설계는 현장 조건 확인",ok=false,clicked=0,pending=false;
-function setOk(){try{window.localStorage.setItem(K,'1')}catch(e){}try{document.cookie=K+'=1; max-age=31536000; path=/; SameSite=Lax'}catch(e){}}
-function getOk(){var v=false;try{v=window.localStorage.getItem(K)==='1'}catch(e){}
- if(!v){try{v=/(?:^|; )ecok_sub_ok=1/.test(document.cookie)}catch(e){}}
- if(v)setOk();return v}
+<div class="pg-bar" id="pg-bar"><button type="button" class="pg-save" id="pg-save">보고서 PDF로 저장</button><span class="pg-hint">A4 한 장, 입력값과 결과 표</span></div><script>(function(){var R=document.getElementById("nm_out"),b=document.getElementById('pg-bar');if(R&&R.parentNode){R.parentNode.insertBefore(b,R.nextSibling)}})();(function(){
+var KEY="net-metering",ROOT="eknm",FIT=(KEY==='fuse'||KEY==='string')?1005:960,RID="nm_out",CO="☎ 1555-2859 · www.ecokkorea.kr · info@ecokkorea.co.kr",NOTE="참고용 계산, 실제 설계는 현장 조건 확인";
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')}
 function rows(){var out=[];document.querySelectorAll('.sheet .row').forEach(function(r){
  var el=r.querySelector('input,select,output');if(!el)return;
@@ -414,15 +409,5 @@ function doSave(){var html=frameHtml();if(!html)return;
   (doc.fonts&&doc.fonts.ready?doc.fonts.ready:Promise.resolve()).then(function(){setTimeout(go,150)},go)};
  document.body.appendChild(f);f.srcdoc=html}
 window.__pgFrameHtml=frameHtml;
-var box=document.getElementById('pg-gatebox'),btn=document.getElementById('pg-save');
-function openGate(){ok=true;setOk();var g=box.querySelector('.gate');g.classList.add('done');
- if(pending){pending=false;doSave()}}
-ok=getOk();
-btn.addEventListener('click',function(){
- if(ok){doSave();return}
- pending=true;box.classList.add('show');try{box.scrollIntoView({block:'nearest'})}catch(e){}});
-document.getElementById('subbtn').addEventListener('click',function(){clicked=Date.now()});
-function back(){if(clicked&&!ok&&Date.now()-clicked>2500)openGate()}
-addEventListener('focus',back);document.addEventListener('visibilitychange',function(){if(!document.hidden)back()});
-window.__pgUnlock=openGate;
+document.getElementById('pg-save').addEventListener('click',doSave);
 })();</script><script>(function(){function s(){parent.postMessage({h:document.documentElement.scrollHeight},'*')}addEventListener('load',s);new ResizeObserver(s).observe(document.body);setTimeout(s,800)})()</script></body></html>
