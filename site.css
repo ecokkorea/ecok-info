@@ -421,7 +421,7 @@ iframe.tool{width:100%;border:0;min-height:700px;display:block}
 .adv-ask{margin-top:22px;padding:20px 22px;border:1.5px solid var(--line);background:#fff;word-break:keep-all}
 .adv-ask h3{font-size:clamp(20px,1.8vw,24px);font-weight:800;line-height:1.4}
 .adv-ask p{margin-top:8px;font-size:17px;color:var(--slate);line-height:1.6}
-.adv-ask .row{display:flex;flex-wrap:wrap;gap:12px;margin-top:14px}
+.adv-ask .adv-btns{display:flex;flex-wrap:wrap;gap:12px;margin-top:14px}
 .adv-ask a.ask{display:inline-flex;align-items:center;justify-content:center;min-height:54px;padding:12px 26px;border-radius:8px;font-size:19px;font-weight:800;text-decoration:none;white-space:nowrap}
 .adv-ask a.kakao{background:#fee500;color:#191919}.adv-ask a.kakao:hover{background:#f2d900}
 .adv-ask a.mail{background:var(--blue);color:#fff}.adv-ask a.mail:hover{background:#163d70}
