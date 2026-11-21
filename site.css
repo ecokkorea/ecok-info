@@ -636,7 +636,7 @@ body.k6 .k6-burger{display:none;align-items:center;gap:8px;margin:10px 0;backgro
 }
 @media (prefers-reduced-motion:reduce){.f2 .f2-btn{transition:none}}
 .k6w{max-width:var(--wrap);padding:0 var(--gut)}
-
+#ek-kakao{position:fixed;left:22px;bottom:110px;z-index:9998;display:flex;align-items:center;gap:8px;background:#FEE500;color:#191919!important;font:800 17px/1 Pretendard,"Noto Sans KR",sans-serif;padding:14px 18px 14px 14px;border-radius:30px;box-shadow:0 6px 18px rgba(0,0,0,.18);text-decoration:none}#ek-kakao svg{width:26px;height:26px;flex:0 0 26px}#ek-kakao:hover{filter:brightness(.96)}@media(max-width:767px){#ek-kakao{left:auto;right:10px;bottom:78px;font-size:15px;padding:12px 15px 12px 12px}}
 .rg-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(20px,3vw,40px);margin-top:32px}
 .rg-card h3{font-size:24px;font-weight:800;padding-bottom:8px;border-bottom:1.5px solid var(--ink)}
 .rg-card{min-width:0}
