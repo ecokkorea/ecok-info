@@ -49,6 +49,7 @@ body.past .nav-apply{visibility:visible;opacity:1}
 .go6{display:inline-flex;align-items:center;min-height:66px;padding:14px 38px!important;font-size:24px!important}
 .go6::after{content:"→";margin-left:14px;font-weight:600}
 .note6{color:#dbe3ea;font-size:17px;margin:12px 0 0}
+.dl6{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 0}.dl6 a{display:inline-flex;align-items:center;min-height:48px;padding:10px 22px;border-radius:999px;background:#fff;color:#111!important;font-weight:800;font-size:18px;text-decoration:none;white-space:nowrap}.dl6 a:hover{background:var(--y)}
 .hero-cap{position:absolute;right:16px;bottom:62px;z-index:1;margin:0;font-size:15px;color:#fff;background:rgba(14,19,25,.7);padding:4px 10px}
 /* 숫자 상자(테마의 노란 상자) */
 .call-to-action-box{margin-top:-50px;position:relative;z-index:2}
@@ -157,6 +158,7 @@ section,.section-padding{padding:72px 0}
  .slide-sub-title{font-size:36px}
  .slider-description{font-size:18px;margin-bottom:22px}
  .go6{display:flex;width:100%;justify-content:center;min-height:62px;font-size:21px!important;padding:14px 18px!important}
+ .dl6 a{font-size:16px;padding:8px 16px;min-height:44px}
  .hero-cap{position:static;align-self:flex-start;margin:0 15px 66px;font-size:14px}
  .facts6 li{padding:14px 14px}.facts6 b{font-size:28px}.facts6 span{font-size:15px}
  section,.section-padding{padding:44px 0}
